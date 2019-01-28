@@ -169,7 +169,6 @@ namespace JEONG
 		Matrix World;
 		Matrix View;
 		Matrix Projection;
-		Matrix InvProjection;
 		Matrix WV;
 		Matrix WVP;
 		Vector3 Pivot; //12
@@ -223,7 +222,8 @@ namespace JEONG
 	{
 		float DeltaTime;
 		float PlusedDeltaTime;
-		Vector2 Empty;
+		float Far;
+		float Empty;
 	};
 
 }

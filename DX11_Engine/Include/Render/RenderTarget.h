@@ -21,6 +21,7 @@ public:
 	void SetClearColor(const Vector4& Color) { memcpy(m_ClearColor, &Color, sizeof(Vector4)); }
 	ID3D11RenderTargetView* GetRenderTargetView() const { return m_TargetView; }
 	ID3D11DepthStencilView* GetDepthView() const { return m_DepthView; }
+	ID3D11ShaderResourceView* GetShaderResourceView() const { return m_TargetShaderResourceView; }
 
 private:
 	ID3D11Texture2D* m_TargetBuffer;
@@ -43,8 +44,6 @@ private:
 	DepthStancilState* m_DepthState;
 	Vector3	m_Pos;
 	Vector3	m_Scale;
-
-	PublicCBuffer m_CBuffer;
 
 public:
 	RenderTarget();

@@ -20,19 +20,12 @@ struct RenderGroup
 	}
 };
 
-struct JEONG_DLL MultiRenderTarget
-{
-	vector<class RenderTarget*> vecTargetView;
-	vector<ID3D11RenderTargetView*>	vecOldTargetView;
-	ID3D11DepthStencilView*	DepthView;
-	ID3D11DepthStencilView*	OldDepthView;
-};
-
 class RenderState;
 class BlendState;
 class RenderTarget;
 class GameObject;
 class Light_Com;
+class MultiRenderTarget;
 class JEONG_DLL RenderManager
 {
 public:
@@ -53,13 +46,12 @@ public:
 	void AddRenderObject(JEONG::GameObject* object);
 	void Render(float DeltaTime);
 
-	bool AddMultiTarget(const string& MultiKey, const string& TargetKey);
-	bool AddMultiTargetDepth(const string& MultiKey, const string& TargetKey);
-	void SetMultiTarget(const string& MultiKey);
-	void ResetMultiTarget(const string& MultiKey);
-	MultiRenderTarget* FindMultiTarget(const string& MultiKey);
-	void ClearMultiTarget(const string& MultiKey, float ClearColor[4]);
+	bool CreateMultiTarget(const string& MultiKey);
+	bool AddMultiRenderTarget(const string& MultiKey, const string& TargetKey);
+	bool AddMultiRenderTargetDepthView(const string& MultiKey, const string& TargetKey);
 
+	MultiRenderTarget* FindMultiTarget(const string& MultiKey);
+	
 private:
 	void Render2D(float DeltaTime);
 	void Render3D(float DeltaTime);
@@ -72,6 +64,7 @@ private:
 	void RenderLightDirection(float DeltaTime, Light_Com* Light);
 	void RenderLightPoint(float DeltaTime, Light_Com* Light);
 	void RenderLightSpot(float DeltaTime, Light_Com* Light);
+	void LightBlend(float DeltaTime);
 
 private:
 	GAME_MODE m_GameMode;
@@ -87,7 +80,13 @@ private:
 	Sampler* m_GBufferSampler;
 	Shader* m_LightAccDirShader;
 
+	MultiRenderTarget* m_GBufferMultiTarget;
+	MultiRenderTarget* m_LightMultiTarget;
+
+	RenderState* m_AddBlend;
+
 	bool m_isDeferred;
+	PublicCBuffer m_CBuffer;
 
 public:
 	CLASS_IN_SINGLE(RenderManager)

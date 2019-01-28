@@ -217,6 +217,9 @@
     <Filter Include="Core\16. GUIManager">
       <UniqueIdentifier>{9c02956e-e8cc-4bb4-8fcb-7bb0b735ab6c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\09. Render\07. MultiRenderTarget">
+      <UniqueIdentifier>{290a9996-7f30-4308-b480-e047c1bea53b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -408,6 +411,9 @@
     <ClInclude Include="resource.h">
       <Filter>Core\01. Window</Filter>
     </ClInclude>
+    <ClInclude Include="Render\MultiRenderTarget.h">
+      <Filter>Core\09. Render\07. MultiRenderTarget</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Copy.bat">
@@ -591,6 +597,9 @@
     </ClCompile>
     <ClCompile Include="GUIManager.cpp">
       <Filter>Core\16. GUIManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\MultiRenderTarget.cpp">
+      <Filter>Core\09. Render\07. MultiRenderTarget</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

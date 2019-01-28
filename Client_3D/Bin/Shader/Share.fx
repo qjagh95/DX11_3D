@@ -67,7 +67,7 @@ struct VS_INPUT_NORMAL_COLOR
 struct VS_OUTPUT_NORMAL_COLOR
 {
     float4 vPos : SV_POSITION;
-    float3 vPosV : POSITION;
+    float3 vPosV : POSITION0;
     float3 vNormalV : NORMAL0; //법선View
     float3 vNormal : NORMAL1; //법선
     float4 vColor : COLOR;
@@ -77,7 +77,7 @@ struct VS_OUTPUT_NORMAL_COLOR
 
 struct PS_OUTPUT_GBUFFER
 {
-    float4 vAlbedo : SV_Target;
+    float4 vAlbedo : SV_Target0;
     float4 vNormal : SV_Target1;
     float4 vDepth : SV_Target2;
     float4 vMaterial : SV_Target3;
@@ -127,7 +127,7 @@ struct MaterialInfo
     float4 Diffuse;
     float4 Ambient;
     float4 Specular;
-    float4 Emission;
+    float4 Emissive;
 };
 
 struct LightInfo
@@ -163,7 +163,8 @@ cbuffer Public : register(b10)
 {
     float g_DeltaTime;
     float g_PlusedDeltaTime;
-    float2 g_Empty12345;
+    float g_ProjectionFar;
+    float g_Empty12345;
 }
 
 cbuffer Light : register(b3)
@@ -281,7 +282,7 @@ void ComputeSpotBomiLight(float3 vNormal, float3 vPos, float3 vToCamera, out flo
     Specular = g_Material.Specular * g_Light.LightSpecular * max(dot(vHalfWay, vNormal), 0.0f) * SpotStrong * LightStrong;
 }
 
-float ConvertColor(float4 vColor)
+float CompressColor(float4 vColor)
 {
     uint4 vColor1 = (uint4) 0;
     vColor1.r = uint(vColor.r * 255);
@@ -289,27 +290,27 @@ float ConvertColor(float4 vColor)
     vColor1.b = uint(vColor.b * 255);
     vColor1.a = uint(vColor.a * 255);
 
-    uint InColor = 0;
+    uint OutColor = 0;
     //바로 넣고
-    InColor = (uint) (vColor1.a * 255);
+    OutColor = (uint) vColor1.a;
     //8비트 밀고 넣는다
-    InColor = (InColor << 8) | vColor1.r;
-    InColor = (InColor << 8) | vColor1.g;
-    InColor = (InColor << 8) | vColor1.b;
+    OutColor = (OutColor << 8) | vColor1.r * 255;
+    OutColor = (OutColor << 8) | vColor1.g * 255;
+    OutColor = (OutColor << 8) | vColor1.b * 255;
 
     //float으로 보다 정확하게 형변환해주는 함수.
-    return asfloat(InColor);
+    return asfloat(OutColor);
 }
 
-float4 ConvertColor(float Color)
+float4 DecompressColor(float Color)
 {
-    float4 vColor;
+    float4 OutColor;
     uint inColor = asuint(Color);
 
-    vColor.b = (inColor & 0x000000ff) / 255.0f;
-    vColor.g = (inColor >> 8 & 0x000000ff) / 255.0f;
-    vColor.r = (inColor >> 16 & 0x000000ff) / 255.0f;
-    vColor.a = (inColor >> 24 & 0x000000ff) / 255.0f;
+    OutColor.b = (inColor & 0xff000000) / 255.0f;
+    OutColor.g = (inColor & 0x00ff0000) / 255.0f;
+    OutColor.r = (inColor & 0x0000ff00) / 255.0f;
+    OutColor.a = (inColor & 0x000000ff) / 255.0f;
 
-    return vColor;
+    return OutColor;
 }

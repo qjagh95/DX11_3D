@@ -1,5 +1,9 @@
 #include "stdafx.h"
 #include "GUIManager.h"
+#include "GameObject.h"
+#include "Scene/SceneManager.h"
+#include "Scene/Scene.h"
+#include "Component/Transform_Com.h"
 
 JEONG_USING
 SINGLETON_VAR_INIT(JEONG::GUIManager)
@@ -68,7 +72,11 @@ void GUIManager::Debug()
 	GameObject* getObject = getScene->FindObject("Pyramid");
 
 	if (getObject == NULLPTR)
+	{
+		SAFE_RELEASE(getScene);
+		SAFE_RELEASE(getObject);
 		return;
+	}
 
 	ImGui::Text("Pyramid");
 

@@ -30,6 +30,8 @@ public:
 	void SetTarget(GameObject* pTarget);
 	void SetTarget(Component_Base* pTarget);
 
+	float GetFar() const { return m_Far; }
+
 private:
 	Matrix m_View;
 	Matrix m_Projection;

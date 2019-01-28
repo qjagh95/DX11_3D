@@ -29,8 +29,6 @@ RenderTarget::RenderTarget()
 	m_DepthState = NULLPTR;
 	m_FullScreenShader = NULLPTR;
 	m_Sampler = NULLPTR;
-	m_CBuffer.DeltaTime = 0.0f;
-	m_CBuffer.PlusedDeltaTime = 0.0f;
 
 	ZeroMemory(m_ClearColor, sizeof(float) * 4);
 }
@@ -140,10 +138,6 @@ void RenderTarget::ResetTarget()
 void RenderTarget::Render(float DeltaTime)
 {
 	Scene* getScene = SceneManager::Get()->GetCurScene();
-
-	m_CBuffer.DeltaTime = DeltaTime;
-	m_CBuffer.PlusedDeltaTime += DeltaTime;
-	ShaderManager::Get()->UpdateCBuffer("PublicCBuffer", &m_CBuffer);
 
 	SAFE_RELEASE(getScene);
 

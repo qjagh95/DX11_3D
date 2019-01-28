@@ -35,6 +35,7 @@
 #define STANDARD_UV_STATIC_SHADER "StandardUVStaticShader"
 #define STANDARD_NORMAL_COLOR_SHADER "StandardNormalColorShader"
 #define LIGHT_DIR_ACC_SHADER "LightDirAccShader"
+#define LIGHT_BLEND_SHADER "LightBlendShader"
 
 //Base InputLayOut
 #define POS_COLOR_LAYOUT "PosColorLayOut"

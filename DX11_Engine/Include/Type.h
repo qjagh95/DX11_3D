@@ -222,7 +222,8 @@ namespace JEONG
 	{
 		float DeltaTime;
 		float PlusedDeltaTime;
-		Vector2 Empty;
+		float Far;
+		float Empty;
 	};
 
 }
