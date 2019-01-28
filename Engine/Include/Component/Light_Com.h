@@ -28,6 +28,7 @@ public:
 	void SetLightOutAngle(float OutAngle);
 	void SetLightColor(const Vector4& Ambient, const Vector4& Diffuse, const Vector4& Specular);
 
+
 private:
 	LightCBuffer m_tLightInfo;
 
@@ -38,6 +39,7 @@ protected:
 
 public:
 	friend class GameObject;
+	friend class Scene;
 };
 
 JEONG_END

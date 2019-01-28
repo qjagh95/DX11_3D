@@ -40,7 +40,7 @@ bool JEONG::KeyInput::Init()
 	AddKey("MoveRight", 'D');
 	AddKey("MoveUp", 'W');
 	AddKey("MoveDown", 'S');
-	AddKey("SystemPause", VK_F12);
+	AddKey("F1", VK_F1);
 	AddKey("LButton", VK_LBUTTON);
 	AddKey("RButton", VK_RBUTTON);
 	AddKey("MButton", VK_MBUTTON);

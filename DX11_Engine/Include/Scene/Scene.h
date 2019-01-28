@@ -54,6 +54,7 @@ public:
 	GameObject* GetUICameraObject() const { return m_UICameraObject; }
 	Transform_Com* GetUICameraTransform() const { return m_UICameraTransform; }
 	Camera_Com* GetUICamera() const { return m_UICamera; }
+	void LightDebug(float DeltaTime);
 
 private:
 	class GameObject* FindCamera(const string& TagName);

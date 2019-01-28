@@ -218,6 +218,7 @@
     <ClInclude Include="ExcelManager.h" />
     <ClInclude Include="FontManager.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="GUIManager.h" />
     <ClInclude Include="KeyInput.h" />
     <ClInclude Include="Macro.h" />
     <ClInclude Include="PathManager.h" />
@@ -282,6 +283,7 @@
     <ClCompile Include="ExcelManager.cpp" />
     <ClCompile Include="FontManager.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="GUIManager.cpp" />
     <ClCompile Include="KeyInput.cpp" />
     <ClCompile Include="PathManager.cpp" />
     <ClCompile Include="RefCount.cpp" />

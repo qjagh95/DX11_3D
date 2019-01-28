@@ -51,6 +51,7 @@ private:
 
 public:
 	friend class GameObject;
+	friend class GUIManager;
 };
 
 JEONG_END

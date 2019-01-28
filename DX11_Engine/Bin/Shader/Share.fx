@@ -171,7 +171,7 @@ Texture2D TargetDiffuse : register(t10);
 #define	LIGHT_DIRECTION	0
 #define	LIGHT_POINT	1
 #define	LIGHT_SPOT	2
-
+#define	LIGHT_SPOT_BOMI	3
 /////////////////////////////////////////////////////////////////////
 
 //out -> 넣어주면 값채워서 반환해줌
@@ -234,10 +234,37 @@ void ComputeSpotLight(float3 vNormal, float3 vPos, float3 vToCamera, out float4 
     float3 vToLight = normalize(LightPos - vPos);
     float3 vHalfWay = normalize(vToLight + vToCamera);
     float LightStrong;
+    float SpotAmbientStrong;
+    SpotAmbientStrong = pow(max(dot(-vToLight, g_Light.LightDirection), 0.0f), g_Light.FallOff);
 
     LightStrong = 1.0f / dot(g_Light.Attenuation, float3(1.0f, Distance, Distance * Distance));
 
-    Ambient = g_Material.Ambient * g_Light.LightAmbient * LightStrong;
+    Ambient = g_Material.Ambient * g_Light.LightAmbient * SpotAmbientStrong;
     Diffuse = g_Material.Diffuse * g_Light.LightDiffuse * max(dot(vToLight, vNormal), 0.0f) * LightStrong;
     Specular = g_Material.Specular * g_Light.LightSpecular * max(dot(vHalfWay, vNormal), 0.0f) * LightStrong;
 }
+
+void ComputeSpotBomiLight(float3 vNormal, float3 vPos, float3 vToCamera, out float4 Ambient, out float4 Diffuse, out float4 Specular)
+{
+    //float3 LightPos = mul(float4(g_Light.LightPos, 1.0f), g_WV);
+    //float Distance = distance(LightPos, vPos);
+
+    //if (g_Light.LightRange < Distance)
+    //{
+    //    Ambient = g_Material.Ambient * g_Light.LightAmbient * 0.1f;
+    //    Diffuse = g_Material.Diffuse * g_Light.LightDiffuse * 0.1f;
+    //    Specular = g_Material.Specular * g_Light.LightSpecular * 0.1f;
+    //    return;
+    //}
+
+    //float3 vToLight = normalize(LightPos - vPos);
+    //float3 vHalfWay = normalize(vToLight + vToCamera);
+    //float LightStrong;
+
+    //LightStrong = 1.0f / dot(g_Light.Attenuation, float3(1.0f, Distance, Distance * Distance));
+
+    //Ambient = g_Material.Ambient * g_Light.LightAmbient * LightStrong;
+    //Diffuse = g_Material.Diffuse * g_Light.LightDiffuse * max(dot(vToLight, vNormal), 0.0f) * LightStrong;
+    //Specular = g_Material.Specular * g_Light.LightSpecular * max(dot(vHalfWay, vNormal), 0.0f) * LightStrong;
+}
+

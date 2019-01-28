@@ -75,27 +75,9 @@ bool JEONG::Scene::Init()
 
 int JEONG::Scene::Input(float DeltaTime)
 {
-	//static Vector3 Pos = Vector3::Zero;
-	//GameObject* getObject = FindObject("GlobalLight");
-	//Light_Com* getLight = getObject->FindComponentFromType<Light_Com>(CT_LIGHT);
-
-	//if (KeyInput::Get()->KeyPress("Up"))
-	//	Pos.y += 10.0f * DeltaTime;
-	//else if(KeyInput::Get()->KeyPress("Down"))
-	//	Pos.y -= 10.0f * DeltaTime;
-	//else if (KeyInput::Get()->KeyPress("Left"))
-	//	Pos.x -= 10.0f * DeltaTime;
-	//else if (KeyInput::Get()->KeyPress("Right"))
-	//	Pos.x += 10.0f * DeltaTime;
-	//else if (KeyInput::Get()->KeyPress("Front"))
-	//	Pos.z += 10.0f * DeltaTime;
-	//else if (KeyInput::Get()->KeyPress("Back"))
-	//	Pos.z -= 10.0f * DeltaTime;
-
-	//getLight->SetLightPos(Pos);
-
-	//SAFE_RELEASE(getObject);
-	//SAFE_RELEASE(getLight);
+#ifdef _DEBUG
+	LightDebug(DeltaTime);
+#endif
 
 	list<JEONG::SceneComponent*>::iterator StartIter = m_SceneComponentList.begin();
 	list<JEONG::SceneComponent*>::iterator EndIter = m_SceneComponentList.end();
@@ -509,6 +491,43 @@ void JEONG::Scene::ChangeCamera(const string & TagName)
 	m_MainCameraObject = getCamera;
 	m_MainCameraTransform = getCamera->GetTransform();
 	m_MainCamera = getCamera->FindComponentFromType<JEONG::Camera_Com>(CT_CAMERA);
+}
+
+void JEONG::Scene::LightDebug(float DeltaTime)
+{
+	ImGui::Text("GlobalLight");
+	ImGui::BeginTabBar("AA");
+	ImGui::EndTabBar();
+
+	static int GlobalLightType = 0;
+
+	GameObject* getObject = FindObject("GlobalLight");
+	Light_Com* getLight = getObject->FindComponentFromType<Light_Com>(CT_LIGHT);
+
+	const char* Items[4] = { "Direction", "Point", "Spot", "BomiSpot" };
+	ImGui::Text("LightType");
+	ImGui::Combo("", &getLight->m_tLightInfo.LightType, Items, 4);
+
+	ImGui::Text("LightInfo");
+
+	ImGui::SliderFloat4("Ambient", (float*)&getLight->m_tLightInfo.Ambient, 0.0f, 1.0f);
+	ImGui::SliderFloat4("Diffuse", (float*)&getLight->m_tLightInfo.Diffuse, 0.0f, 1.0f);
+	ImGui::SliderFloat4("Specular", (float*)&getLight->m_tLightInfo.Spcular, 0.0f, 1.0f);
+	ImGui::SliderFloat3("Direction", (float*)&getLight->m_tLightInfo.Direction, 0.0f, 1.0f);
+	ImGui::SliderFloat3("Attenuation", (float*)&getLight->m_tLightInfo.Attenuation, 0.0f, 1.0f);
+	ImGui::SliderFloat("Range", (float*)&getLight->m_tLightInfo.Range, 0.0f, 20.0f);
+	ImGui::SliderFloat("FallOff", (float*)&getLight->m_tLightInfo.FallOff, 0.0f, 1.0f);
+	ImGui::SliderFloat("InAngle", (float*)&getLight->m_tLightInfo.InAngle , 0.0f, 1.0f);
+	ImGui::SliderFloat("OutAngle", (float*)&getLight->m_tLightInfo.OutAngle, 0.0f, 1.0f);
+
+	ImGui::Text("Trasnform");
+
+	ImGui::SliderFloat3("Pos", (float*)&getLight->m_tLightInfo.Pos, 0.0f, 20.0f);
+	SAFE_RELEASE(getObject);
+	SAFE_RELEASE(getLight);
+
+	ImGui::BeginTabBar("BB");
+	ImGui::EndTabBar();
 }
 
 JEONG::GameObject * JEONG::Scene::FindCamera(const string & TagName)

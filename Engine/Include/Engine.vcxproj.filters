@@ -214,6 +214,9 @@
     <Filter Include="Core\08. Object\Component\BaseComponent\11. StaticManager">
       <UniqueIdentifier>{48427f01-addd-4388-abb1-a58a2053d75a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\16. GUIManager">
+      <UniqueIdentifier>{9c02956e-e8cc-4bb4-8fcb-7bb0b735ab6c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -230,9 +233,6 @@
     </ClInclude>
     <ClInclude Include="Device.h">
       <Filter>Core\02. Device</Filter>
-    </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>Core\01. Window</Filter>
     </ClInclude>
     <ClInclude Include="Resource\ResourceManager.h">
       <Filter>Core\10. Resource\04. Manager</Filter>
@@ -401,6 +401,12 @@
     </ClInclude>
     <ClInclude Include="Component\Light_Com.h">
       <Filter>Core\08. Object\Component\BaseComponent\12. Light</Filter>
+    </ClInclude>
+    <ClInclude Include="GUIManager.h">
+      <Filter>Core\16. GUIManager</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Core\01. Window</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -582,6 +588,9 @@
     </ClCompile>
     <ClCompile Include="Component\Light_Com.cpp">
       <Filter>Core\08. Object\Component\BaseComponent\12. Light</Filter>
+    </ClCompile>
+    <ClCompile Include="GUIManager.cpp">
+      <Filter>Core\16. GUIManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

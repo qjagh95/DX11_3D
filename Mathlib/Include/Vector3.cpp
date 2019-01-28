@@ -6,8 +6,6 @@ Vector3	Vector3::Axis[3] = { Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f
 Vector3	Vector3::Zero = Vector3(0.0f, 0.0f, 0.0f);
 Vector3	Vector3::One = Vector3(1.0f, 1.0f, 1.0f);
 
-Vector3	Vector3::CameraZoom = Vector3(1.0f, 1.0f, 1.0f);
-
 float & Vector3::operator[](unsigned int Index)
 {
 	switch (Index)
@@ -1020,14 +1018,13 @@ void Vector3::Convert(const XMVECTOR & Xmvec)
 	XMStoreFloat3((XMFLOAT3*)this, Xmvec);
 }
 
-void Vector3::AddCameraZoom(const Vector3& Amount)
+float* Vector3::FloatConvert()
 {
-	CameraZoom += Amount;
-}
+	float Temp[3];
 
-void Vector3::AddCameraZoom(const Vector2& Amount)
-{
-	CameraZoom.x += Amount.x;
-	CameraZoom.y += Amount.y;
-}
+	Temp[0] = x;
+	Temp[1] = y;
+	Temp[2] = z;
 
+	return Temp;
+}

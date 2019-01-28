@@ -47,11 +47,11 @@ int Light_Com::Update(float DeltaTime)
 
 int Light_Com::LateUpdate(float DeltaTime)
 {
-	if (m_tLightInfo.LightType != LT_POINT)
-		m_tLightInfo.Direction = m_Transform->GetWorldAxis(AXIS_Z);
+	//if (m_tLightInfo.LightType != LT_POINT)
+	//	m_tLightInfo.Direction = m_Transform->GetWorldAxis(AXIS_Z);
 
 	if (m_tLightInfo.LightType != LT_DIRECTION)
-		m_tLightInfo.Pos = m_Transform->GetWorldPos();
+		m_Transform->SetWorldPos(m_tLightInfo.Pos);
 
 	return 0;
 }
@@ -108,8 +108,9 @@ void Light_Com::SetLightAttenuation(const Vector3& Attenuation)
 }
 void Light_Com::SetLightPos(const Vector3& Pos)
 {
-	m_Transform->SetWorldPos(Pos);
+	m_tLightInfo.Pos = Pos;
 }
+
 void Light_Com::SetLightDirection(const Vector3& Dir)
 {
 	m_tLightInfo.Direction = Dir;

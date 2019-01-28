@@ -36,6 +36,7 @@ Core::~Core()
 	StaticManager::Delete();
 	RenderManager::Delete();
 	ExcelManager::Delete();
+	GUIManager::Delete();
 
 	CoUninitialize();
 }
@@ -137,6 +138,8 @@ bool Core::Init(HINSTANCE hInst, HWND hWnd, unsigned int Width, unsigned int Hei
 		return false;
 	}
 
+	GUIManager::Get()->CreateImGui(m_hWnd, Device::Get()->GetDevice(), Device::Get()->GetContext());
+
 	SetClearColor(0, 150, 255, 0);
 
 	return true;
@@ -156,9 +159,6 @@ int Core::Run()
 		else
 		{
 			Logic();
-
-			if (KeyInput::Get()->KeyDown("SystemPause"))
-				TrueAssert(true);
 		}
 	}
 	return (int)msg.wParam;
@@ -171,6 +171,9 @@ void Core::Logic()
 
 	float Time = getTimer->GetDeltaTime();
 
+#ifdef _DEBUG
+	GUIManager::Get()->ImGuiBegin("Test");
+#endif
 	Input(Time);
 	Update(Time);
 	LateUpdate(Time);
@@ -223,8 +226,16 @@ void Core::CreateWnd(const TCHAR * TitleName, const TCHAR * ClassName)
 	UpdateWindow(m_hWnd);
 }
 
+extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 LRESULT Core::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+#ifdef _DEBUG
+
+	if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam))
+		return true;
+
+#endif
+
 	switch (message)
 	{
 		case WM_DESTROY:
@@ -249,8 +260,8 @@ int Core::Update(float DeltaTime)
 {
 	SceneManager::Get()->Update(DeltaTime);
 
-	if (KeyInput::Get()->KeyDown("SystemPause"))
-		system("pause");
+	if (KeyInput::Get()->KeyDown("F1"))
+		GUIManager::Get()->m_isShow ^= true;
 
 	return 0;
 }
@@ -280,8 +291,11 @@ void Core::Render(float DeltaTime)
 	{		
 		SceneManager::Get()->Render(DeltaTime);
 		RenderManager::Get()->Render(DeltaTime);
-
 		KeyInput::Get()->RenderMouse(DeltaTime);
+
+#ifdef _DEBUG
+		GUIManager::Get()->ImGuiEnd();
+#endif
 	}
 	Device::Get()->Present();
 }

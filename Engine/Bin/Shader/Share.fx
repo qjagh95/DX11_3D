@@ -234,10 +234,11 @@ void ComputeSpotLight(float3 vNormal, float3 vPos, float3 vToCamera, out float4 
     float3 vToLight = normalize(LightPos - vPos);
     float3 vHalfWay = normalize(vToLight + vToCamera);
     float LightStrong;
-
+    float SpotAmbientStrong;
+    SpotAmbientStrong = pow(max(dot(-vToLight, g_Light.LightDirection), 0.0f), g_Light.FallOff);
     LightStrong = 1.0f / dot(g_Light.Attenuation, float3(1.0f, Distance, Distance * Distance));
 
-    Ambient = g_Material.Ambient * g_Light.LightAmbient * LightStrong;
+    Ambient = g_Material.Ambient * g_Light.LightAmbient * SpotAmbientStrong;
     Diffuse = g_Material.Diffuse * g_Light.LightDiffuse * max(dot(vToLight, vNormal), 0.0f) * LightStrong;
     Specular = g_Material.Specular * g_Light.LightSpecular * max(dot(vHalfWay, vNormal), 0.0f) * LightStrong;
 }

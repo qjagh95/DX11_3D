@@ -112,8 +112,8 @@ PS_OUTPUT_SINGLE StandardNormalColorPS(VS_OUTPUT_NORMAL_COLOR input)
         ComputePointLight(input.vNormalV, input.vPosV, toCamera, Ambient, Diffuse, Specular);
     else if (g_Light.LightType == LIGHT_SPOT)
         ComputeSpotLight(input.vNormalV, input.vPosV, toCamera, Ambient, Diffuse, Specular);
-    else if (g_Light.LightType == LIGHT_SPOT_BOMI)
-        ComputeSpotBomiLight(input.vNormalV, input.vPosV, toCamera, Ambient, Diffuse, Specular);
+    //else if (g_Light.LightType == LIGHT_SPOT_BOMI)
+    //    ComputeSpotBomiLight(input.vNormalV, input.vPosV, toCamera, Ambient, Diffuse, Specular);
 
     output.vTarget0 = input.vColor * (Ambient + Diffuse) + Specular;
 

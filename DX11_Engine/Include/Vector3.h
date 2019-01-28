@@ -152,15 +152,11 @@ union MATH_DLL Vector3
 
 	XMVECTOR Convert();
 	void Convert(const XMVECTOR & Xmvec);
+	float* FloatConvert();
 
 	static Vector3 Nomallize(const Vector3& vec);
 
 	static Vector3 Axis[3];
 	static Vector3 Zero;
 	static Vector3 One;
-
-	static void AddCameraZoom(const Vector3& Amount);
-	static void AddCameraZoom(const Vector2& Amount);
-
-	static Vector3 CameraZoom;
 };

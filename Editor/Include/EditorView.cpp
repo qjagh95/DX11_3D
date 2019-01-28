@@ -122,34 +122,6 @@ BOOL EditorView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 	Vector3 CameraPos = getCamera->GetTransform()->GetWorldPos();
 	Vector3 MousePos = KeyInput::Get()->GetMouseWorldPos();
 
-	if (KeyInput::Get()->KeyPress("Shift"))
-	{
-		if (zDelta <= 0) //휠 다운
-		{
-			if (Vector3::CameraZoom.x <= 0.0f && Vector3::CameraZoom.y <= 0.0f)
-				editorForm->AddWorkText("Error! 0%이하로 줄일 수 없습니다");
-			else
-			{
-				getCamera->GetTransform()->Move(Vector3(Device::Get()->GetWinSize().Width * -0.1f, Device::Get()->GetWinSize().Height * -0.1f, 0.0f));
-				editorForm->AddWorkText("20% 감소...");
-			}
-		
-			Vector3::AddCameraZoom(Vector3(-0.2f, -0.2f, 0.0f));
-		}
-		else //휠업
-		{
-			if ((Vector3::CameraZoom.x >= 1.0f && Vector3::CameraZoom.y >= 1.0f) && (Vector3::CameraZoom.x < 5.0f && Vector3::CameraZoom.y < 5.0f))
-			{
-				editorForm->AddWorkText("20% 증가...");
-				getCamera->GetTransform()->Move(Vector3(Device::Get()->GetWinSize().Width * 0.1f, Device::Get()->GetWinSize().Height * 0.1f, 0.0f));
-			}
-			if(Vector3::CameraZoom.x >= 5.0f && Vector3::CameraZoom.y >= 5.0f)
-				editorForm->AddWorkText("Error! 500% 이상으로 늘릴 수 없습니다.");
-
-			Vector3::AddCameraZoom(Vector3(0.2f, 0.2f, 0.0f));
-		}
-	}
-
 	SAFE_RELEASE(getScene);
 
 	return CView::OnMouseWheel(nFlags, zDelta, pt);

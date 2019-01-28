@@ -55,6 +55,7 @@
 
 ///Excel
 #pragma comment(lib, "libxl")
+#pragma comment(lib, "ImGui")
 
 #include "Macro.h"
 #include "Flag.h"
@@ -71,6 +72,10 @@ using namespace libxl;
 //#define new new(_CLIENT_BLOCK,__FILE__,__LINE__)
 //#endif // DEBUG
 
+#include <imgui.h>
+#include <imgui_impl_dx11.h>
+#include <imgui_impl_win32.h>
+
 #include "FontManager.h"
 #include "Device.h"
 #include "PathManager.h"
@@ -84,6 +89,7 @@ using namespace libxl;
 #include "ExcelManager.h"
 #include "BineryWriter.h"
 #include "BineryReader.h"
+#include "GUIManager.h"
 
 #include "Scene/SceneManager.h"
 #include "Scene/Scene.h"
