@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="Include\Vector2.cpp">
+      <Filter>Vector</Filter>
+    </ClCompile>
+    <ClCompile Include="Include\Vector4.cpp">
+      <Filter>Vector</Filter>
+    </ClCompile>
+    <ClCompile Include="Include\Vector3.cpp">
+      <Filter>Vector</Filter>
+    </ClCompile>
+    <ClCompile Include="Include\Matrix.cpp">
+      <Filter>Matrix</Filter>
+    </ClCompile>
+    <ClCompile Include="Include\MathHeader.cpp">
+      <Filter>Header</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Include\Vector4.h">
+      <Filter>Vector</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Vector2.h">
+      <Filter>Vector</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Vector3.h">
+      <Filter>Vector</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Matrix.h">
+      <Filter>Matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\MathHeader.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Vector">
+      <UniqueIdentifier>{89644a22-46b4-4145-bd15-bd4bfea770a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header">
+      <UniqueIdentifier>{aa03518f-09e3-4ae8-af86-c82503a119ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Matrix">
+      <UniqueIdentifier>{af947e4e-6f74-47ce-acc6-121eec0ae448}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\MathCopy.bat">
+      <Filter>Header</Filter>
+    </None>
+  </ItemGroup>
+</Project>

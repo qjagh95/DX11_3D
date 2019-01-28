@@ -1,0 +1,110 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="01. EditScene">
+      <UniqueIdentifier>{0941c54c-d33d-4fdc-a4e2-b72bb1e8bc1d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Control">
+      <UniqueIdentifier>{0e87472a-6a8d-4038-a7ab-475020974b67}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Control\View">
+      <UniqueIdentifier>{97a160b4-d0d5-4e50-becb-2cb6521aaa4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Control\Main">
+      <UniqueIdentifier>{0bcc9c6c-adcc-4bf9-a5ef-b41ab3eede3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Control\Doc">
+      <UniqueIdentifier>{ff345e76-454a-4813-8d4d-c5301846b5f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. 노쓸모">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="02. Control\FormView">
+      <UniqueIdentifier>{a3068e7f-aa30-402d-8a50-e7a44e9cfbeb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Control\ResourceFile">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="02. Control\EditorApp%28Window%29">
+      <UniqueIdentifier>{59911a50-2ff7-4587-9805-d7c42c893952}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="MainFrame.h">
+      <Filter>02. Control\Main</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorDoc.h">
+      <Filter>02. Control\Doc</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorView.h">
+      <Filter>02. Control\View</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>03. 노쓸모</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>03. 노쓸모</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorHeader.h">
+      <Filter>03. 노쓸모</Filter>
+    </ClInclude>
+    <ClInclude Include="EditScene.h">
+      <Filter>01. EditScene</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorForm.h">
+      <Filter>02. Control\FormView</Filter>
+    </ClInclude>
+    <ClInclude Include="Editor.h">
+      <Filter>02. Control\EditorApp%28Window%29</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="MainFrame.cpp">
+      <Filter>02. Control\Main</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorDoc.cpp">
+      <Filter>02. Control\Doc</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorView.cpp">
+      <Filter>02. Control\View</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorHeader.cpp">
+      <Filter>03. 노쓸모</Filter>
+    </ClCompile>
+    <ClCompile Include="EditScene.cpp">
+      <Filter>01. EditScene</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorForm.cpp">
+      <Filter>02. Control\FormView</Filter>
+    </ClCompile>
+    <ClCompile Include="Editor.cpp">
+      <Filter>02. Control\EditorApp%28Window%29</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\Toolbar.bmp">
+      <Filter>02. Control\ResourceFile</Filter>
+    </Image>
+    <Image Include="res\Editor.ico">
+      <Filter>02. Control\ResourceFile</Filter>
+    </Image>
+    <Image Include="res\EditorDoc.ico">
+      <Filter>02. Control\ResourceFile</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Editor.rc">
+      <Filter>02. Control\ResourceFile</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\Editor.rc2">
+      <Filter>02. Control\ResourceFile</Filter>
+    </None>
+    <None Include="..\..\EditorCopy.bat">
+      <Filter>03. 노쓸모</Filter>
+    </None>
+  </ItemGroup>
+</Project>
