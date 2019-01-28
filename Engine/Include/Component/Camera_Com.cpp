@@ -61,7 +61,7 @@ int JEONG::Camera_Com::Update(float DeltaTime)
 	//카메라 축을 가져온다.
 	for (unsigned int i = 0; i < AXIS_MAX; i++)
 		memcpy(&m_View[i][0], &m_Transform->GetWorldAxis((AXIS)i), sizeof(Vector3));
-
+	
 	/*
 	Xx Yx Zx 0
 	Xy Yy Zy 0
@@ -72,7 +72,7 @@ int JEONG::Camera_Com::Update(float DeltaTime)
 	//역행렬 = 전치행렬
 	m_View.Transpose();
 
-	//물체를 원점으로 땡겨야하기때문에 -값을 곱함. 
+	//원점으로 되돌린다.
 	TempPos *= -1.0f;
 
 	//내적하는 이유 : 카메라 축 * 행렬 = 내적값
@@ -111,14 +111,36 @@ void JEONG::Camera_Com::SetCameraType(CAMERA_TYPE eType)
 
 	switch (eType)
 	{
-	case CT_PERSPECTIVE:
-		m_Projection = XMMatrixPerspectiveFovLH(DegreeToRadian(m_ViewAngle), m_Width / m_Height, m_Near, m_Far);
-		break;
+		/*
+		Perspective 투영 행렬 공식
 
-	case CT_ORTHO:
-		m_Projection = XMMatrixOrthographicOffCenterLH(0.0f, m_Width, 0.0f, m_Height, m_Near, m_Far);
-		break;
+		거리에따라 Scale조절 = tan
+		z는 0 ~ 1
 
+		(1 / tan(Fov / 2) / 종횡비, 0, 0, 0)
+		(0 , 1/tan(Fov / 2) , 0, 0)
+		(0, 0, zf / (zf - zn), 1)
+		(0 , 0, -zn * zf / (zf - zn), 0)
+
+		*/
+		case CT_PERSPECTIVE:
+			m_Projection = XMMatrixPerspectiveFovLH(DegreeToRadian(m_ViewAngle), m_Width / m_Height, m_Near, m_Far);
+			break;
+
+		/*
+		Ortho 투영 행렬 공식
+
+		r = winsize Min
+		l = winsize max
+
+		2/(r-l)      0            0           0
+		0            2/(t-b)      0           0
+		0            0            1/(zf-zn)   0
+		(l+r)/(l-r)  (t+b)/(b-t)  zn/(zn-zf)  l
+		*/
+		case CT_ORTHO:
+			m_Projection = XMMatrixOrthographicOffCenterLH(0.0f, m_Width, 0.0f, m_Height, m_Near, m_Far);
+			break;
 	}
 }
 

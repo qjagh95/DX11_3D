@@ -6,7 +6,14 @@ JEONG_USING
 SINGLETON_VAR_INIT(JEONG::Device);
 
 JEONG::Device::Device()
-	:m_Device(NULLPTR), m_Context(NULLPTR), m_SwapChain(NULLPTR), m_TargerView(NULLPTR), m_DepthView(NULLPTR), m_Hwnd(NULLPTR), m_2DFactory(NULLPTR), m_2DTarget(NULLPTR)
+	:m_Device(NULLPTR),
+	m_Context(NULLPTR), 
+	m_SwapChain(NULLPTR),
+	m_TargerView(NULLPTR),
+	m_DepthView(NULLPTR), 
+	m_Hwnd(NULLPTR),
+	m_2DFactory(NULLPTR),
+	m_2DTarget(NULLPTR)
 {
 }
 

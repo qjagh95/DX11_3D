@@ -202,15 +202,17 @@ struct JEONG_DLL BarCBuffer
 
 struct JEONG_DLL LightCBuffer
 {
-	int	LightType;
 	Vector4	Diffuse;
 	Vector4	Ambient;
 	Vector4	Spcular;
 	Vector3	Direction;
+	int	LightType;
 	Vector3	Pos;
 	float Range;
+	Vector3 Attenuation; //°¨¼è
 	float InAngle;
 	float OutAngle;
+	float FallOff;
 	Vector2 Empty;
 };
 

@@ -39,12 +39,17 @@ public:
 	RenderState* FindRenderState(const string& KeyName);
 	JEONG::RenderTarget* FindRenderTarget(const string& KeyName);
 
+	void EnableDeferredRender() { m_isDeferred = true; }
+
 	void AddRenderObject(JEONG::GameObject* object);
 	void Render(float DeltaTime);
 
 private:
 	void Render2D(float DeltaTime);
 	void Render3D(float DeltaTime);
+
+	void ForwardRender(float DeltaTime);
+	void DeferredRender(float DeltaTime);
 
 private:
 	GAME_MODE m_GameMode;
@@ -54,8 +59,9 @@ private:
 
 	BlendState* m_CreateState;
 	RenderGroup m_RenderGroup[RG_END];
+	RenderGroup m_LightGroup;
 
-	//PublicCbuffer m_CBuffer;
+	bool m_isDeferred;
 
 public:
 	CLASS_IN_SINGLE(RenderManager)

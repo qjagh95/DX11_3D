@@ -131,59 +131,61 @@ void RenderTarget::ResetTarget()
 
 void RenderTarget::Render(float DeltaTime)
 {
+	Scene* getScene = SceneManager::Get()->GetCurScene();
+
 	m_CBuffer.DeltaTime = DeltaTime;
 	m_CBuffer.PlusedDeltaTime += DeltaTime;
-
 	ShaderManager::Get()->UpdateCBuffer("PublicCBuffer", &m_CBuffer);
+
+	SAFE_RELEASE(getScene);
 
 	if (m_isDebugDraw == false)
 		return;
 
-	TransformCBuffer tTransform = {};
-	Matrix	matPos, matScale;
-	matScale.Scaling(m_Scale);
-	matPos.Translation(m_Pos);
+	//TransformCBuffer tTransform = {};
+	//Matrix	matPos, matScale;
+	//matScale.Scaling(Vector3(100, 100, 1.0f));
+	//matPos.Translation(m_Pos);
 
-	Scene* pScene = SceneManager::Get()->GetCurScene();
-	Camera_Com*	pCamera = pScene->GetUICamera();
+	//Scene* pScene = SceneManager::Get()->GetCurScene();
+	//Camera_Com*	pCamera = pScene->GetUICamera();
 
-	SAFE_RELEASE(pScene);
+	//SAFE_RELEASE(pScene);
 
-	Matrix	matView, matProj;
-	matView = pCamera->GetViewMatrix();
-	matProj = pCamera->GetProjection();
+	//Matrix	matView, matProj;
+	//matView = pCamera->GetViewMatrix();
+	//matProj = pCamera->GetProjection();
 
-	tTransform.World = matScale * matPos;
-	tTransform.View = matView;
-	tTransform.Projection = matProj;
-	tTransform.WV = tTransform.World * matView;
-	tTransform.WVP = tTransform.WV * matProj;
-	tTransform.Lenth = m_Mesh->GetLenth();
+	//tTransform.World = matScale * matPos;
+	//tTransform.View = matView;
+	//tTransform.Projection = matProj;
+	//tTransform.WV = tTransform.World * matView;
+	//tTransform.WVP = tTransform.WV * matProj;
+	//tTransform.Lenth = m_Mesh->GetLenth();
 
-	tTransform.World.Transpose();
-	tTransform.View.Transpose();
-	tTransform.Projection.Transpose();
-	tTransform.WV.Transpose();
-	tTransform.WVP.Transpose();
+	//tTransform.World.Transpose();
+	//tTransform.View.Transpose();
+	//tTransform.Projection.Transpose();
+	//tTransform.WV.Transpose();
+	//tTransform.WVP.Transpose();
 
-	ShaderManager::Get()->UpdateCBuffer("Transform", &tTransform);
+	//ShaderManager::Get()->UpdateCBuffer("Transform", &tTransform);
 
-	m_DepthState->SetState();
-	{
-		if (m_Sampler != NULLPTR)
-			m_Sampler->SetSamplerState(0);
+	//m_DepthState->SetState();
+	//{
+	//	if (m_Sampler != NULLPTR)
+	//		m_Sampler->SetSamplerState(0);
 
-		Device::Get()->GetContext()->IASetInputLayout(m_Layout);
-		Device::Get()->GetContext()->PSSetShaderResources(0, 1, &m_TargetShaderResourceView);
+	//	Device::Get()->GetContext()->IASetInputLayout(m_Layout);
+	//	SetShader(0);
 
-		m_Shader->SetShader();
-		m_Mesh->Render();
+	//	m_Shader->SetShader();
+	//	m_Mesh->Render();
 
-		ID3D11ShaderResourceView* pSRV = NULLPTR;
-		Device::Get()->GetContext()->PSSetShaderResources(0, 1, &pSRV);
-	}
-	m_DepthState->ResetState();
-
+	//	ID3D11ShaderResourceView* pSRV = NULLPTR;
+	//	Device::Get()->GetContext()->PSSetShaderResources(0, 1, &pSRV);
+	//}
+	//m_DepthState->ResetState();
 }
 
 void RenderTarget::RenderFullScreen()
@@ -196,7 +198,7 @@ void RenderTarget::RenderFullScreen()
 		if (m_Sampler != NULLPTR)
 			m_Sampler->SetSamplerState(0);
 
-		Device::Get()->GetContext()->PSSetShaderResources(0, 1, &m_TargetShaderResourceView);
+		SetShader(0);
 		m_FullScreenShader->SetShader();
 
 		//NULL Buffer를 이용한 출력준비.

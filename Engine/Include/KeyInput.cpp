@@ -158,7 +158,7 @@ void JEONG::KeyInput::Update(float DeltaTime)
 
 void JEONG::KeyInput::RenderMouse(float DeltaTime)
 {
-	m_MouseObject->Render(DeltaTime);
+	//m_MouseObject->Render(DeltaTime);
 }
 
 Vector3 KeyInput::GetMouseWorldPos() const

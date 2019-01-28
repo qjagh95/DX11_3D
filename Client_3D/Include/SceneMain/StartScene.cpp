@@ -37,7 +37,7 @@ bool StartScene::Init()
 
 	GameObject* newButton = GameObject::CreateObject("StartButton", UILayer);
 	newButton->GetTransform()->SetWorldPos(640.0f, 360.0f, 0.0f);
-	newButton->GetTransform()->SetWorldScale(200.0f, 50.0f, 0.0f);
+	newButton->GetTransform()->SetWorldScale(200.0f, 50.0f, 1.0f);
 
 	Button_Com* buttonCom = newButton->AddComponent<Button_Com>("StartButton");
 	buttonCom->SetCallBack(&StartScene::StartButtonActive, this);

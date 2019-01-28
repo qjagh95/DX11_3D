@@ -17,6 +17,7 @@ JEONG::GameObject::GameObject()
 	:m_Scene(NULLPTR), m_Layer(NULLPTR), m_Transform(NULLPTR), m_Parent(NULLPTR)
 {
 	SetTag("GameObject");
+	m_RenderGroup = RG_NORMAL;
 }
 
 JEONG::GameObject::GameObject(const JEONG::GameObject& copyObject)
@@ -408,6 +409,19 @@ JEONG::Component_Base * JEONG::GameObject::AddComponent(JEONG::Component_Base * 
 	component->m_Object = this;
 	component->AddRefCount();
 
+	switch (component->GetComType())
+	{
+	case JEONG::CT_UI:
+		m_RenderGroup = RG_UI;
+		break;
+	case JEONG::CT_STAGE2D:
+		m_RenderGroup = RG_LANDSCAPE;
+		break;
+	case JEONG::CT_LIGHT:
+		m_RenderGroup = RG_LIGHT;
+		break;
+	}
+
 	m_ComponentList.push_back(component);
 
 	JEONG::Renderer_Com* pRender = FindComponentFromType<JEONG::Renderer_Com>(CT_RENDER);
@@ -460,7 +474,7 @@ JEONG::GameObject * JEONG::GameObject::CreateProtoType(const string & TagName, b
 	}
 
 	newProtoType->AddRefCount();
-	//pMap이 FindIter->Second의 주소를 가지고있으니 FindIter->second에 newProtoType이 들어감
+
 	pMap->insert(make_pair(TagName, newProtoType));
 
 	return newProtoType;

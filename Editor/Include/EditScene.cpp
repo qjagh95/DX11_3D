@@ -41,8 +41,6 @@ bool EditScene::Init()
 	SAFE_RELEASE(TileLayer);
 	SAFE_RELEASE(UILayer);
 
-	RenderManager::Get()->SetIsZoomMode(true);
-
 	return true;
 }
 

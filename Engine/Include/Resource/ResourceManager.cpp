@@ -53,7 +53,7 @@ bool JEONG::ResourceManager::Init()
 		VertexUV(Vector3(1.0f, 0.0f, 0.0f), Vector2(1.0f, 1.0f))
 	};
 
-	CreateMesh("TextureRect", STANDARD_UV_SHADER, POS_UV_LAYOUT, UVRect, 4, sizeof(VertexUV), D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, IndexRect, 6, 2);
+	CreateMesh("TextureRect", STANDARD_UV_SHADER, POS_UV_LAYOUT, UVRect, 4, sizeof(VertexUV), D3D11_USAGE_DEFAULT,	D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, IndexRect, 6, 2);
 	CreateSampler(LINER_SAMPLER);
 
 	Vector3	DebugColliderPos[5] =
@@ -133,18 +133,18 @@ bool JEONG::ResourceManager::Init()
 
 	VertexNormalColor Pyramid[9] =
 	{
-		VertexNormalColor(PyramidPos[0], Vector3(0.0f, 1.0f, 0.0f),  Vector4::Red),
-		VertexNormalColor(PyramidPos[1], Normal[0], Vector4::Green),
-		VertexNormalColor(PyramidPos[2], Normal[1], Vector4::Blue),
-		VertexNormalColor(PyramidPos[3], Normal[2], Vector4::Yellow),
-		VertexNormalColor(PyramidPos[4], Normal[3], Vector4::Magenta),
-		VertexNormalColor(PyramidPos[1], Vector3(0.0f, -1.0f, 0.0f), Vector4::Green),
-		VertexNormalColor(PyramidPos[2], Vector3(0.0f, -1.0f, 0.0f), Vector4::Blue),
-		VertexNormalColor(PyramidPos[3], Vector3(0.0f, -1.0f, 0.0f), Vector4::Yellow),
-		VertexNormalColor(PyramidPos[4], Vector3(0.0f, -1.0f, 0.0f), Vector4::Magenta)
+		VertexNormalColor(PyramidPos[0], Vector3(0.0f, 1.0f, 0.0f),  Vector4::Bisque),
+		VertexNormalColor(PyramidPos[1], Normal[0], Vector4::Cornsilk),
+		VertexNormalColor(PyramidPos[2], Normal[1], Vector4::DarkGreen),
+		VertexNormalColor(PyramidPos[3], Normal[2], Vector4::DarkOrange),
+		VertexNormalColor(PyramidPos[4], Normal[3], Vector4::Bisque),
+		VertexNormalColor(PyramidPos[1], Vector3(0.0f, -1.0f, 0.0f), Vector4::White),
+		VertexNormalColor(PyramidPos[2], Vector3(0.0f, -1.0f, 0.0f), Vector4::White),
+		VertexNormalColor(PyramidPos[3], Vector3(0.0f, -1.0f, 0.0f), Vector4::White),
+		VertexNormalColor(PyramidPos[4], Vector3(0.0f, -1.0f, 0.0f), Vector4::White)
 	};
 
-	int	PyramidIdx[18] = { 0, 4, 1, 2, 0, 1, 3, 0, 2, 4, 0, 3, 8, 6, 5, 7, 6, 8 };
+	int	PyramidIdx[18] = {0, 4, 1, 2, 0, 1, 3, 0, 2, 4, 0, 3, 8, 6, 5, 7, 6, 8 };
 	//{0, 4, 1}
 	//{2, 1, 0}
 	//{3, 0, 2}
@@ -165,7 +165,7 @@ bool JEONG::ResourceManager::CreateMesh(const string & KeyName, const string & S
 		SAFE_RELEASE(newMesh);
 		return false;
 	}
-
+	
 	newMesh = new Mesh();
 
 	if (newMesh->CreateMesh(KeyName, ShaderKeyName, LayOutKeyName, vertexInfo, vertexCount, vertexSize, vertexUsage, primitiveType, indexInfo, indexCount, indexSize, indexUsage, indexFormat) == false)

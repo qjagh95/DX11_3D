@@ -16,6 +16,21 @@ public:
 	Light_Com* Clone() override;
 	void AfterClone() override;
 
+	void UpdateCBuffer();
+	void SetLightType(LIGHT_TYPE eType);
+	void SetLightRange(float Range);
+	void SetLightAngle(float InAngle, float OutAngle);
+	void SetLightFallOff(float FallOff);
+	void SetLightAttenuation(const Vector3& Attenuation);
+	void SetLightPos(const Vector3& Pos);
+	void SetLightDirection(const Vector3& Dir);
+	void SetLightInAngle(float InAngle);
+	void SetLightOutAngle(float OutAngle);
+	void SetLightColor(const Vector4& Ambient, const Vector4& Diffuse, const Vector4& Specular);
+
+private:
+	LightCBuffer m_tLightInfo;
+
 protected:
 	Light_Com();
 	Light_Com(const Light_Com& CopyData);

@@ -15,7 +15,7 @@ PS_OUTPUT_SINGLE BackColorPS(VS_OUTPUT_UV input)
 {
     PS_OUTPUT_SINGLE output = (PS_OUTPUT_SINGLE) 0;
 
-    output.vTarget0 = g_MaterialDiffuse;
+    output.vTarget0 = g_Material.Diffuse;
 
     return output;
 }

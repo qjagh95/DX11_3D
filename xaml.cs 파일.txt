@@ -1,0 +1,76 @@
+namespace WpfApp1
+{
+    /// <summary>
+    /// MainWindow.xaml에 대한 상호 작용 논리
+    /// </summary>
+    public partial class MainWindow : Window
+    {
+        double orginalWidth, originalHeight;
+        ScaleTransform scale = new ScaleTransform();
+
+        public MainWindow()
+        {
+            InitializeComponent();
+            this.Loaded += new RoutedEventHandler(MainWindow_Loaded);
+        }
+        void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            ChangeSize(e.NewSize.Width, e.NewSize.Height);
+        }
+
+        void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            orginalWidth = this.Width;
+            originalHeight = this.Height;
+
+            if (this.WindowState == WindowState.Maximized)
+            {
+                ChangeSize(this.ActualWidth, this.ActualHeight);
+            }
+
+            this.SizeChanged += new SizeChangedEventHandler(MainWindow_SizeChanged);
+        }
+
+        private void ChangeSize(double width, double height)
+        {
+            scale.ScaleX = width / orginalWidth;
+            scale.ScaleY = height / originalHeight;
+
+            FrameworkElement rootElement = this.Content as FrameworkElement;
+
+            rootElement.LayoutTransform = scale;
+        }
+
+        private void BtnPlus(Button btn)
+        {
+            string content;
+            int value;
+            content = btn.Content.ToString();
+            value = Convert.ToInt32(content);
+            value++;
+            content = String.Format("{0:d}", value);
+            btn.Content = content;
+        }
+        private void BtnMinus(Button btn)
+        {
+            string content;
+            int value;
+            content = btn.Content.ToString();
+            value = Convert.ToInt32(content);
+            value--;
+            if (value < 0) value = 0;
+            content = String.Format("{0:d}", value);
+            btn.Content = content;
+        }
+
+        private void btn_ClickR(object sender, RoutedEventArgs e)
+        {
+            BtnPlus((Button)sender);
+        }
+
+        private void btn_ClickL(object sender, RoutedEventArgs e)
+        {
+            BtnMinus((Button)sender);
+        }
+    }
+}

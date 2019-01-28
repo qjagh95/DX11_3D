@@ -51,7 +51,7 @@ void JEONG::Mesh::Render()
 				//쉐이더에 정점정보를 넣는준비를 한다(입력 레지스터에 넣는다)
 				Device::Get()->GetContext()->IASetIndexBuffer(m_vecMeshContainer[i]->vecIndexBuffer[j].iBuffer, m_vecMeshContainer[i]->vecIndexBuffer[j].iFormat, 0);
 				Device::Get()->GetContext()->DrawIndexed(m_vecMeshContainer[i]->vecIndexBuffer[j].iCount, 0, 0); ///인덱스버퍼의 갯수, 위치(첫번째), 추가되는값(0)
-			}
+			} 
 		}//else
 	}
 }
@@ -131,7 +131,7 @@ bool JEONG::Mesh::CreateVertexBuffer(void * vertexInfo, int vertexCount, int ver
 		return false;
 	}
 
-	char* Vertices = (char*)vertexInfo;
+	char* Vertices =(char*)vertexInfo;
 	Vector3 TempPos;
 	//주소값 memcpy (첫번째 주소)
 	memcpy(&TempPos, Vertices, sizeof(Vector3));
@@ -220,19 +220,19 @@ void JEONG::Mesh::UpdateVertexBuffer(void * vertexInfo, int ContainerIndex)
 
 	switch (m_vecMeshContainer[ContainerIndex]->vertexBuffer.vUsage)
 	{
-	case D3D11_USAGE_DEFAULT:
-		Device::Get()->GetContext()->UpdateSubresource(m_vecMeshContainer[ContainerIndex]->vertexBuffer.vBuffer, 0, NULLPTR, vertexInfo, 0, 0);
-		break;
-	case D3D11_USAGE_DYNAMIC:
-	{
-		D3D11_MAPPED_SUBRESOURCE mapData;
-		//메모리락을걸고 실행 후 락을 푼다. (컨텍스트 스위칭시 조작방지) Map ~ UnMap
-		Device::Get()->GetContext()->Map(m_vecMeshContainer[ContainerIndex]->vertexBuffer.vBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapData);
+		case D3D11_USAGE_DEFAULT:
+			Device::Get()->GetContext()->UpdateSubresource(m_vecMeshContainer[ContainerIndex]->vertexBuffer.vBuffer, 0, NULLPTR, vertexInfo, 0, 0);
+			break;
+		case D3D11_USAGE_DYNAMIC:
 		{
-			memcpy(mapData.pData, vertexInfo, m_vecMeshContainer[ContainerIndex]->vertexBuffer.vSize *m_vecMeshContainer[ContainerIndex]->vertexBuffer.vCount);
+			D3D11_MAPPED_SUBRESOURCE mapData;
+			//메모리락을걸고 실행 후 락을 푼다. (컨텍스트 스위칭시 조작방지) Map ~ UnMap
+			Device::Get()->GetContext()->Map(m_vecMeshContainer[ContainerIndex]->vertexBuffer.vBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapData);
+			{
+				memcpy(mapData.pData, vertexInfo, m_vecMeshContainer[ContainerIndex]->vertexBuffer.vSize *m_vecMeshContainer[ContainerIndex]->vertexBuffer.vCount);
+			}
+			Device::Get()->GetContext()->Unmap(m_vecMeshContainer[ContainerIndex]->vertexBuffer.vBuffer, 0);
 		}
-		Device::Get()->GetContext()->Unmap(m_vecMeshContainer[ContainerIndex]->vertexBuffer.vBuffer, 0);
-	}
-	break;
+			break;
 	}//switch
 }

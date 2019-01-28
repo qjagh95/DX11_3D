@@ -29,6 +29,7 @@ public:
 
 	Transform_Com* GetTransform() const { return m_Transform; }
 	void SetTransform(Transform_Com* transform);
+	RENDER_GROUP GetRenderGroup() const { return m_RenderGroup; }
 
 	void SetRotation(const Vector3& vecRot);
 	void SetRotationX(float RotX);
@@ -125,6 +126,7 @@ private:
 	Layer* m_Layer;
 	string m_LayerName;
 	int m_LayerZOrder;
+	RENDER_GROUP m_RenderGroup;
 	
 	list<Component_Base*> m_FindComList;
 	static unordered_map<Scene*, unordered_map<string, GameObject*>> m_ProtoTypeMap;

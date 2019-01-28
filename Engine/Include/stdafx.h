@@ -26,6 +26,7 @@
 #include <ISheetT.h>
 #include <setup.h>
 #include <libxl.h>
+#include <wrl/client.h>
 ///Excel
 
 #include "MathHeader.h"

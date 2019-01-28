@@ -39,7 +39,7 @@ bool MainScene::Init()
 	Layer* TileLayer = m_Scene->FindLayer("Tile");
 
 	GameObject* newObject = GameObject::CreateObject("new", Default);
-	newObject->GetTransform()->SetWorldPos(0, 0, 0.0f);
+	//newObject->GetTransform()->SetWorldRotX(-20.0f);
 	//newObject->GetTransform()->SetWorldScale(100.0f, 100.0f, 100.0f);
 
 	Renderer_Com* RenderComponent = newObject->AddComponent<Renderer_Com>("Render");

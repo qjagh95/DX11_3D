@@ -11,6 +11,8 @@
 #include "../Component/Camera_Com.h"
 #include "../Component/Transform_Com.h"
 
+#include "../Component/Light_Com.h"
+
 JEONG_USING
 
 JEONG::Scene::Scene()
@@ -37,28 +39,68 @@ bool JEONG::Scene::Init()
 	AddLayer("Tile", 0);
 	AddLayer("Default", 2);
 	AddLayer("UI", INT_MAX);
-
-	m_MainCameraObject = CreateCamera("MainCamera", Vector3(0.0f, 0.0f, -5.0f), CT_PERSPECTIVE, (float)Device::Get()->GetWinSize().Width, (float)Device::Get()->GetWinSize().Height, 60.0f, 0.3f, 1000.0f);
+	 
+	m_MainCameraObject = CreateCamera("MainCamera", Vector3(1.0f, -1.0f, -5.0f), CT_PERSPECTIVE, (float)Device::Get()->GetWinSize().Width, (float)Device::Get()->GetWinSize().Height, 60.0f, 0.3f, 1000.0f);
 	m_MainCameraTransform = m_MainCameraObject->GetTransform();
 	m_MainCamera = m_MainCameraObject->FindComponentFromType<JEONG::Camera_Com>(CT_CAMERA);
 
-	m_UICameraObject = CreateCamera("UICamera", Vector3(0.0f, 0.0f, 0.0f), CT_ORTHO, (float)Device::Get()->GetWinSize().Width, (float)Device::Get()->GetWinSize().Height, 60.0f, 0.0f, 1000.0f);
+	m_UICameraObject = CreateCamera("UICamera", Vector3(0.0f, 0.0f, -0.6f), CT_ORTHO, (float)Device::Get()->GetWinSize().Width, (float)Device::Get()->GetWinSize().Height, 60.0f, 0.0f, 1000.0f);
 	m_UICameraTransform = m_UICameraObject->GetTransform();
 	m_UICamera = m_UICameraObject->FindComponentFromType<JEONG::Camera_Com>(CT_CAMERA);
 
-	//CreateCamera함수안에서 카메라 컴포넌트 생성 후 AddComponent
-
 	SortLayer();
 
+	Layer* Default = FindLayer("Default");
+	GameObject*	newLightObject = GameObject::CreateObject("GlobalLight", Default);
+	newLightObject->GetTransform()->SetWorldPos(1.0f, 1.0f, 1.0f);
+
+	Light_Com* newLight = newLightObject->AddComponent<Light_Com>("GlobalLight");
+	newLight->SetLightType(LT_POINT);
+	newLight->SetLightRange(5.0f);
+	newLight->SetLightAttenuation(Vector3(0.2f, 0.2f, 0.2f));
+
+	KeyInput::Get()->AddKey("Up", 'W');
+	KeyInput::Get()->AddKey("Down", 'S');
+	KeyInput::Get()->AddKey("Left", 'A');
+	KeyInput::Get()->AddKey("Right", 'D');
+	KeyInput::Get()->AddKey("Front", VK_SPACE);
+	KeyInput::Get()->AddKey("Back", VK_BACK);
+
+	SAFE_RELEASE(newLight);
+	SAFE_RELEASE(newLightObject);
+	SAFE_RELEASE(Default);
+	
 	return true;
 }
 
 int JEONG::Scene::Input(float DeltaTime)
 {
+	//static Vector3 Pos = Vector3::Zero;
+	//GameObject* getObject = FindObject("GlobalLight");
+	//Light_Com* getLight = getObject->FindComponentFromType<Light_Com>(CT_LIGHT);
+
+	//if (KeyInput::Get()->KeyPress("Up"))
+	//	Pos.y += 10.0f * DeltaTime;
+	//else if(KeyInput::Get()->KeyPress("Down"))
+	//	Pos.y -= 10.0f * DeltaTime;
+	//else if (KeyInput::Get()->KeyPress("Left"))
+	//	Pos.x -= 10.0f * DeltaTime;
+	//else if (KeyInput::Get()->KeyPress("Right"))
+	//	Pos.x += 10.0f * DeltaTime;
+	//else if (KeyInput::Get()->KeyPress("Front"))
+	//	Pos.z += 10.0f * DeltaTime;
+	//else if (KeyInput::Get()->KeyPress("Back"))
+	//	Pos.z -= 10.0f * DeltaTime;
+
+	//getLight->SetLightPos(Pos);
+
+	//SAFE_RELEASE(getObject);
+	//SAFE_RELEASE(getLight);
+
 	list<JEONG::SceneComponent*>::iterator StartIter = m_SceneComponentList.begin();
 	list<JEONG::SceneComponent*>::iterator EndIter = m_SceneComponentList.end();
 
-	for (; StartIter != EndIter; )
+	for (; StartIter != EndIter ; )
 	{
 		if ((*StartIter)->GetIsActive() == false)
 		{
@@ -374,7 +416,7 @@ void JEONG::Scene::SetEnableLayer(const string & TagName, bool isShow)
 	list<JEONG::Layer*>::iterator StartIter = m_LayerList.begin();
 	list<JEONG::Layer*>::iterator EndIter = m_LayerList.end();
 
-	for (; StartIter != EndIter; StartIter++)
+	for (; StartIter != EndIter ; StartIter++)
 	{
 		if ((*StartIter)->GetTag() == TagName)
 		{
@@ -426,7 +468,7 @@ JEONG::GameObject * JEONG::Scene::FindObject(const string & TagName)
 	{
 		JEONG::GameObject* getObject = (*StartIter)->FindObject(TagName);
 
-		if (getObject != NULLPTR)
+		if(getObject != NULLPTR)
 			return getObject;
 	}
 	return NULLPTR;
