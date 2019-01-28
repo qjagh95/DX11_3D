@@ -251,7 +251,7 @@ void JEONG::Transform_Com::ComputeLocalAxis()
 		//행렬 곱함수.
 		m_LocalAxis[i] = Vector3::Axis[i].TransformNormal(m_MatLocalRotation);
 		//크기1벡터로 만들어서 방향값을 얻어오기 위함.
-		m_LocalAxis[i].Nomallize();
+		m_LocalAxis[i].Normalize();
 	}
 }
 
@@ -423,7 +423,7 @@ void JEONG::Transform_Com::ComputeWorldAxis()
 		//지정된 매트릭스(회전행렬)에 따라 벡터를 반환한다.
 		m_WorldAxis[i] = Vector3::Axis[i].TransformNormal(m_MatWorldRotation);
 		//크기1벡터로 만들어서 방향값을 얻어오기 위함.
-		m_WorldAxis[i].Nomallize();
+		m_WorldAxis[i].Normalize();
 	}
 }
 
@@ -441,7 +441,7 @@ void JEONG::Transform_Com::LookAt(const Vector3 & Vec, AXIS eAxis)
 {
 	//바라보려는 방향을 구한다. (벡터뺄셈 = 바라보는방향) 
 	Vector3 View = Vec - m_WorldPos;
-	View.Nomallize();
+	View.Normalize();
 
 	//가상축을 선언한다.
 	Vector3 Axis = Vector3::Axis[eAxis];
@@ -450,7 +450,7 @@ void JEONG::Transform_Com::LookAt(const Vector3 & Vec, AXIS eAxis)
 	float Angle = Axis.GetAngle(View);
 
 	Vector3 vRotAxis = Axis.Cross(View);
-	vRotAxis.Nomallize();
+	vRotAxis.Normalize();
 
 	//가상 축에 대한 회전행렬 생성.
 	m_MatWorldRotation.RotationAxis(Angle, vRotAxis);

@@ -104,7 +104,6 @@ public:
 	Matrix GetParentRot() const;
 	Matrix GetParentScale() const;
 
-	//ºÎ¸ð²¨
 	Matrix GetScaleDelta() const { return m_DeltaScale; }
 	Matrix GetPosDelta() const { return m_DeltaPos; }
 	Matrix GetRotDelta() const { return m_DeltaRot; }
@@ -162,7 +161,6 @@ private:
 
 public:
 	friend class GameObject;
-	friend class GUIManager;
 };
 
 JEONG_END

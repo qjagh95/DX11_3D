@@ -116,8 +116,8 @@ BOOL EditorView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 	Scene* getScene = SceneManager::Get()->GetCurScene();
 	Camera_Com* getCamera = getScene->GetMainCamera();
 
-	Vector3 CameraNormal = Vector3::Nomallize(getCamera->GetTransform()->GetWorldPos());
-	Vector3 MouseNormal = Vector3::Nomallize(KeyInput::Get()->GetMouseWorldPos());
+	Vector3 CameraNormal = Vector3::Normalize(getCamera->GetTransform()->GetWorldPos());
+	Vector3 MouseNormal = Vector3::Normalize(KeyInput::Get()->GetMouseWorldPos());
 
 	Vector3 CameraPos = getCamera->GetTransform()->GetWorldPos();
 	Vector3 MousePos = KeyInput::Get()->GetMouseWorldPos();

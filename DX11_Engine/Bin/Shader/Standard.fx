@@ -122,7 +122,7 @@ PS_OUTPUT_GBUFFER StandardNormalColorPS(VS_OUTPUT_NORMAL_COLOR input)
     else
     {
         output.vAlbedo = input.vColor;
-        output.vNormal.xyz = input.vNormalV;
+        output.vNormal.xyz = input.vNormal;
         output.vNormal.w = 1.0f;
         //z값을 w의 z값으로 나눈다 (w에는 z값이 그대로 들어가있음)
         output.vDepth.rgb = (float3) (input.vPos.z / input.vPos.w);

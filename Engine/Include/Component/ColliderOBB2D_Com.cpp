@@ -66,7 +66,7 @@ int ColliderOBB2D_Com::LateUpdate(float DeltaTime)
 	{
 		//Axis는 방향만 알면되니 Nomal(w값 0)
 		m_WorldInfo.Axis[i] = m_Virtual.Axis[i].TransformNormal(RotMat);
-		//m_WorldInfo.Axis[i].Nomallize();
+		//m_WorldInfo.Axis[i].Normalize();
 		//해당 방향에 해당 길이만큼 늘린다.
 		TempAxis[i] = m_WorldInfo.Axis[i] * m_WorldInfo.Lenth[i];
 	}

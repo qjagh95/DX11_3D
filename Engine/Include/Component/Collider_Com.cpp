@@ -390,7 +390,7 @@ bool JEONG::Collider_Com::CollsionOBB2DToCircle(const OBB2DInfo & Src, const Cir
 	//4. CollsionToRectToCircle();
 
 	Vector3 Distance = Dest.CenterPos - Src.CenterPos;
-	Vector3 DistanceNormal = Vector3::Nomallize(Distance);
+	Vector3 DistanceNormal = Vector3::Normalize(Distance);
 
 	float A = abs(Src.Axis[0].Dot(DistanceNormal));
 	float B = abs(Src.Axis[1].Dot(DistanceNormal));

@@ -117,7 +117,7 @@ union MATH_DLL Vector3
 	//벡터의 크기를 구해주는 함수
 	float Lenth() const;
 	//노말라이즈
-	void Nomallize();
+	void Normalize();
 
 	//Vector3의 값을 강제로 Vector4로 바꾸고 연산한다.
 	//그러면 w값이 추가되는데 w값이 0 -> Normal, 1 -> Coord
@@ -154,7 +154,7 @@ union MATH_DLL Vector3
 	void Convert(const XMVECTOR & Xmvec);
 	float* FloatConvert();
 
-	static Vector3 Nomallize(const Vector3& vec);
+	static Vector3 Normalize(const Vector3& vec);
 
 	static Vector3 Axis[3];
 	static Vector3 Zero;

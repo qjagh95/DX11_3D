@@ -710,7 +710,7 @@ float Vector2::Lenth() const
 
 	return XMVectorGetX(XMVector3Length(Src));
 }
-void Vector2::Nomallize()
+void Vector2::Normalize()
 {
 	XMVECTOR Src = XMLoadFloat2((XMFLOAT2*)this);
 
@@ -758,7 +758,7 @@ float Vector2::Dot(int Val[2]) const
 }
 /////////////////////////////////////////////////////////////////////////
 
-Vector2 Vector2::Nomallize(const Vector2 & vec)
+Vector2 Vector2::Normalize(const Vector2 & vec)
 {
 	XMVECTOR Src = XMLoadFloat2((XMFLOAT2*)&vec);
 

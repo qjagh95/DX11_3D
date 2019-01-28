@@ -115,7 +115,7 @@ union MATH_DLL Vector2
 	//벡터의 크기를 구해주는 함수
 	float Lenth() const;
 	//노말라이즈
-	void Nomallize();
+	void Normalize();
 
 	//내적
 	float Dot(const Vector2& vec) const;
@@ -124,7 +124,7 @@ union MATH_DLL Vector2
 	float Dot(float Val[2]) const;
 	float Dot(int Val[2]) const;
 
-	static Vector2 Nomallize(const Vector2& vec);
+	static Vector2 Normalize(const Vector2& vec);
 	static Vector2 Axis[2];
 	static Vector2 Zero;
 	static Vector2 One;

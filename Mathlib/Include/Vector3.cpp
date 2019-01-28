@@ -768,7 +768,7 @@ float Vector3::Lenth() const
 	return XMVectorGetX(XMVector3Length(Src));
 }
 
-void Vector3::Nomallize()
+void Vector3::Normalize()
 {
 	XMVECTOR Src = XMLoadFloat3((XMFLOAT3*)this);
 
@@ -922,7 +922,7 @@ Vector3 Vector3::Cross(int Val[3]) const
 	return Result;
 }
 
-Vector3 Vector3::Nomallize(const Vector3 & vec)
+Vector3 Vector3::Normalize(const Vector3 & vec)
 {
 	XMVECTOR Src = XMLoadFloat3((XMFLOAT3*)&vec);
 
@@ -933,8 +933,8 @@ Vector3 Vector3::Nomallize(const Vector3 & vec)
 float Vector3::GetAngle(const Vector3 & vec) const
 {
 	//단위벡터로만든다
-	Vector3 Src = Nomallize(*this);
-	Vector3 Dest = Nomallize(vec);
+	Vector3 Src = Normalize(*this);
+	Vector3 Dest = Normalize(vec);
 
 	//단위벡터를 내적한다(cos각도가 나온다)
 	float Angle = Src.Dot(Dest);
@@ -947,8 +947,8 @@ float Vector3::GetAngle(const Vector3 & vec) const
 float Vector3::GetAngle(const XMVECTOR & Xmvec) const
 {
 	//단위벡터로만든다
-	Vector3 Src = Nomallize(*this);
-	Vector3 Dest = Nomallize(Xmvec);
+	Vector3 Src = Normalize(*this);
+	Vector3 Dest = Normalize(Xmvec);
 
 	//단위벡터를 내적한다(cos각도가 나온다)
 	float Angle = Src.Dot(Dest);
@@ -963,8 +963,8 @@ float Vector3::GetAngle(const XMVECTOR & Xmvec) const
 float Vector3::GetAngle(const XMFLOAT3 & XmFloat) const
 {
 	//단위벡터로만든다
-	Vector3 Src = Nomallize(*this);
-	Vector3 Dest = Nomallize(XmFloat);
+	Vector3 Src = Normalize(*this);
+	Vector3 Dest = Normalize(XmFloat);
 
 	//단위벡터를 내적한다(cos각도가 나온다)
 	float Angle = Src.Dot(Dest);
@@ -979,8 +979,8 @@ float Vector3::GetAngle(const XMFLOAT3 & XmFloat) const
 float Vector3::GetAngle(float Val[3]) const
 {
 	//단위벡터로만든다
-	Vector3 Src = Nomallize(*this);
-	Vector3 Dest = Nomallize(Val);
+	Vector3 Src = Normalize(*this);
+	Vector3 Dest = Normalize(Val);
 
 	//단위벡터를 내적한다(cos각도가 나온다)
 	float Angle = Src.Dot(Dest);
@@ -995,8 +995,8 @@ float Vector3::GetAngle(float Val[3]) const
 float Vector3::GetAngle(int Val[3]) const
 {
 	//단위벡터로만든다
-	Vector3 Src = Nomallize(*this);
-	Vector3 Dest = Nomallize(Val);
+	Vector3 Src = Normalize(*this);
+	Vector3 Dest = Normalize(Val);
 
 	//단위벡터를 내적한다(cos각도가 나온다)
 	float Angle = Src.Dot(Dest);

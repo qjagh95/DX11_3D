@@ -104,44 +104,44 @@ bool JEONG::ResourceManager::Init()
 
 	Edge1 = PyramidPos[4] - PyramidPos[0];
 	Edge2 = PyramidPos[1] - PyramidPos[0];
-	Edge1.Nomallize();
-	Edge2.Nomallize();
+	Edge1.Normalize();
+	Edge2.Normalize();
 	PlaneNormal[0] = Edge1.Cross(Edge2);
-	PlaneNormal[0].Nomallize();
+	PlaneNormal[0].Normalize();
 
 	Edge1 = PyramidPos[1] - PlaneNormal[0];
 	Edge2 = PyramidPos[2] - PlaneNormal[0];
-	Edge1.Nomallize();
-	Edge2.Nomallize();
+	Edge1.Normalize();
+	Edge2.Normalize();
 	PlaneNormal[1] = Edge1.Cross(Edge2);
-	PlaneNormal[1].Nomallize();
+	PlaneNormal[1].Normalize();
 
 	Edge1 = PlaneNormal[2] - PyramidPos[0];
 	Edge2 = PlaneNormal[3] - PyramidPos[0];
-	Edge1.Nomallize();
-	Edge2.Nomallize();
+	Edge1.Normalize();
+	Edge2.Normalize();
 	PlaneNormal[2] = Edge1.Cross(Edge2);
-	PlaneNormal[2].Nomallize();
+	PlaneNormal[2].Normalize();
 
 	Edge1 = PyramidPos[3] - PyramidPos[0];
 	Edge2 = PyramidPos[4] - PyramidPos[0];
-	Edge1.Nomallize();
-	Edge2.Nomallize();
+	Edge1.Normalize();
+	Edge2.Normalize();
 	PlaneNormal[3] = Edge1.Cross(Edge2);
-	PlaneNormal[3].Nomallize();
+	PlaneNormal[3].Normalize();
 
 	Vector3	Normal[4];
 	Normal[0] = (PlaneNormal[0] + PlaneNormal[1]);
-	Normal[0].Nomallize();
+	Normal[0].Normalize();
 
 	Normal[1] = (PlaneNormal[1] + PlaneNormal[2]);
-	Normal[1].Nomallize();
+	Normal[1].Normalize();
 
 	Normal[2] = (PlaneNormal[2] + PlaneNormal[3]);
-	Normal[2].Nomallize();
+	Normal[2].Normalize();
 
 	Normal[3] = (PlaneNormal[3] + PlaneNormal[0]);
-	Normal[3].Nomallize();
+	Normal[3].Normalize();
 
 	VertexNormalColor Pyramid[9] =
 	{
