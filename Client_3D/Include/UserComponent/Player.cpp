@@ -16,16 +16,16 @@ Player_Com::~Player_Com()
 
 bool Player_Com::Init()
 {
-	KeyInput::Get()->FuncBindAxis("Move", this, &Player_Com::Move);
+	KeyInput::Get()->AddBindAxis("Move", this, &Player_Com::Move);
 	KeyInput::Get()->AddKeyScale("Move", DIK_W, 1.0f);
 	KeyInput::Get()->AddKeyScale("Move", DIK_S, -1.0f);
 
-	KeyInput::Get()->FuncBindAction("Fire", KEY_PRESS, this, &Player_Com::Fire);
+	KeyInput::Get()->AddBindAction("Fire", KEY_PRESS, this, &Player_Com::Fire);
 	KeyInput::Get()->AddKeyAction("Fire", DIK_SPACE);
 
 	bool bSKey[SKT_MAX] = { true, true, true };
-	KeyInput::Get()->FuncBindAction("Fire1", KEY_PRESS, this, &Player_Com::Fire1);
-	KeyInput::Get()->FuncBindAction("Fire1", KEY_UP, this, &Player_Com::Fire1Release);
+	KeyInput::Get()->AddBindAction("Fire1", KEY_PRESS, this, &Player_Com::Fire1);
+	KeyInput::Get()->AddBindAction("Fire1", KEY_UP, this, &Player_Com::Fire1Release);
 	KeyInput::Get()->AddKeyAction("Fire1", DIK_SPACE, bSKey);
 
 	return true;

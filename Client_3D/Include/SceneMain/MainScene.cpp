@@ -41,7 +41,7 @@ bool MainScene::Init()
 	RenderComponent->SetShader(STANDARD_NORMAL_COLOR_SHADER);
 
 	GameObject* newObject2 = GameObject::CreateObject("Player", Default);
-	Player_Com* newPlayer = newObject2->AddComponent< Player_Com>("Player");
+	Player_Com* newPlayer = newObject2->AddComponent<Player_Com>("Player");
 
 	SAFE_RELEASE(newPlayer);
 	SAFE_RELEASE(newObject2);

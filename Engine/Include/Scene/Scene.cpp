@@ -70,8 +70,8 @@ int Scene::Input(float DeltaTime)
 	LightDebug(DeltaTime);
 #endif
 
-	list<JEONG::SceneComponent*>::iterator StartIter = m_SceneComponentList.begin();
-	list<JEONG::SceneComponent*>::iterator EndIter = m_SceneComponentList.end();
+	list<SceneComponent*>::iterator StartIter = m_SceneComponentList.begin();
+	list<SceneComponent*>::iterator EndIter = m_SceneComponentList.end();
 
 	for (; StartIter != EndIter ; )
 	{
@@ -166,8 +166,8 @@ int Scene::Update(float DeltaTime)
 
 int Scene::LateUpdate(float DeltaTime)
 {
-	list<JEONG::SceneComponent*>::iterator StartIter = m_SceneComponentList.begin();
-	list<JEONG::SceneComponent*>::iterator EndIter = m_SceneComponentList.end();
+	list<SceneComponent*>::iterator StartIter = m_SceneComponentList.begin();
+	list<SceneComponent*>::iterator EndIter = m_SceneComponentList.end();
 
 	for (; StartIter != EndIter; )
 	{
@@ -462,6 +462,21 @@ GameObject * Scene::FindObject(const string & TagName)
 	return NULLPTR;
 }
 
+GameObject * Scene::FindObjectNoneCount(const string & TagName)
+{
+	list<Layer*>::iterator StartIter = m_LayerList.begin();
+	list<Layer*>::iterator EndIter = m_LayerList.end();
+
+	for (; StartIter != EndIter; StartIter++)
+	{
+		GameObject* getObject = (*StartIter)->FindObjectNoneCount(TagName);
+
+		if (getObject != NULLPTR)
+			return getObject;
+	}
+	return NULLPTR;
+}
+
 GameObject * Scene::CreateCamera(const string & TagName, const Vector3 & Pos, CAMERA_TYPE eType, float Width, float Height, float ViewAngle, float Near, float Far)
 {
 	GameObject* newCameraObject = FindCamera(TagName);
@@ -496,10 +511,10 @@ void Scene::ChangeCamera(const string & TagName)
 
 	m_MainCameraObject = getCamera;
 	m_MainCameraTransform = getCamera->GetTransform();
-	m_MainCamera = getCamera->FindComponentFromType<JEONG::Camera_Com>(CT_CAMERA);
+	m_MainCamera = getCamera->FindComponentFromType<Camera_Com>(CT_CAMERA);
 }
 
-void JEONG::Scene::LightDebug(float DeltaTime)
+void Scene::LightDebug(float DeltaTime)
 {
 	ImGui::Text("GlobalLight");
 	ImGui::BeginTabBar("AA");
@@ -507,8 +522,8 @@ void JEONG::Scene::LightDebug(float DeltaTime)
 
 	static int GlobalLightType = 0;
 
-	GameObject* getObject = FindObject("GlobalLight");
-	Light_Com* getLight = getObject->FindComponentFromType<Light_Com>(CT_LIGHT);
+	GameObject* getObject = FindObjectNoneCount("GlobalLight");
+	Light_Com* getLight = getObject->FindComponentFromTypeNoneCount<Light_Com>(CT_LIGHT);
 
 	const char* Items[4] = { "Direction", "Point", "Spot", "BomiSpot" };
 	ImGui::Text("LightType");
@@ -518,19 +533,15 @@ void JEONG::Scene::LightDebug(float DeltaTime)
 
 	ImGui::SliderFloat4("Ambient", (float*)&getLight->m_tLightInfo.Ambient, -1.0f, 1.0f);
 	ImGui::SliderFloat4("Diffuse", (float*)&getLight->m_tLightInfo.Diffuse, -1.0f, 1.0f);
-	ImGui::SliderFloat4("Specular", (float*)&getLight->m_tLightInfo.Spcular, -1.0f, 1.0f);
+	ImGui::SliderFloat3("Specular", (float*)&getLight->m_tLightInfo.Spcular, -1.0f, 1.0f);
 	ImGui::SliderFloat3("Direction", (float*)&getLight->m_tLightInfo.Direction, -1.0f, 1.0f);
 	ImGui::SliderFloat3("Attenuation", (float*)&getLight->m_tLightInfo.Attenuation, -1.0f, 1.0f);
 	ImGui::SliderFloat("Range", (float*)&getLight->m_tLightInfo.Range, 0.0f, 20.0f);
 	ImGui::SliderFloat("FallOff", (float*)&getLight->m_tLightInfo.FallOff, -1.0f, 10.0f);
-	ImGui::SliderFloat("InAngle", (float*)&getLight->m_tLightInfo.InAngle , -1.0f, 1.0f);
-	ImGui::SliderFloat("OutAngle", (float*)&getLight->m_tLightInfo.OutAngle, -1.0f, 1.0f);
 
 	ImGui::Text("LightPos");
 
 	ImGui::SliderFloat3("Pos", (float*)&getLight->m_tLightInfo.Pos, -1.0f, 20.0f);
-	SAFE_RELEASE(getObject);
-	SAFE_RELEASE(getLight);
 
 	ImGui::BeginTabBar("BB");
 	ImGui::EndTabBar();
@@ -545,7 +556,7 @@ void JEONG::Scene::LightDebug(float DeltaTime)
 	ImGui::EndTabBar();
 }
 
-JEONG::GameObject * JEONG::Scene::FindCamera(const string & TagName)
+GameObject * Scene::FindCamera(const string & TagName)
 {
 	unordered_map<string, GameObject*>::iterator FindIter = m_CameraMap.find(TagName);
 

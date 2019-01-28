@@ -281,8 +281,8 @@ void JEONG::GameObject::Render(float DeltaTime)
 		SAFE_RELEASE(getRender);
 	}
 
-	list<JEONG::Component_Base*>::iterator StartIter = m_ComponentList.begin();
-	list<JEONG::Component_Base*>::iterator EndIter = m_ComponentList.end();
+	list<Component_Base*>::iterator StartIter = m_ComponentList.begin();
+	list<Component_Base*>::iterator EndIter = m_ComponentList.end();
 
 	for (; StartIter != EndIter;)
 	{
@@ -309,34 +309,34 @@ void JEONG::GameObject::Render(float DeltaTime)
 	}
 }
 
-JEONG::GameObject * JEONG::GameObject::Clone()
+GameObject * GameObject::Clone()
 {
-	return new JEONG::GameObject(*this);
+	return new GameObject(*this);
 }
 
-void JEONG::GameObject::AfterClone()
+void GameObject::AfterClone()
 {
-	list<JEONG::Component_Base*>::iterator StartIter = m_ComponentList.begin();
-	list<JEONG::Component_Base*>::iterator EndIter = m_ComponentList.end();
+	list<Component_Base*>::iterator StartIter = m_ComponentList.begin();
+	list<Component_Base*>::iterator EndIter = m_ComponentList.end();
 
 	for (;StartIter != EndIter; StartIter++)
 		(*StartIter)->AfterClone();
 
 }
 
-void JEONG::GameObject::SetScene(JEONG::Scene * scene)
+void GameObject::SetScene(Scene * scene)
 {
 	m_Scene = scene;
 	m_Transform->m_Scene = scene;
 
-	list<JEONG::Component_Base*>::iterator StartIter = m_ComponentList.begin();
-	list<JEONG::Component_Base*>::iterator EndIter = m_ComponentList.end();
+	list<Component_Base*>::iterator StartIter = m_ComponentList.begin();
+	list<Component_Base*>::iterator EndIter = m_ComponentList.end();
 
 	for (;StartIter != EndIter; StartIter++)
 		(*StartIter)->m_Scene = scene;
 }
 
-void JEONG::GameObject::SetLayer(JEONG::Layer * layer)
+void GameObject::SetLayer(Layer * layer)
 {
 	m_Layer = layer;
 	m_LayerName = layer->GetTag();
@@ -344,8 +344,8 @@ void JEONG::GameObject::SetLayer(JEONG::Layer * layer)
 
 	m_Transform->m_Layer = layer;
 
-	list<JEONG::Component_Base*>::iterator StartIter = m_ComponentList.begin();
-	list<JEONG::Component_Base*>::iterator EndIter = m_ComponentList.end();
+	list<Component_Base*>::iterator StartIter = m_ComponentList.begin();
+	list<Component_Base*>::iterator EndIter = m_ComponentList.end();
 
 	for (;StartIter != EndIter; StartIter++)
 		(*StartIter)->m_Layer = layer;
@@ -353,12 +353,12 @@ void JEONG::GameObject::SetLayer(JEONG::Layer * layer)
 
 JEONG::GameObject * JEONG::GameObject::CreateObject(const string & TagName, JEONG::Layer * layer, bool isStaticObject)
 {
-	JEONG::GameObject* newObject = StaticManager::Get()->FindStaticObject(TagName);
+	GameObject* newObject = StaticManager::Get()->FindStaticObject(TagName);
 
 	if (newObject != NULLPTR)
 		return newObject;
 
-	newObject = new JEONG::GameObject();
+	newObject = new GameObject();
 	newObject->SetTag(TagName);
 
 	if (isStaticObject == true)
@@ -387,15 +387,15 @@ JEONG::GameObject * JEONG::GameObject::CreateObject(const string & TagName, JEON
 	return newObject;
 }
 
-const list<JEONG::Component_Base*>* JEONG::GameObject::GetComponentList() const
+const list<Component_Base*>* GameObject::GetComponentList() const
 {
 	return &m_ComponentList;
 }
 
-bool JEONG::GameObject::CheckComponentType(COMPONENT_TYPE eType)
+bool GameObject::CheckComponentType(COMPONENT_TYPE eType)
 {
-	list<JEONG::Component_Base*>::const_iterator StartIter = m_ComponentList.begin();
-	list<JEONG::Component_Base*>::const_iterator EndIter = m_ComponentList.end();
+	list<Component_Base*>::const_iterator StartIter = m_ComponentList.begin();
+	list<Component_Base*>::const_iterator EndIter = m_ComponentList.end();
 
 	for (; StartIter != EndIter; StartIter++)
 	{
@@ -405,7 +405,7 @@ bool JEONG::GameObject::CheckComponentType(COMPONENT_TYPE eType)
 	return false;
 }
 
-JEONG::Component_Base * JEONG::GameObject::AddComponent(JEONG::Component_Base * component)
+Component_Base * GameObject::AddComponent(Component_Base * component)
 {
 	component->m_Scene = m_Scene;
 	component->m_Layer = m_Layer;
@@ -428,7 +428,7 @@ JEONG::Component_Base * JEONG::GameObject::AddComponent(JEONG::Component_Base * 
 
 	m_ComponentList.push_back(component);
 
-	JEONG::Renderer_Com* pRender = FindComponentFromType<JEONG::Renderer_Com>(CT_RENDER);
+	Renderer_Com* pRender = FindComponentFromType<Renderer_Com>(CT_RENDER);
 
 	if (pRender != NULLPTR)
 	{
@@ -439,21 +439,21 @@ JEONG::Component_Base * JEONG::GameObject::AddComponent(JEONG::Component_Base * 
 	return component;
 }
 
-JEONG::GameObject * JEONG::GameObject::CreateProtoType(const string & TagName, bool isCurrent)
+GameObject * GameObject::CreateProtoType(const string & TagName, bool isCurrent)
 {
-	JEONG::Scene* getScene = NULLPTR;
+	Scene* getScene = NULLPTR;
 
 	if (isCurrent == true)
-		getScene = JEONG::SceneManager::Get()->GetCurScene();
+		getScene = SceneManager::Get()->GetCurScene();
 	else
-		getScene = JEONG::SceneManager::Get()->GetNextScene();
+		getScene = SceneManager::Get()->GetNextScene();
 
-	JEONG::GameObject* newProtoType = FindProtoType(getScene, TagName);
+	GameObject* newProtoType = FindProtoType(getScene, TagName);
 	
 	if (newProtoType != NULLPTR)
 		return NULLPTR;
 
-	unordered_map<JEONG::Scene*, unordered_map<string, JEONG::GameObject*>>::iterator FindIter = m_ProtoTypeMap.find(getScene);
+	unordered_map<JEONG::Scene*, unordered_map<string, GameObject*>>::iterator FindIter = m_ProtoTypeMap.find(getScene);
 	unordered_map<string, JEONG::GameObject*>* pMap = NULLPTR;
 
 	if (FindIter == m_ProtoTypeMap.end())
@@ -484,16 +484,16 @@ JEONG::GameObject * JEONG::GameObject::CreateProtoType(const string & TagName, b
 	return newProtoType;
 }
 
-JEONG::GameObject * JEONG::GameObject::CreateClone(const string & TagName, const string & ProtoTypeTagName, JEONG::Layer * layer, bool isCurrent)
+GameObject * GameObject::CreateClone(const string & TagName, const string & ProtoTypeTagName, JEONG::Layer * layer, bool isCurrent)
 {
 	JEONG::Scene* getScene = NULLPTR;
 
 	if (isCurrent == true)
-		getScene = JEONG::SceneManager::Get()->GetCurScene();
+		getScene = SceneManager::Get()->GetCurScene();
 	else
-		getScene = JEONG::SceneManager::Get()->GetNextScene();
+		getScene = SceneManager::Get()->GetNextScene();
 
-	JEONG::GameObject* newCloneObject = FindProtoType(getScene, ProtoTypeTagName);
+	GameObject* newCloneObject = FindProtoType(getScene, ProtoTypeTagName);
 	SAFE_RELEASE(getScene);
 
 	if (newCloneObject == NULLPTR)
@@ -509,9 +509,9 @@ JEONG::GameObject * JEONG::GameObject::CreateClone(const string & TagName, const
 	return pClone;
 }
 
-void JEONG::GameObject::DestroyProtoType(JEONG::Scene * scene)
+void GameObject::DestroyProtoType(JEONG::Scene * scene)
 {
-	unordered_map<JEONG::Scene*, unordered_map<string, JEONG::GameObject*>>::iterator FindIter = m_ProtoTypeMap.find(scene);
+	unordered_map<Scene*, unordered_map<string, GameObject*>>::iterator FindIter = m_ProtoTypeMap.find(scene);
 
 	if (FindIter == m_ProtoTypeMap.end())
 		return;
@@ -521,14 +521,14 @@ void JEONG::GameObject::DestroyProtoType(JEONG::Scene * scene)
 	m_ProtoTypeMap.erase(FindIter);
 }
 
-void JEONG::GameObject::DestroyProtoType(JEONG::Scene * scene, const string & TagName)
+void GameObject::DestroyProtoType(Scene * scene, const string & TagName)
 {
-	unordered_map<JEONG::Scene*, unordered_map<string, JEONG::GameObject*>>::iterator FindIter = m_ProtoTypeMap.find(scene);
+	unordered_map<Scene*, unordered_map<string, GameObject*>>::iterator FindIter = m_ProtoTypeMap.find(scene);
 
 	if (FindIter == m_ProtoTypeMap.end())
 		return;
 
-	unordered_map<string, JEONG::GameObject*>::iterator FindIter2 = FindIter->second.find(TagName);
+	unordered_map<string, GameObject*>::iterator FindIter2 = FindIter->second.find(TagName);
 
 	if (FindIter2 == FindIter->second.end())
 		return;
@@ -540,8 +540,8 @@ void JEONG::GameObject::DestroyProtoType(JEONG::Scene * scene, const string & Ta
 
 void JEONG::GameObject::DestroyProtoType()
 {
-	unordered_map<JEONG::Scene*, unordered_map<string, JEONG::GameObject*>>::iterator StartIter = m_ProtoTypeMap.begin();
-	unordered_map<JEONG::Scene*, unordered_map<string, JEONG::GameObject*>>::iterator EndIter = m_ProtoTypeMap.end();
+	unordered_map<Scene*, unordered_map<string, GameObject*>>::iterator StartIter = m_ProtoTypeMap.begin();
+	unordered_map<Scene*, unordered_map<string, GameObject*>>::iterator EndIter = m_ProtoTypeMap.end();
 
 	for (; StartIter != EndIter; StartIter++)
 	{
@@ -551,7 +551,7 @@ void JEONG::GameObject::DestroyProtoType()
 	m_ProtoTypeMap.clear();
 }
 
-JEONG::GameObject * JEONG::GameObject::FindProtoType(JEONG::Scene * scene, const string & TagName)
+GameObject * GameObject::FindProtoType(Scene * scene, const string & TagName)
 {
 	unordered_map<JEONG::Scene*, unordered_map<string, JEONG::GameObject*>>::iterator FindIter = m_ProtoTypeMap.find(scene);
 	
@@ -566,12 +566,12 @@ JEONG::GameObject * JEONG::GameObject::FindProtoType(JEONG::Scene * scene, const
 	return FindIter2->second;
 }
 
-JEONG::GameObject * JEONG::GameObject::FindObject(const string & TagName)
+GameObject * GameObject::FindObject(const string & TagName)
 {
 	return JEONG::SceneManager::Get()->FindObject(TagName);
 }
 
-void JEONG::GameObject::AddChild(JEONG::GameObject * Child)
+void GameObject::AddChild(GameObject * Child)
 {
 	Child->m_Parent = this;
 
@@ -600,8 +600,8 @@ const list<JEONG::Component_Base*>* JEONG::GameObject::FindComponentFromTag(cons
 	Safe_Release_VecList(m_FindComList);
 	m_FindComList.clear();
 
-	list<JEONG::Component_Base*>::iterator StartIter = m_ComponentList.begin();
-	list<JEONG::Component_Base*>::iterator EndIter = m_ComponentList.end();
+	list<Component_Base*>::iterator StartIter = m_ComponentList.begin();
+	list<Component_Base*>::iterator EndIter = m_ComponentList.end();
 
 	for (; StartIter != EndIter ; StartIter++)
 	{
@@ -614,13 +614,13 @@ const list<JEONG::Component_Base*>* JEONG::GameObject::FindComponentFromTag(cons
 	return &m_FindComList;
 }
 
-const list<JEONG::Component_Base*>* JEONG::GameObject::FindComponentFromType(COMPONENT_TYPE type)
+const list<Component_Base*>* GameObject::FindComponentFromType(COMPONENT_TYPE type)
 {
 	Safe_Release_VecList(m_FindComList);
 	m_FindComList.clear();
 
-	list<JEONG::Component_Base*>::iterator StartIter = m_ComponentList.begin();
-	list<JEONG::Component_Base*>::iterator EndIter = m_ComponentList.end();
+	list<Component_Base*>::iterator StartIter = m_ComponentList.begin();
+	list<Component_Base*>::iterator EndIter = m_ComponentList.end();
 
 	for (; StartIter != EndIter; StartIter++)
 	{
@@ -633,21 +633,37 @@ const list<JEONG::Component_Base*>* JEONG::GameObject::FindComponentFromType(COM
 	return &m_FindComList;
 }
 
-void JEONG::GameObject::SetTransform(JEONG::Transform_Com* transform)
+const list<Component_Base*>* GameObject::FindComponentFromTypeNoneCount(COMPONENT_TYPE type)
+{
+	Safe_Release_VecList(m_FindComList);
+	m_FindComList.clear();
+
+	list<Component_Base*>::iterator StartIter = m_ComponentList.begin();
+	list<Component_Base*>::iterator EndIter = m_ComponentList.end();
+
+	for (; StartIter != EndIter; StartIter++)
+	{
+		if ((*StartIter)->GetComType() == type)
+			m_FindComList.push_back(*StartIter);
+	}
+	return &m_FindComList;
+}
+
+void GameObject::SetTransform(JEONG::Transform_Com* transform)
 {
 	m_Transform = transform;
 }
-void JEONG::GameObject::SetRotation(const Vector3& vecRot)
+void GameObject::SetRotation(const Vector3& vecRot)
 {
 	m_Transform->Rotation(vecRot);	
 }
 
-void JEONG::GameObject::SetRotationX(float RotX)
+void GameObject::SetRotationX(float RotX)
 {
 	m_Transform->SetWorldRotX(RotX);
 }
 
-void JEONG::GameObject::SetRotationY(float RotY)
+void GameObject::SetRotationY(float RotY)
 {
 	m_Transform->SetWorldRotY(RotY);
 }

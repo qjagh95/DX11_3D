@@ -3,7 +3,6 @@
 #include "Device.h"
 #include "Timer.h"
 
-
 #include "Scene/SceneManager.h"
 #include "Scene/Scene.h"
 #include "Scene/Layer.h"
@@ -30,7 +29,6 @@
 
 #include "Render\Shader.h"
 
-
 JEONG_USING
 SINGLETON_VAR_INIT(Core)
 bool Core::m_isLoop = true;
@@ -39,7 +37,7 @@ WPARAM Core::m_wParam;
 Core::Core()
 {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	//_CrtSetBreakAlloc(1201);
+	//_CrtSetBreakAlloc(1572);
 	ZeroMemory(ClearColor, sizeof(float) * 4);
 	PathManager::Get();
 }
@@ -125,18 +123,6 @@ bool Core::Init(HINSTANCE hInst, HWND hWnd, unsigned int Width, unsigned int Hei
 		return false;
 	}
 
-	if (KeyInput::Get()->Init() == false)
-	{
-		TrueAssert(true);
-		return false;
-	}
-
-	if (SceneManager::Get()->Init() == false)
-	{
-		TrueAssert(true);
-		return false;
-	}
-
 	if (CollsionManager::Get()->Init() == false)
 	{
 		TrueAssert(true);
@@ -161,6 +147,18 @@ bool Core::Init(HINSTANCE hInst, HWND hWnd, unsigned int Width, unsigned int Hei
 		return false;
 	}
 
+	if (KeyInput::Get()->Init() == false)
+	{
+		TrueAssert(true);
+		return false;
+	}
+
+	if (SceneManager::Get()->Init() == false)
+	{
+		TrueAssert(true);
+		return false;
+	}
+
 	GUIManager::Get()->CreateImGui(m_hWnd, Device::Get()->GetDevice(), Device::Get()->GetContext());
 
 	SetClearColor(0, 150, 255, 0);
@@ -171,6 +169,7 @@ bool Core::Init(HINSTANCE hInst, HWND hWnd, unsigned int Width, unsigned int Hei
 int Core::Run()
 {
 	MSG msg;
+
 
 	while (m_isLoop)
 	{

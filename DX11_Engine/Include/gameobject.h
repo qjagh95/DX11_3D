@@ -75,6 +75,7 @@ public:
 	/////////////////////////////////////FindComponentÇÔ¼ö/////////////////////////////////////////
 	const list<Component_Base*>* FindComponentFromTag(const string& TagName);
 	const list<Component_Base*>* FindComponentFromType(COMPONENT_TYPE type);
+	const list<Component_Base*>* FindComponentFromTypeNoneCount(COMPONENT_TYPE type);
 
 	template<typename T>
 	T* FindComponentFromTag(const string& TagName)
@@ -104,6 +105,22 @@ public:
 			if ((*StartIter)->GetComType() == eType)
 			{
 				(*StartIter)->AddRefCount();
+				return (T*)*StartIter;
+			}
+		}
+		return NULLPTR;
+	}
+
+	template <typename T>
+	T* FindComponentFromTypeNoneCount(COMPONENT_TYPE eType)
+	{
+		list<Component_Base*>::iterator	StartIter = m_ComponentList.begin();
+		list<Component_Base*>::iterator	EndIter = m_ComponentList.end();
+
+		for (; StartIter != EndIter; ++StartIter)
+		{
+			if ((*StartIter)->GetComType() == eType)
+			{
 				return (T*)*StartIter;
 			}
 		}

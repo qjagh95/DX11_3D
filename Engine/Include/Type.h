@@ -73,14 +73,16 @@ namespace JEONG
 
 	struct JEONG_DLL MaterialCbuffer
 	{
-		//재질정보 (색상) 나머지필요한 변수들은 나중에 추가 예정.
 		Vector4 Diffuse;
 		Vector4 Ambient;
 		Vector4 Specular;
 		Vector4 Emissive; //자체발광
 
 		MaterialCbuffer()
-			: Diffuse(Vector4::White), Ambient(Vector4(0.2f, 0.2f, 0.2f, 1.0f)), Specular(Vector4::White), Emissive(Vector4::White)
+			:Diffuse(Vector4::White),
+			Ambient(Vector4(0.2f, 0.2f, 0.2f, 1.0f)), 
+			Specular(Vector4::White), 
+			Emissive(Vector4::White)
 		{
 			//w값을 SpecularPower로쓰겠다. 
 			Specular.w = 3.2f;

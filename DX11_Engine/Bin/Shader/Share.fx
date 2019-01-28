@@ -205,7 +205,7 @@ void ComputeDirectionLight(float3 vNormal, float3 vToCamera, out float4 Ambient,
 
     //불린 퐁. 빛을 보는 방향과 카메라를 보는 방향을 더한 중간벡터를 사용하겠다. 
     float3 vHalfWay = normalize(vToLight + vToCamera);
-    Specular = g_Material.Specular * g_Light.LightSpecular * max(dot(vHalfWay, vNormal), 0.0f);
+    Specular = g_Material.Specular * g_Light.LightSpecular * max(dot(vHalfWay, vNormal), 0.0f) * g_Material.Specular.w;
 }
 
 void ComputePointLight(float3 vNormal, float3 vPos, float3 vToCamera, out float4 Ambient, out float4 Diffuse, out float4 Specular)
@@ -216,7 +216,7 @@ void ComputePointLight(float3 vNormal, float3 vPos, float3 vToCamera, out float4
 
     if(g_Light.LightRange < Distance)
     {
-        Ambient = g_Material.Ambient * g_Light.LightAmbient * 0.2f;
+        Ambient = g_Material.Ambient * g_Light.LightAmbient;
         Diffuse = g_Material.Diffuse * g_Light.LightDiffuse * 0.2f;
         Specular = g_Material.Specular * g_Light.LightSpecular * 0.2f;
         return;
@@ -232,7 +232,9 @@ void ComputePointLight(float3 vNormal, float3 vPos, float3 vToCamera, out float4
 
     Ambient = g_Material.Ambient * g_Light.LightAmbient;
     Diffuse = g_Material.Diffuse * g_Light.LightDiffuse * max(dot(vToLight, vNormal), 0.0f) * LightStrong;
-    Specular = g_Material.Specular * g_Light.LightSpecular * max(dot(vHalfWay, vNormal), 0.0f) * LightStrong;
+
+    LightStrong *= g_Material.Specular.w;
+    Specular = float4(g_Material.Specular.xyz, 0.0f) * g_Light.LightSpecular * max(dot(vHalfWay, vNormal), 0.0f) * LightStrong;
 }
 
 void ComputeSpotLight(float3 vNormal, float3 vPos, float3 vToCamera, out float4 Ambient, out float4 Diffuse, out float4 Specular)
@@ -255,7 +257,9 @@ void ComputeSpotLight(float3 vNormal, float3 vPos, float3 vToCamera, out float4 
 
     Ambient = g_Material.Ambient * g_Light.LightAmbient;
     Diffuse = g_Material.Diffuse * g_Light.LightDiffuse * max(dot(vToLight, vNormal), 0.0f) * SpotStrong;
-    Specular = g_Material.Specular * g_Light.LightSpecular * max(dot(vHalfWay, vNormal), 0.0f) * SpotStrong;
+
+    SpotStrong *= g_Material.Specular.w;
+    Specular = float4(g_Material.Specular.xyz, 0.0f) * g_Light.LightSpecular * max(dot(vHalfWay, vNormal), 0.0f) * SpotStrong;
 }
 
 void ComputeSpotBomiLight(float3 vNormal, float3 vPos, float3 vToCamera, out float4 Ambient, out float4 Diffuse, out float4 Specular)
@@ -265,7 +269,7 @@ void ComputeSpotBomiLight(float3 vNormal, float3 vPos, float3 vToCamera, out flo
 
     if (g_Light.LightRange < Distance)
     {
-        Ambient = g_Material.Ambient * g_Light.LightAmbient * 0.1f;
+        Ambient = g_Material.Ambient * g_Light.LightAmbient;
         Diffuse = g_Material.Diffuse * g_Light.LightDiffuse * 0.1f;
         Specular = g_Material.Specular * g_Light.LightSpecular * 0.1f;
         return;
@@ -280,10 +284,13 @@ void ComputeSpotBomiLight(float3 vNormal, float3 vPos, float3 vToCamera, out flo
 
     Ambient = g_Material.Ambient * g_Light.LightAmbient;
     Diffuse = g_Material.Diffuse * g_Light.LightDiffuse * max(dot(vToLight, vNormal), 0.0f) * SpotStrong * LightStrong;
-    Specular = g_Material.Specular * g_Light.LightSpecular * max(dot(vHalfWay, vNormal), 0.0f) * SpotStrong * LightStrong;
+
+    LightStrong *= g_Material.Specular.w;
+    Specular = float4(g_Material.Specular.xyz, 0.0f) * g_Light.LightSpecular * max(dot(vHalfWay, vNormal), 0.0f) * SpotStrong * LightStrong;
 }
 
 //픽셀압축
+//Convert Color
 float CompressColor(float4 vColor)
 {
     uint4 vColor1 = (uint4) 0;
@@ -304,6 +311,7 @@ float CompressColor(float4 vColor)
     return asfloat(OutColor);
 }
 
+// 압축 해제
 float4 DecompressColor(float Color)
 {
     uint inColor = asuint(Color);

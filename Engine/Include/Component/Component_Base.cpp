@@ -72,6 +72,10 @@ const list<JEONG::Component_Base*>* JEONG::Component_Base::FindComponentFromType
 {
 	return m_Object->FindComponentFromType(type);
 }
+const list<Component_Base*>* Component_Base::FindComponentFromTypeNoneCount(COMPONENT_TYPE type)
+{
+	return m_Object->FindComponentFromTypeNoneCount(type);
+}
 
 JEONG::GameObject * JEONG::Component_Base::GetGameObject() const
 {

@@ -200,3 +200,18 @@ JEONG::GameObject * JEONG::Layer::FindObject(const string & TagName)
 	}
 	return NULLPTR;
 }
+
+GameObject * Layer::FindObjectNoneCount(const string & TagName)
+{
+	list<GameObject*>::iterator StartIter = m_ObjectList.begin();
+	list<GameObject*>::iterator EndIter = m_ObjectList.end();
+
+	for (; StartIter != EndIter; StartIter++)
+	{
+		if (((*StartIter)->GetTag() == TagName))
+		{
+			return *StartIter;
+		}
+	}
+	return NULLPTR;
+}

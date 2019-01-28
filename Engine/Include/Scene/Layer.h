@@ -21,6 +21,7 @@ public:
 
 	void AddObject(GameObject* object);
 	GameObject* FindObject(const string& TagName);
+	GameObject* FindObjectNoneCount(const string& TagName);
 
 private:
 	Scene* m_Scene;

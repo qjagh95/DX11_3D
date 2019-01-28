@@ -4,7 +4,7 @@
 JEONG_USING
 SINGLETON_VAR_INIT(JEONG::PathManager)
 
-JEONG::PathManager::PathManager()
+PathManager::PathManager()
 {
 	TCHAR strPath[MAX_PATH];
 	//실행파일 있는곳의 경로를 뽑아낸다.
@@ -28,16 +28,16 @@ JEONG::PathManager::PathManager()
 	AddPath(DATA_PATH, TEXT("Data\\"));
 }
 
-JEONG::PathManager::~PathManager()
+PathManager::~PathManager()
 {
 }
 
-bool JEONG::PathManager::Init()
+bool PathManager::Init()
 {
 	return true;
 }
 
-bool JEONG::PathManager::AddPath(const string & KeyName, const wstring & PathName, const string & BaseKeyName)
+bool PathManager::AddPath(const string & KeyName, const wstring & PathName, const string & BaseKeyName)
 {
 	if (FindPath(KeyName) != NULLPTR)
 		return false;
@@ -54,7 +54,7 @@ bool JEONG::PathManager::AddPath(const string & KeyName, const wstring & PathNam
 	return true;
 }
 
-const TCHAR * JEONG::PathManager::FindPath(const string & KeyName)
+const TCHAR * PathManager::FindPath(const string & KeyName)
 {
 	unordered_map<string, wstring>::iterator FindIter = PathMap.find(KeyName);
 
@@ -64,7 +64,7 @@ const TCHAR * JEONG::PathManager::FindPath(const string & KeyName)
 	return FindIter->second.c_str();
 }
 
-const char * JEONG::PathManager::FindPathMultiByte(const string & KeyName)
+const char * PathManager::FindPathMultiByte(const string & KeyName)
 {
 	const TCHAR* mPath = FindPath(KeyName);
 

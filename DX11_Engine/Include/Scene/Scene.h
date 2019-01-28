@@ -26,6 +26,7 @@ public:
 	Layer* FindLayer(const string& TagName);
 	Layer* FindLayerNoneCount(const string& TagName);
 	GameObject* FindObject(const string& TagName);
+	GameObject* FindObjectNoneCount(const string& TagName);
 
 	template<typename T>
 	bool AddSceneComponent(const string& TagName)

@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "StaticManager.h"
+#include "Scene/Scene.h"
+#include "Scene/Layer.h"
 
 JEONG_USING
 SINGLETON_VAR_INIT(JEONG::StaticManager)

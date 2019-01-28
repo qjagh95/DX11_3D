@@ -33,6 +33,7 @@ public:
 
 	const list<Component_Base*>* FindComponentFromTag(const string& TagName);
 	const list<Component_Base*>* FindComponentFromType(COMPONENT_TYPE type);
+	const list<Component_Base*>* FindComponentFromTypeNoneCount(COMPONENT_TYPE type);
 
 	template<typename T>
 	T* AddComponent(const string& TagName)
@@ -50,6 +51,12 @@ public:
 	T* FindComponentFromType(COMPONENT_TYPE type)
 	{
 		return m_Object->FindComponentFromType<T>(type);
+	}
+
+	template<typename T>
+	T* FindComponentFromTypeNoneCount(COMPONENT_TYPE type)
+	{
+		return m_Object->FindComponentFromTypeNoneCount<T>(type);
 	}
 
 protected:

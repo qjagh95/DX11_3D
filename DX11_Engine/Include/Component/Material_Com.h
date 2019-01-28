@@ -9,8 +9,8 @@ struct JEONG_DLL SubsetMaterial
 {
 	MaterialCbuffer MatrialInfo;
 
-	vector<JEONG::Texture*> vecDiffuseTexture;
-	vector<JEONG::Sampler*> vecDiffuseSampler;
+	vector<Texture*> vecDiffuseTexture;
+	vector<Sampler*> vecDiffuseSampler;
 
 	SubsetMaterial();
 	~SubsetMaterial();
@@ -36,6 +36,7 @@ public:
 	void SetDiffuseTextureFromFullPath(int RegisterNumber, const string& KeyName, const TCHAR* FullPath, int Container = 0, int Subset = 0);
 	void SetSampler(int RegisterNumber, const string& KeyName, int Container = 0, int Subset = 0);
 	void SetShader(int Container = 0, int Subset = 0);
+	MaterialCbuffer GetMaterialInfo() const { return m_vecMaterial[0][0]->MatrialInfo; }
 
 private:
 	//메쉬도 컨테이너와 서브셋개념으로 나눠져있기때문에 재질정보도 각 부위마다 달라질 수 있다.

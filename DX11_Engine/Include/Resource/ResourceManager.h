@@ -14,6 +14,9 @@ public:
 	bool CreateTextureFromFullPath(const string& KeyName, const TCHAR* FullPath);
 	bool CreateSampler(const string& KeyName, D3D11_FILTER eFilter = D3D11_FILTER_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_MODE eU = D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_MODE eV = D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_MODE eW = D3D11_TEXTURE_ADDRESS_WRAP);
 	void CreateSphereMesh(const string& KeyName, float Radius, int 가로Slice, int 세로Slice);
+	void CreateCapsulMesh(const string& KeyName, float Radius, int 가로Slice, int 세로Slice);
+	void CreateCylinderMesh(const string& KeyName, float Radius, int 가로Slice, int 세로Slice);
+	void CreateCornMesh(const string& KeyName, float Radius, int 가로Slice, int 세로Slice);
 
 private:
 

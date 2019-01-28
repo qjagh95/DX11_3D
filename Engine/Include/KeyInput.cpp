@@ -20,10 +20,9 @@ SINGLETON_VAR_INIT(KeyInput)
 bool KeyInput::m_isMosueShow = false;
 
 KeyInput::KeyInput()
+	:m_MouseObject(NULLPTR), m_MouseWorldPoint(NULLPTR), m_ShowCursor(false)
 {
-	m_MouseObject = NULLPTR;
-	m_MouseWorldPoint = NULLPTR;
-	m_ShowCursor = false;
+
 }
 
 JEONG::KeyInput::~KeyInput()
@@ -35,7 +34,7 @@ JEONG::KeyInput::~KeyInput()
 	Safe_Delete_Map(m_KeyAxisMap);
 	Safe_Delete_Map(m_KeyActionMap);
 
-	if (m_Keyboard != NULLPTR)
+	if (m_Keyboard)
 	{
 		m_Keyboard->Unacquire();
 		SAFE_RELEASE(m_Keyboard);
@@ -46,11 +45,6 @@ JEONG::KeyInput::~KeyInput()
 
 bool KeyInput::Init()
 {
-	ZeroMemory(m_KeyPress, sizeof(bool) * 256);
-	ZeroMemory(m_KeyDown, sizeof(bool) * 256);
-	ZeroMemory(m_KeyUp, sizeof(bool) * 256);
-	ZeroMemory(m_Key, sizeof(bool) * 256);
-
 	if (FAILED(DirectInput8Create(Core::Get()->GetHinstance(), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&m_Input, NULLPTR)))
 		return false;
 
@@ -60,14 +54,14 @@ bool KeyInput::Init()
 	if (FAILED(m_Keyboard->SetDataFormat(&c_dfDIKeyboard)))
 		return false;
 
-	//창이 활성화 됬을대만 키 옵션을 받는 옵션.
-	if (FAILED(m_Keyboard->SetCooperativeLevel(Core::Get()->GetHwnd(), DISCL_EXCLUSIVE | DISCL_FOREGROUND)))
-		return false;
+	//창이 활성화 됬을대만 키 옵션을 받는 옵션. (안되넹)
+	//if (FAILED(m_Keyboard->SetCooperativeLevel(Core::Get()->GetHwnd(), DISCL_EXCLUSIVE)))
+	//	return false;
 
 	if (FAILED(m_Keyboard->Acquire()))
 		return false;
 
-	m_MouseObject = GameObject::CreateObject("MouseObject");
+	m_MouseObject = JEONG::GameObject::CreateObject("MouseObject");
 	m_MouseObject->GetTransform()->SetWorldScale(Vector3(31.0f, 32.0f, 0.0f));
 	m_MouseObject->GetTransform()->SetWorldPivot(Vector3(0.0f, 1.0f, 0.0f));
 
@@ -99,32 +93,28 @@ void KeyInput::Update(float DeltaTime)
 
 	for (size_t i = 0; i < m_KeyList.size(); ++i)
 	{
-		if (m_Key[m_KeyList[i]] & 0x80)
-		{
-			if (m_KeyDown[m_KeyList[i]] == false && m_KeyPress[m_KeyList[i]] == false)
-			{
-				m_KeyDown[m_KeyList[i]] = true;
-				m_KeyPress[m_KeyList[i]] = true;
-			}
+		unsigned char CurKey = m_KeyList[i];
 
+		if (m_Key[CurKey] & 0x80)
+		{
+			if (!m_KeyPress[CurKey] && !m_KeyDown[CurKey])
+				m_KeyPress[CurKey] = true;
 			else
 			{
-				m_KeyDown[m_KeyList[i]] = false;
-				m_KeyPress[m_KeyList[i]] = true;
+				m_KeyPress[CurKey] = false;
+				m_KeyDown[CurKey] = true;
 			}
 		}
 
-		else if (m_KeyDown[m_KeyList[i]] || m_KeyPress[m_KeyList[i]])
+		else if (m_KeyPress[CurKey] || m_KeyDown[CurKey])
 		{
-			m_KeyDown[m_KeyList[i]] = false;
-			m_KeyPress[m_KeyList[i]] = false;
-			m_KeyUp[m_KeyList[i]] = true;
+			m_KeyPress[CurKey] = false;
+			m_KeyDown[CurKey] = false;
+			m_KeyUp[CurKey] = true;
 		}
 
-		else if (m_KeyUp[m_KeyList[i]])
-		{
-			m_KeyUp[m_KeyList[i]] = false;
-		}
+		else if (m_KeyUp[CurKey])
+			m_KeyUp[CurKey] = false;
 	}
 
 	auto iter = m_KeyAxisMap.begin();
@@ -134,11 +124,13 @@ void KeyInput::Update(float DeltaTime)
 	{
 		for (size_t i = 0; i < iter->second->KeyList.size(); ++i)
 		{
-			float Scale = 0.f;
-			if (m_KeyPress[iter->second->KeyList[i]->Key] && iter->second->isFunctionBind == true)
+			KeyScale* CurKeyScale = iter->second->KeyList[i];
+
+			float fScale = 0.0f;
+			if (m_Key[CurKeyScale->Key] & 0x80 && iter->second->isFunctionBind)
 			{
-				Scale = iter->second->KeyList[i]->Scale;
-				iter->second->Func(Scale, DeltaTime);
+				fScale = CurKeyScale->Scale;
+				iter->second->Func(fScale, DeltaTime);
 			}
 		}
 	}
@@ -150,71 +142,65 @@ void KeyInput::Update(float DeltaTime)
 	{
 		if (m_Key[cSKey[i]] & 0x80)
 			bSKeyState[i] = true;
-
 		else
 			bSKeyState[i] = false;
 	}
 
-	unordered_map<string, BindAction*>::iterator iter2 = m_KeyActionMap.begin();
-	unordered_map<string, BindAction*>::iterator iter2End = m_KeyActionMap.end();
+	auto iter2 = m_KeyActionMap.begin();
+	auto iter2End = m_KeyActionMap.end();
 
 	for (; iter2 != iter2End; ++iter2)
 	{
 		for (size_t i = 0; i < iter2->second->KeyList.size(); ++i)
 		{
-			ActionKey* CurAction = iter2->second->KeyList[i];
-
 			bool bSKeyEnable[SKT_MAX] = { false, false, false };
+			ActionKey* CurActionKey = iter2->second->KeyList[i];
 
 			for (int i = 0; i < SKT_MAX; ++i)
 			{
-				if (CurAction->isSKey[i])
+				if (CurActionKey->isSKey[i])
 				{
 					if (bSKeyState[i])
 						bSKeyEnable[i] = true;
-
 					else
 						bSKeyEnable[i] = false;
 				}
-
 				else
 				{
 					if (bSKeyState[i])
 						bSKeyEnable[i] = false;
-
 					else
 						bSKeyEnable[i] = true;
 				}
 			}
 
-			if (m_KeyDown[CurAction->Key] && bSKeyEnable[SKT_CONTROL] && bSKeyEnable[SKT_SHIFT] && bSKeyEnable[SKT_ALT])
+			if (m_KeyDown[CurActionKey->Key] && bSKeyEnable[SKT_CONTROL] && bSKeyEnable[SKT_SHIFT] && bSKeyEnable[SKT_ALT])
 			{
-				if (CurAction->Down == false && CurAction->Press == false)
+				if (CurActionKey->Down == false && CurActionKey->Press == false)
 				{
-					CurAction->Down = true;
-					CurAction->Press = true;
+					CurActionKey->Down = true;
+					CurActionKey->Press = true;
 				}
 				else
-					CurAction->Down = false;
+					CurActionKey->Down = false;
 			}
 
-			else if (CurAction->Down == true || CurAction->Press == true)
+			else if (CurActionKey->Down || CurActionKey->Press)
 			{
-				CurAction->Down = false;
-				CurAction->Press = false;
-				CurAction->Up = true;
+				CurActionKey->Down = false;
+				CurActionKey->Press = false;
+				CurActionKey->Up = true;
 			}
+			else if (CurActionKey->Up)
+				CurActionKey->Up = false;
 
-			else if (CurAction->Up == true)
-				CurAction->Up = false;
-
-			if (iter2->second->KeyState & KEY_PRESS && CurAction->Down && iter2->second->isFunctionBind[AT_PRESS])
-				iter2->second->Func[AT_PRESS](DeltaTime);
-
-			if (iter2->second->KeyState & KEY_DOWN && CurAction->Down && iter2->second->isFunctionBind[AT_DOWN])
+			if (iter2->second->KeyState & KEY_DOWN && CurActionKey->Down && iter2->second->isFunctionBind[AT_DOWN])
 				iter2->second->Func[AT_DOWN](DeltaTime);
 
-			if (iter2->second->KeyState & KEY_UP && CurAction->Up && iter2->second->isFunctionBind[AT_UP])
+			if (iter2->second->KeyState & KEY_PRESS && CurActionKey->Press && iter2->second->isFunctionBind[AT_PRESS])
+				iter2->second->Func[AT_PRESS](DeltaTime);
+
+			if (iter2->second->KeyState & KEY_UP && CurActionKey->Up && iter2->second->isFunctionBind[AT_UP])
 				iter2->second->Func[AT_UP](DeltaTime);
 		}
 	}
@@ -243,7 +229,7 @@ void KeyInput::Update(float DeltaTime)
 	m_MouseScreenPos.x = (float)DevicePos.x;
 	m_MouseScreenPos.y = (float)DevicePos.y;
 
-	m_MouseWorldPos.x = DevicePos.x + m_CameraPos.x;  
+	m_MouseWorldPos.x = DevicePos.x + m_CameraPos.x;
 	m_MouseWorldPos.y = DevicePos.y + m_CameraPos.y;
 
 	m_MouseObject->GetTransform()->SetWorldPos((float)m_MouseScreenPos.x, (float)m_MouseScreenPos.y, 0.0f);
@@ -288,6 +274,26 @@ void KeyInput::UpdateMousePos()
 	m_MouseObject->LateUpdate(1.0f);
 }
 
+void KeyInput::DeleteActionKey(const string & KeyName)
+{
+	BindAction* getAction = FindAction(KeyName);
+
+	if (getAction == NULLPTR)
+		return;
+	
+	m_KeyActionMap.erase(KeyName);
+}
+
+void KeyInput::DeleteAxisKey(const string & KeyName)
+{
+	BindAxis* getAxis = FindAxis(KeyName);
+
+	if (getAxis == NULLPTR)
+		return;
+
+	m_KeyAxisMap.erase(KeyName);
+}
+
 BindAxis* KeyInput::FindAxis(const string& Name)
 {
 	auto FindIter = m_KeyAxisMap.find(Name);
@@ -310,12 +316,13 @@ BindAction* KeyInput::FindAction(const string& Name)
 
 bool KeyInput::ReadKeyBoard()
 {
-	HRESULT	result = m_Keyboard->GetDeviceState(256, (void*)m_Key);
+	HRESULT	result = m_Keyboard->GetDeviceState(256, m_Key);
 
 	if (FAILED(result))
 	{
 		if (result == DIERR_INPUTLOST || result == DIERR_NOTACQUIRED)
 			m_Keyboard->Acquire();
+
 		else
 			return false;
 	}

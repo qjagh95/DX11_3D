@@ -426,7 +426,7 @@ void RenderManager::RenderLightAcc(float DeltaTime)
 	{
 		for (size_t i = 0; i < m_LightGroup.Size; i++)
 		{
-			Light_Com* getLight = m_LightGroup.ObjectList[i]->FindComponentFromType<Light_Com>(CT_LIGHT);
+			Light_Com* getLight = m_LightGroup.ObjectList[i]->FindComponentFromTypeNoneCount<Light_Com>(CT_LIGHT);
 			
 			switch (getLight->GetLightType())
 			{
