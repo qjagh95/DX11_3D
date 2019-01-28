@@ -236,7 +236,6 @@ void ComputeSpotLight(float3 vNormal, float3 vPos, float3 vToCamera, out float4 
     float LightStrong;
     float SpotAmbientStrong;
     SpotAmbientStrong = pow(max(dot(-vToLight, g_Light.LightDirection), 0.0f), g_Light.FallOff);
-
     LightStrong = 1.0f / dot(g_Light.Attenuation, float3(1.0f, Distance, Distance * Distance));
 
     Ambient = g_Material.Ambient * g_Light.LightAmbient * SpotAmbientStrong;

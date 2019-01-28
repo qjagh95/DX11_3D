@@ -87,6 +87,18 @@ bool JEONG::ResourceManager::Init()
 		Vector3(-0.5f, -0.5f, -0.5f) //4
 	};
 
+	VertexNormalColor NormalRect[4] =
+	{
+		//투영공간은 -1 ~ 0의 범위를 갖는다.
+		VertexNormalColor(Vector3(-500.0f, 500.0f, 0.0f),Vector3(0.0f,0.0f,-1.0f), Vector4::Red),
+		VertexNormalColor(Vector3(500.0f, 500.0f, 0.0f),Vector3(0.0f,0.0f,-1.0f), Vector4::MediumSpringGreen),
+		VertexNormalColor(Vector3(500.0f, -500.0f, 0.0f),Vector3(0.0f,0.0f,-1.0f), Vector4::SteelBlue),
+		VertexNormalColor(Vector3(-500.0f, -500.0f, 0.0f),Vector3(0.0f,0.0f,-1.0f), Vector4::Purple)
+	};
+
+	unsigned short IndexRect12[6] = { 0, 1, 3, 3, 1, 2 };
+	CreateMesh("NormalRect", STANDARD_NORMAL_COLOR_SHADER, POS_NORMAL_COLOR_LAYOUT, NormalRect, 4, sizeof(VertexNormalColor), D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, IndexRect12, 6, 2, D3D11_USAGE_DEFAULT, DXGI_FORMAT_R16_UINT);
+
 	Vector3	PlaneNormal[4];
 	Vector3	Edge1, Edge2;
 

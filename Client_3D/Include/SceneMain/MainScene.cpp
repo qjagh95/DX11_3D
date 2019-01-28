@@ -40,10 +40,10 @@ bool MainScene::Init()
 
 	GameObject* newObject = GameObject::CreateObject("new", Default);
 	//newObject->GetTransform()->SetWorldRotX(-20.0f);
-	//newObject->GetTransform()->SetWorldScale(100.0f, 100.0f, 100.0f);
+	newObject->GetTransform()->SetWorldPos(0.0f, 0.0f, 2.0f);
 
 	Renderer_Com* RenderComponent = newObject->AddComponent<Renderer_Com>("Render");
-	RenderComponent->SetMesh("Pyramid");
+	RenderComponent->SetMesh("NormalRect");
 	RenderComponent->SetShader(STANDARD_NORMAL_COLOR_SHADER);
 
 	SAFE_RELEASE(RenderComponent);
