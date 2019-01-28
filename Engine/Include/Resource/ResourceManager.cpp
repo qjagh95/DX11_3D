@@ -53,7 +53,7 @@ bool JEONG::ResourceManager::Init()
 		VertexUV(Vector3(1.0f, 0.0f, 0.0f), Vector2(1.0f, 1.0f))
 	};
 
-	CreateMesh("TextureRect", STANDARD_UV_SHADER, POS_UV_LAYOUT, UVRect, 4, sizeof(VertexUV), D3D11_USAGE_DEFAULT,	D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, IndexRect, 6, 2);
+	CreateMesh("TextureRect", STANDARD_UV_SHADER, POS_UV_LAYOUT, UVRect, 4, sizeof(VertexUV), D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, IndexRect, 6, 2);
 	CreateSampler(LINER_SAMPLER);
 
 	Vector3	DebugColliderPos[5] =
@@ -80,17 +80,17 @@ bool JEONG::ResourceManager::Init()
 
 	Vector3	PyramidPos[5] =
 	{
-		Vector3(0.0f, 0.5f, 0.0f),
-		Vector3(-0.5f, -0.5f, 0.5f),
-		Vector3(0.5f, -0.5f, 0.5f),
-		Vector3(-0.5f, -0.5f, -0.5f),
-		Vector3(0.5f, -0.5f, -0.5f)
+		Vector3(0.0f, 0.5f, 0.0f),  //0
+		Vector3(-0.5f, -0.5f, 0.5f), //1
+		Vector3(0.5f, -0.5f, 0.5f), //2
+		Vector3(0.5f, -0.5f, -0.5f), //3
+		Vector3(-0.5f, -0.5f, -0.5f) //4
 	};
 
 	Vector3	PlaneNormal[4];
 	Vector3	Edge1, Edge2;
 
-	Edge1 = PyramidPos[3] - PyramidPos[0];
+	Edge1 = PyramidPos[4] - PyramidPos[0];
 	Edge2 = PyramidPos[1] - PyramidPos[0];
 	Edge1.Nomallize();
 	Edge2.Nomallize();
@@ -105,14 +105,14 @@ bool JEONG::ResourceManager::Init()
 	PlaneNormal[1].Nomallize();
 
 	Edge1 = PlaneNormal[2] - PyramidPos[0];
-	Edge2 = PlaneNormal[4] - PyramidPos[0];
+	Edge2 = PlaneNormal[3] - PyramidPos[0];
 	Edge1.Nomallize();
 	Edge2.Nomallize();
 	PlaneNormal[2] = Edge1.Cross(Edge2);
 	PlaneNormal[2].Nomallize();
 
-	Edge1 = PyramidPos[4] - PyramidPos[0];
-	Edge2 = PyramidPos[3] - PyramidPos[0];
+	Edge1 = PyramidPos[3] - PyramidPos[0];
+	Edge2 = PyramidPos[4] - PyramidPos[0];
 	Edge1.Nomallize();
 	Edge2.Nomallize();
 	PlaneNormal[3] = Edge1.Cross(Edge2);
@@ -122,30 +122,35 @@ bool JEONG::ResourceManager::Init()
 	Normal[0] = (PlaneNormal[0] + PlaneNormal[1]);
 	Normal[0].Nomallize();
 
-	Normal[1] = (PlaneNormal[2] + PlaneNormal[1]);
+	Normal[1] = (PlaneNormal[1] + PlaneNormal[2]);
 	Normal[1].Nomallize();
 
-	Normal[2] = (PlaneNormal[0] + PlaneNormal[3]);
+	Normal[2] = (PlaneNormal[2] + PlaneNormal[3]);
 	Normal[2].Nomallize();
 
-	Normal[3] = (PlaneNormal[2] + PlaneNormal[3]);
+	Normal[3] = (PlaneNormal[3] + PlaneNormal[0]);
 	Normal[3].Nomallize();
 
 	VertexNormalColor Pyramid[9] =
 	{
-		VertexNormalColor(Vector3(0.0f, 0.5f, 0.0f), Vector3(0.0f, 1.0f, 0.0f),  Vector4::Red),
-		VertexNormalColor(Vector3(-0.5f, -0.5f, 0.5f), Normal[0], Vector4::Green),
-		VertexNormalColor(Vector3(0.5f, -0.5f, 0.5f), Normal[1], Vector4::Blue),
-		VertexNormalColor(Vector3(-0.5f, -0.5f, -0.5f), Normal[2], Vector4::Yellow),
-		VertexNormalColor(Vector3(0.5f, -0.5f, -0.5f), Normal[3], Vector4::Magenta),
-		VertexNormalColor(Vector3(-0.5f, -0.5f, 0.5f), Vector3(0.0f, -1.0f, 0.0f), Vector4::Green),
-		VertexNormalColor(Vector3(0.5f, -0.5f, 0.5f), Vector3(0.0f, -1.0f, 0.0f), Vector4::Blue),
-		VertexNormalColor(Vector3(-0.5f, -0.5f, -0.5f), Vector3(0.0f, -1.0f, 0.0f), Vector4::Yellow),
-		VertexNormalColor(Vector3(0.5f, -0.5f, -0.5f), Vector3(0.0f, -1.0f, 0.0f), Vector4::Magenta)
+		VertexNormalColor(PyramidPos[0], Vector3(0.0f, 1.0f, 0.0f),  Vector4::Red),
+		VertexNormalColor(PyramidPos[1], Normal[0], Vector4::Green),
+		VertexNormalColor(PyramidPos[2], Normal[1], Vector4::Blue),
+		VertexNormalColor(PyramidPos[3], Normal[2], Vector4::Yellow),
+		VertexNormalColor(PyramidPos[4], Normal[3], Vector4::Magenta),
+		VertexNormalColor(PyramidPos[1], Vector3(0.0f, -1.0f, 0.0f), Vector4::Green),
+		VertexNormalColor(PyramidPos[2], Vector3(0.0f, -1.0f, 0.0f), Vector4::Blue),
+		VertexNormalColor(PyramidPos[3], Vector3(0.0f, -1.0f, 0.0f), Vector4::Yellow),
+		VertexNormalColor(PyramidPos[4], Vector3(0.0f, -1.0f, 0.0f), Vector4::Magenta)
 	};
 
-	int	PyramidIdx[18] = { 1, 0, 3, 2, 0, 1, 4, 0, 2, 3, 0, 4, 7, 8, 6, 7, 6, 5 };
-
+	int	PyramidIdx[18] = { 0, 4, 1, 2, 1, 0, 3, 0, 2, 4, 0, 3, 8, 6, 5, 7, 6, 8 };
+	//{0, 4, 1}
+	//{2, 1, 0}
+	//{3, 0, 2}
+	//{4, 0, 3}
+	//{8, 6, 5}
+	//{7, 6, 8}
 	CreateMesh("Pyramid", STANDARD_NORMAL_COLOR_SHADER, POS_NORMAL_COLOR_LAYOUT, Pyramid, 9, sizeof(VertexNormalColor), D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, PyramidIdx, 18, 4, D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
 
 	return true;
@@ -160,7 +165,7 @@ bool JEONG::ResourceManager::CreateMesh(const string & KeyName, const string & S
 		SAFE_RELEASE(newMesh);
 		return false;
 	}
-	
+
 	newMesh = new Mesh();
 
 	if (newMesh->CreateMesh(KeyName, ShaderKeyName, LayOutKeyName, vertexInfo, vertexCount, vertexSize, vertexUsage, primitiveType, indexInfo, indexCount, indexSize, indexUsage, indexFormat) == false)

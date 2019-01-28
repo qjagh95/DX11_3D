@@ -38,7 +38,7 @@ bool JEONG::Scene::Init()
 	AddLayer("Default", 2);
 	AddLayer("UI", INT_MAX);
 
-	m_MainCameraObject = CreateCamera("MainCamera", Vector3(0.0f, 0.0f, -5.0f), CT_ORTHO, (float)Device::Get()->GetWinSize().Width, (float)Device::Get()->GetWinSize().Height, 60.0f, 0.03f, 1000.0f);
+	m_MainCameraObject = CreateCamera("MainCamera", Vector3(0.0f, 0.0f, -200.0f), CT_PERSPECTIVE, (float)Device::Get()->GetWinSize().Width, (float)Device::Get()->GetWinSize().Height, 60.0f, 0.03f, 1000.0f);
 	m_MainCameraTransform = m_MainCameraObject->GetTransform();
 	m_MainCamera = m_MainCameraObject->FindComponentFromType<JEONG::Camera_Com>(CT_CAMERA);
 
@@ -58,7 +58,7 @@ int JEONG::Scene::Input(float DeltaTime)
 	list<JEONG::SceneComponent*>::iterator StartIter = m_SceneComponentList.begin();
 	list<JEONG::SceneComponent*>::iterator EndIter = m_SceneComponentList.end();
 
-	for (; StartIter != EndIter ; )
+	for (; StartIter != EndIter; )
 	{
 		if ((*StartIter)->GetIsActive() == false)
 		{
@@ -373,7 +373,7 @@ void JEONG::Scene::SetEnableLayer(const string & TagName, bool isShow)
 	list<JEONG::Layer*>::iterator StartIter = m_LayerList.begin();
 	list<JEONG::Layer*>::iterator EndIter = m_LayerList.end();
 
-	for (; StartIter != EndIter ; StartIter++)
+	for (; StartIter != EndIter; StartIter++)
 	{
 		if ((*StartIter)->GetTag() == TagName)
 		{
@@ -425,7 +425,7 @@ JEONG::GameObject * JEONG::Scene::FindObject(const string & TagName)
 	{
 		JEONG::GameObject* getObject = (*StartIter)->FindObject(TagName);
 
-		if(getObject != NULLPTR)
+		if (getObject != NULLPTR)
 			return getObject;
 	}
 	return NULLPTR;
