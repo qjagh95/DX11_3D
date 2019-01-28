@@ -66,13 +66,13 @@ int TitleBar_Com::Update(float DeltaTime)
 
 	if (m_isOver == true)
 	{
-		if (KeyInput::Get()->KeyPress("LButton"))
-		{
-			//타이틀 오브젝트 이동
-			m_TitleObject->GetTransform()->Move(Vector3(KeyInput::Get()->GetMouseGap().x, KeyInput::Get()->GetMouseGap().y, 0.0f), 1.0f);
-			//메인 오브젝트 이동.
-			mainObjectTrans->Move(Vector3(KeyInput::Get()->GetMouseGap().x, KeyInput::Get()->GetMouseGap().y, 0.0f), 1.0f);
-		}
+		//if (KeyInput::Get()->KeyPress("LButton"))
+		//{
+		//	//타이틀 오브젝트 이동
+		//	m_TitleObject->GetTransform()->Move(Vector3(KeyInput::Get()->GetMouseGap().x, KeyInput::Get()->GetMouseGap().y, 0.0f), 1.0f);
+		//	//메인 오브젝트 이동.
+		//	mainObjectTrans->Move(Vector3(KeyInput::Get()->GetMouseGap().x, KeyInput::Get()->GetMouseGap().y, 0.0f), 1.0f);
+		//}
 	}
 
 	return 0;

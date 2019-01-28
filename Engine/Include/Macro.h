@@ -19,10 +19,6 @@
 #define SOUND_PATH "SoundPath"
 #define DATA_PATH "DataPath"
 
-#define KEYPRESS(Key) KeyInput::Get()->KeyPress(key)
-#define KEYUP(Key) KeyInput::Get()->KeyUp(key)
-#define KEYPDOWN(Key) KeyInput::Get()->KeyDown(key)
-
 //BaseShader
 #define STANDARD_COLOR_SHADER "StandardColorShader"
 #define STANDARD_UV_SHADER "StandardUVShader"
@@ -35,6 +31,7 @@
 #define STANDARD_UV_STATIC_SHADER "StandardUVStaticShader"
 #define STANDARD_NORMAL_COLOR_SHADER "StandardNormalColorShader"
 #define LIGHT_DIR_ACC_SHADER "LightDirAccShader"
+#define LIGHT_POINT_ACC_SHADER "LightPointAccShader"
 #define LIGHT_BLEND_SHADER "LightBlendShader"
 
 //Base InputLayOut
@@ -47,10 +44,11 @@
 #define LINER_SAMPLER "Linear"
 #define POINT_SAMPLER "Point"
 
-//AlphaBlend
+//BlendState
 #define ALPHA_BLEND "AlphaBlend"
 #define DEPTH_DISABLE "DepthDisable"
 #define ACC_BLEND "AccBlend"
+#define CULL_NONE "CullNone"
 
 template<typename T>
 void Safe_Delete_VecList(T& p)

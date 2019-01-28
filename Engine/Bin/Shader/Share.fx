@@ -114,7 +114,8 @@ cbuffer Transform : register(b0)
     //두개를 더 선언하는 이유는 버텍스마다 곱하는 것 보다
     //이미 곱해진 값이 들어와서 연산하는게 훨씬더 빠르기때문이다.
     matrix g_WV;    //World * View
-    matrix g_WVP;   //World * View * Projection
+    matrix g_WVP; //World * View * Projection
+    matrix g_InvProjection;
 
     float3 g_Pivot;
     float g_Empty1;
@@ -229,7 +230,7 @@ void ComputePointLight(float3 vNormal, float3 vPos, float3 vToCamera, out float4
     //거리에따른 감쇠량
     LightStrong = 1.0f / dot(g_Light.Attenuation, float3(1.0f, Distance, Distance * Distance));
 
-    Ambient = g_Material.Ambient * g_Light.LightAmbient * LightStrong;
+    Ambient = g_Material.Ambient * g_Light.LightAmbient;
     Diffuse = g_Material.Diffuse * g_Light.LightDiffuse * max(dot(vToLight, vNormal), 0.0f) * LightStrong;
     Specular = g_Material.Specular * g_Light.LightSpecular * max(dot(vHalfWay, vNormal), 0.0f) * LightStrong;
 }
@@ -252,7 +253,7 @@ void ComputeSpotLight(float3 vNormal, float3 vPos, float3 vToCamera, out float4 
     float SpotStrong;
     SpotStrong = pow(max(dot(-vToLight, g_Light.LightDirection), 0.0f), g_Light.FallOff);
 
-    Ambient = g_Material.Ambient * g_Light.LightAmbient * SpotStrong;
+    Ambient = g_Material.Ambient * g_Light.LightAmbient;
     Diffuse = g_Material.Diffuse * g_Light.LightDiffuse * max(dot(vToLight, vNormal), 0.0f) * SpotStrong;
     Specular = g_Material.Specular * g_Light.LightSpecular * max(dot(vHalfWay, vNormal), 0.0f) * SpotStrong;
 }
@@ -277,11 +278,12 @@ void ComputeSpotBomiLight(float3 vNormal, float3 vPos, float3 vToCamera, out flo
     SpotStrong = pow(max(dot(-vToLight, g_Light.LightDirection), 0.0f), g_Light.FallOff);
     LightStrong = 1.0f / dot(g_Light.Attenuation, float3(1.0f, Distance, Distance * Distance));
 
-    Ambient = g_Material.Ambient * g_Light.LightAmbient * SpotStrong * LightStrong;
+    Ambient = g_Material.Ambient * g_Light.LightAmbient;
     Diffuse = g_Material.Diffuse * g_Light.LightDiffuse * max(dot(vToLight, vNormal), 0.0f) * SpotStrong * LightStrong;
     Specular = g_Material.Specular * g_Light.LightSpecular * max(dot(vHalfWay, vNormal), 0.0f) * SpotStrong * LightStrong;
 }
 
+//픽셀압축
 float CompressColor(float4 vColor)
 {
     uint4 vColor1 = (uint4) 0;
@@ -294,9 +296,9 @@ float CompressColor(float4 vColor)
     //바로 넣고
     OutColor = (uint) vColor1.a;
     //8비트 밀고 넣는다
-    OutColor = (OutColor << 8) | vColor1.r * 255;
-    OutColor = (OutColor << 8) | vColor1.g * 255;
-    OutColor = (OutColor << 8) | vColor1.b * 255;
+    OutColor = (OutColor << 8) | vColor1.r;
+    OutColor = (OutColor << 8) | vColor1.g;
+    OutColor = (OutColor << 8) | vColor1.b;
 
     //float으로 보다 정확하게 형변환해주는 함수.
     return asfloat(OutColor);
@@ -304,13 +306,14 @@ float CompressColor(float4 vColor)
 
 float4 DecompressColor(float Color)
 {
-    float4 OutColor;
     uint inColor = asuint(Color);
 
-    OutColor.b = (inColor & 0xff000000) / 255.0f;
-    OutColor.g = (inColor & 0x00ff0000) / 255.0f;
-    OutColor.r = (inColor & 0x0000ff00) / 255.0f;
-    OutColor.a = (inColor & 0x000000ff) / 255.0f;
+    float4 OutColor;
+    OutColor.b = (inColor & 0x000000ff) / 255.0f;
+    OutColor.g = (inColor >> 8 & 0x000000ff) / 255.0f;
+    OutColor.r = (inColor >> 16 & 0x000000ff) / 255.0f;
+    OutColor.a = (inColor >> 24 & 0x000000ff) / 255.0f;
 
     return OutColor;
+
 }

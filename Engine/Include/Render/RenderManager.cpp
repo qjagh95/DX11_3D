@@ -9,7 +9,7 @@
 #include "../Render/ShaderManager.h"
 #include "../Component/Light_Com.h"
 #include "../Resource/Sampler.h"
-
+ 
 #include "DepthStancilState.h"
 #include "Render/Shader.h"
 
@@ -29,6 +29,11 @@ JEONG::RenderManager::RenderManager()
 	m_GBufferMultiTarget = NULLPTR;
 	m_LightMultiTarget = NULLPTR;
 	m_AddBlend = NULLPTR;
+	m_LightAccPointShader = NULLPTR;
+	m_LightAccSpotShader = NULLPTR;
+	m_LightAccBlendShader = NULLPTR;
+	m_LightAccFullScreenShader = NULLPTR;
+
 	m_CBuffer = {};
 }
 
@@ -59,6 +64,11 @@ JEONG::RenderManager::~RenderManager()
 	SAFE_RELEASE(m_GBufferSampler);
 	SAFE_RELEASE(m_LightAccDirShader);
 	SAFE_RELEASE(m_AddBlend);
+
+	SAFE_RELEASE(m_LightAccPointShader);
+	SAFE_RELEASE(m_LightAccSpotShader);
+	SAFE_RELEASE(m_LightAccBlendShader);
+	SAFE_RELEASE(m_LightAccFullScreenShader);
 }
 
 bool JEONG::RenderManager::Init()
@@ -127,36 +137,32 @@ bool JEONG::RenderManager::Init()
 	AddMultiRenderTarget("GBuffer", "Depth");
 	AddMultiRenderTarget("GBuffer", "Material");
 
-	// Light Amb
-	vPos.x = 100.0f;
-	vPos.y = 0.0f;
-	if (CreateRenderTarget("LightAccAmbient", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.0f, 100.0f, 1.0f), true) == false)
-		return false;
-
 	// Light Dif
 	vPos.x = 100.0f;
-	vPos.y = 100.0f;
+	vPos.y = 0.0f;
 	if (CreateRenderTarget("LightAccDiffuse", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.0f, 100.0f, 1.0f), true) == false)
 		return false;
 
 	// Light Spc
 	vPos.x = 100.0f;
-	vPos.y = 200.0f;
+	vPos.y = 100.0f;
 	if (CreateRenderTarget("LightAccSpcular", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.0f, 100.0f, 1.0f), true) == false)
 		return false;
 
 	CreateMultiTarget("LightAcc");
-	AddMultiRenderTarget("LightAcc", "LightAccAmbient");
 	AddMultiRenderTarget("LightAcc", "LightAccDiffuse");
 	AddMultiRenderTarget("LightAcc", "LightAccSpcular");
 
-	m_GBufferSampler = ResourceManager::Get()->FindSampler(POINT_SAMPLER);
-	m_LightAccDirShader = ShaderManager::Get()->FindShader(LIGHT_DIR_ACC_SHADER);
+	m_GBufferSampler = ResourceManager::Get()->FindSamplerNoneCount(POINT_SAMPLER);
+	m_LightAccDirShader = ShaderManager::Get()->FindShaderNoneCount(LIGHT_DIR_ACC_SHADER);
 
 	m_AddBlend = FindRenderState(ACC_BLEND);
 
 	m_GBufferMultiTarget = FindMultiTarget("GBuffer");
 	m_LightMultiTarget = FindMultiTarget("LightAcc");
+
+	m_LightAccDirShader = ShaderManager::Get()->FindShaderNoneCount(LIGHT_DIR_ACC_SHADER);
+	m_LightAccPointShader = ShaderManager::Get()->FindShaderNoneCount(LIGHT_POINT_ACC_SHADER);
 
 	return true;
 }
@@ -314,7 +320,6 @@ bool JEONG::RenderManager::CreateMultiTarget(const string & MultiKey)
 
 	newTarget = new MultiRenderTarget();
 	m_MultiTargetMap.insert(make_pair(MultiKey, newTarget));
-
 	return true;
 }
 
@@ -352,10 +357,6 @@ MultiRenderTarget * RenderManager::FindMultiTarget(const string & MultiKey)
 	return FindIter->second;
 }
 
-void RenderManager::Render2D(float DeltaTime)
-{
-}
-
 void RenderManager::Render3D(float DeltaTime)
 {
 	if (m_isDeferred == false)
@@ -365,7 +366,8 @@ void RenderManager::Render3D(float DeltaTime)
 
 	unordered_map<string, RenderTarget*>::iterator	StartIter = m_RenderTargetMap.begin();
 	unordered_map<string, RenderTarget*>::iterator	EndIter = m_RenderTargetMap.end();
-
+	 
+	//사각형 출력하기만 함
 	for (; StartIter != EndIter; ++StartIter)
 		StartIter->second->Render(DeltaTime);
 }
@@ -376,7 +378,7 @@ void RenderManager::DeferredRender(float DeltaTime)
 	RenderGBuffer(DeltaTime);
 	RenderLightAcc(DeltaTime);
 
-	// UI부터~출력
+	//UI부터~출력
 	for (int i = RG_UI; i < RG_END; ++i)
 	{
 		for (int j = 0; j < m_RenderGroup[i].Size; ++j)
@@ -413,20 +415,47 @@ void RenderManager::RenderLightAcc(float DeltaTime)
 
 	m_LightMultiTarget->ClearRenderTarget(ClearColor);
 	m_LightMultiTarget->SetTarget();
-	m_AddBlend->SetState();
+	m_GBufferSampler->SetSamplerState(10);
+	m_DepthDisable->SetState();
+	//GBuffer타겟에서 뽑아져나온 픽셀데이터들을 10번에 셋팅하겠다.
+	//LightGBuffer 10번에 쓰겠다고 할때 경고 나온이유
+	//Light타겟에선 뽑아져나온 데이터가 없고
+	//데이터쓰고있는데 갑자기 10번에 셋팅하겠다고
+	//했기때문에 읽기와 쓰기를 동시에 할 수 없도록 셋팅했으므로 경고발생.
 	m_GBufferMultiTarget->SetShaderResource(10);
 	{
-
-	
+		for (size_t i = 0; i < m_LightGroup.Size; i++)
+		{
+			Light_Com* getLight = m_LightGroup.ObjectList[i]->FindComponentFromType<Light_Com>(CT_LIGHT);
+			
+			switch (getLight->GetLightType())
+			{
+				case LT_DIRECTION:
+					RenderDirectionLight(DeltaTime, getLight);
+					break;
+				case LT_POINT:
+					RenderPointLight(DeltaTime, getLight);
+					break;
+				case LT_SPOT:
+					RenderSpotLight(DeltaTime, getLight);
+					break;
+				case LT_SPOT_BOMI:
+					RenderBomiSpotLight(DeltaTime, getLight);
+					break;
+			}
+		}
 	}
 	m_GBufferMultiTarget->ResetShaderResource(10);
-	m_AddBlend->ResetState();
+	m_DepthDisable->ResetState();
 	m_LightMultiTarget->ResetTarget();
 }
 
-void RenderManager::RenderLightDirection(float DeltaTime, Light_Com * Light)
+void RenderManager::RenderDirectionLight(float DeltaTime, Light_Com * light)
 {
-	Light->UpdateCBuffer();
+	m_LightAccDirShader->SetShader();
+
+	// 조명 정보를 상수버퍼에 넘겨준다.
+	light->UpdateCBuffer();
 
 	// NULL Buffer로 전체 화면크기의 사각형을 출력한다.
 	Device::Get()->GetContext()->IASetInputLayout(NULLPTR);
@@ -438,16 +467,48 @@ void RenderManager::RenderLightDirection(float DeltaTime, Light_Com * Light)
 	Device::Get()->GetContext()->Draw(4, 0);
 }
 
-void RenderManager::RenderLightPoint(float DeltaTime, Light_Com * Light)
+void RenderManager::RenderPointLight(float DeltaTime, Light_Com * light)
 {
+	m_LightAccPointShader->SetShader();
 }
 
-void RenderManager::RenderLightSpot(float DeltaTime, Light_Com * Light)
+void RenderManager::RenderSpotLight(float DeltaTime, Light_Com * light)
 {
+	m_LightAccDirShader->SetShader();
+
+	// 조명 정보를 상수버퍼에 넘겨준다.
+	light->UpdateCBuffer();
+
+	// NULL Buffer로 전체 화면크기의 사각형을 출력한다.
+	Device::Get()->GetContext()->IASetInputLayout(NULLPTR);
+
+	UINT iOffset = 0;
+	Device::Get()->GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	Device::Get()->GetContext()->IASetVertexBuffers(0, 0, NULLPTR, 0, &iOffset);
+	Device::Get()->GetContext()->IASetIndexBuffer(0, DXGI_FORMAT_UNKNOWN, 0);
+	Device::Get()->GetContext()->Draw(4, 0);
 }
 
-void RenderManager::LightBlend(float DeltaTime)
+void RenderManager::RenderBomiSpotLight(float DeltaTime, Light_Com * light)
 {
+	m_LightAccDirShader->SetShader();
+
+	// 조명 정보를 상수버퍼에 넘겨준다.
+	light->UpdateCBuffer();
+
+	// NULL Buffer로 전체 화면크기의 사각형을 출력한다.
+	Device::Get()->GetContext()->IASetInputLayout(NULLPTR);
+
+	UINT iOffset = 0;
+	Device::Get()->GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	Device::Get()->GetContext()->IASetVertexBuffers(0, 0, NULLPTR, 0, &iOffset);
+	Device::Get()->GetContext()->IASetIndexBuffer(0, DXGI_FORMAT_UNKNOWN, 0);
+	Device::Get()->GetContext()->Draw(4, 0);
+}
+
+void RenderManager::RenderLightBlend(float DeltaTime)
+{
+
 }
 
 void JEONG::RenderManager::ForwardRender(float DeltaTime)

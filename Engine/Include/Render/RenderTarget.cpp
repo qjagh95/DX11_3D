@@ -1,16 +1,16 @@
-#include "../stdafx.h"
+#include "stdafx.h"
 #include "RenderTarget.h"
 #include "Shader.h"
 #include "DepthStancilState.h"
-#include "../Device.h"
-#include "../Resource/ResourceManager.h"
-#include "../Scene/SceneManager.h"
-#include "../Resource/Mesh.h"
-#include "../Component/Camera_Com.h"
-#include "../Resource/Sampler.h"
 #include "ShaderManager.h"
-#include "../Scene/Scene.h"
 #include "RenderManager.h"
+#include "../Resource/ResourceManager.h"
+#include "../Resource/Sampler.h"
+#include "../Resource/Mesh.h"
+#include "../Scene/SceneManager.h"
+#include "../Scene/Scene.h"
+#include "../Component/Camera_Com.h"
+#include "../Device.h"
 
 JEONG_USING
 
@@ -91,10 +91,10 @@ bool RenderTarget::CreateRenderTarget(DXGI_FORMAT TargetFormat, const Vector3 & 
 		textureDesc.Format = DepthFormat;
 		textureDesc.Usage = D3D11_USAGE_DEFAULT;
 
-		if (FAILED(Device::Get()->GetDevice()->CreateTexture2D(&textureDesc, nullptr, &m_DepthBuffer)))
+		if (FAILED(Device::Get()->GetDevice()->CreateTexture2D(&textureDesc, NULLPTR, &m_DepthBuffer)))
 			return false;
 
-		if (FAILED(Device::Get()->GetDevice()->CreateDepthStencilView(m_DepthBuffer, nullptr, &m_DepthView)))
+		if (FAILED(Device::Get()->GetDevice()->CreateDepthStencilView(m_DepthBuffer, NULLPTR, &m_DepthView)))
 			return false;
 	}
 
@@ -165,11 +165,15 @@ void RenderTarget::Render(float DeltaTime)
 	tTransform.WVP = tTransform.WV * matProj;
 	tTransform.Lenth = Vector3::Zero;
 
+	tTransform.InvProjection = tTransform.Projection;
+	tTransform.InvProjection.Inverse();
+
 	tTransform.World.Transpose();
 	tTransform.View.Transpose();
 	tTransform.Projection.Transpose();
 	tTransform.WV.Transpose();
 	tTransform.WVP.Transpose();
+	tTransform.InvProjection.Transpose();
 
 	ShaderManager::Get()->UpdateCBuffer("Transform", &tTransform);
 

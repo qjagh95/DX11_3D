@@ -16,11 +16,11 @@
 #include "Scene/SceneManager.h"
 
 JEONG_USING
-SINGLETON_VAR_INIT(JEONG::KeyInput)
+SINGLETON_VAR_INIT(KeyInput)
 bool KeyInput::m_isMosueShow = false;
 
-JEONG::KeyInput::KeyInput()
-	:m_NewKey(NULLPTR), m_MouseObject(NULLPTR), m_EquipObject(NULLPTR), m_MouseWorldPoint(NULLPTR) ,m_ShowCursor(false), m_isEquip(false)
+KeyInput::KeyInput()
+	:m_MouseObject(NULLPTR), m_MouseWorldPoint(NULLPTR), m_ShowCursor(false)
 {
 	
 }
@@ -30,20 +30,36 @@ JEONG::KeyInput::~KeyInput()
 	SAFE_RELEASE(m_MouseWindowPoint);
 	SAFE_RELEASE(m_MouseWorldPoint);
 	SAFE_RELEASE(m_MouseObject);
-	SAFE_RELEASE(m_EquipObject);
-	Safe_Delete_Map(m_KeyMap);
+
+	Safe_Delete_Map(m_KeyAxisMap);
+	Safe_Delete_Map(m_KeyActionMap);
+
+	if (m_Keyboard)
+	{
+		m_Keyboard->Unacquire();
+		SAFE_RELEASE(m_Keyboard);
+	}
+
+	SAFE_RELEASE(m_Input);
 }
 
-bool JEONG::KeyInput::Init()
+bool KeyInput::Init()
 {
-	AddKey("MoveLeft", 'A');
-	AddKey("MoveRight", 'D');
-	AddKey("MoveUp", 'W');
-	AddKey("MoveDown", 'S');
-	AddKey("F1", VK_F1);
-	AddKey("LButton", VK_LBUTTON);
-	AddKey("RButton", VK_RBUTTON);
-	AddKey("MButton", VK_MBUTTON);
+	if (FAILED(DirectInput8Create(Core::Get()->GetHinstance(), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&m_Input, NULLPTR)))
+		return false;
+
+	if (FAILED(m_Input->CreateDevice(GUID_SysKeyboard, &m_Keyboard, NULLPTR)))
+		return false;
+
+	if (FAILED(m_Keyboard->SetDataFormat(&c_dfDIKeyboard)))
+		return false;
+
+	//창이 활성화 됬을대만 키 옵션을 받는 옵션. (안되넹)
+	//if (FAILED(m_Keyboard->SetCooperativeLevel(Core::Get()->GetHwnd(), DISCL_EXCLUSIVE)))
+	//	return false;
+
+	if (FAILED(m_Keyboard->Acquire()))
+		return false;
 
 	m_MouseObject = JEONG::GameObject::CreateObject("MouseObject");
 	m_MouseObject->GetTransform()->SetWorldScale(Vector3(31.0f, 32.0f, 0.0f));
@@ -71,45 +87,73 @@ bool JEONG::KeyInput::Init()
 	return true;
 }
 
-void JEONG::KeyInput::Update(float DeltaTime)
+void KeyInput::Update(float DeltaTime)
 {
-	JEONG::Scene* curScene = JEONG::SceneManager::Get()->GetCurScene();
-	m_CameraPos = curScene->GetMainCameraTransform()->GetWorldPos();
+	ReadKeyBoard();
 
-	unordered_map<string, JEONG::KeyInfo*>::iterator StartIter = m_KeyMap.begin();
-	unordered_map<string, JEONG::KeyInfo*>::iterator EndIter = m_KeyMap.end();
+	auto iterKey = m_KeyList.begin();
+	auto iterKeyEnd = m_KeyList.end();
 
-	for (; StartIter != EndIter; ++StartIter)
+	for (; iterKey != iterKeyEnd; ++iterKey)
 	{
-		size_t	iCount = 0;
-		for (size_t i = 0; i < StartIter->second->vecKey.size(); ++i)
+		if (m_Key[*iterKey] & 0x80)
 		{
-			if (GetAsyncKeyState((int)StartIter->second->vecKey[i]) & 0x8000)
-				++iCount;
-		}
+			if (!m_KeyPress[*iterKey] && !m_KeyDown[*iterKey])
+				m_KeyPress[*iterKey] = true;
 
-		if (iCount == StartIter->second->vecKey.size())
-		{
-			if (StartIter->second->KeyDown == false && StartIter->second->KeyPress == false)
+			else
 			{
-				StartIter->second->KeyDown = true;
-				StartIter->second->KeyPress = true;
+				m_KeyPress[*iterKey] = false;
+				m_KeyDown[*iterKey] = true;
 			}
-
-			else if (StartIter->second->KeyDown == true)
-				StartIter->second->KeyDown = false;
 		}
 
-		else if (StartIter->second->KeyPress == true)
+		else if (m_KeyPress[*iterKey] || m_KeyDown[*iterKey])
 		{
-			StartIter->second->KeyUp = true;
-			StartIter->second->KeyDown = false;
-			StartIter->second->KeyPress = false;
+			m_KeyPress[*iterKey] = false;
+			m_KeyDown[*iterKey] = false;
+			m_KeyUp[*iterKey] = true;
 		}
 
-		else if (StartIter->second->KeyUp == true)
-			StartIter->second->KeyUp = false;
+		else if (m_KeyUp[*iterKey])
+			m_KeyUp[*iterKey] = false;
 	}
+
+	auto iter = m_KeyAxisMap.begin();
+	auto iterEnd = m_KeyAxisMap.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		auto iter1 = iter->second->KeyList.begin();
+		auto iter1End = iter->second->KeyList.end();
+
+		for (; iter1 != iter1End; ++iter1)
+		{
+			float	fScale = 0.f;
+
+			if (m_Key[(*iter1)->Key] & 0x80)
+				fScale = (*iter1)->Scale;
+
+			if (iter->second->isFunctionBind)
+				iter->second->Func(fScale, DeltaTime);
+		}
+	}
+
+	auto iter2 = m_KeyActionMap.begin();
+	auto iter2End = m_KeyActionMap.end();
+
+	for (; iter2 != iter2End; ++iter2)
+	{
+		auto iter1 = iter2->second->KeyList.begin();
+		auto iter1End = iter2->second->KeyList.end();
+
+		for (; iter1 != iter1End; ++iter1)
+		{
+		}
+	}
+
+	Scene* curScene = SceneManager::Get()->GetCurScene();
+	m_CameraPos = curScene->GetMainCameraTransform()->GetWorldPos();
 
 	POINT tempPos;
 	RECT ScreenRect;
@@ -156,9 +200,9 @@ void JEONG::KeyInput::Update(float DeltaTime)
 	SAFE_RELEASE(curScene);
 }
 
-void JEONG::KeyInput::RenderMouse(float DeltaTime)
+void KeyInput::RenderMouse(float DeltaTime)
 {
-	//m_MouseObject->Render(DeltaTime);
+	m_MouseObject->Render(DeltaTime);
 }
 
 Vector3 KeyInput::GetMouseWorldPos() const
@@ -166,67 +210,49 @@ Vector3 KeyInput::GetMouseWorldPos() const
 	return Vector3(m_MouseWorldPos.x, m_MouseWorldPos.y, 0.0f);
 }
 
-void JEONG::KeyInput::ChangeMouseScene(JEONG::Scene * pScene)
+void KeyInput::ChangeMouseScene(JEONG::Scene * pScene)
 {
 	m_MouseObject->SetScene(pScene);
 }
 
-void JEONG::KeyInput::UpdateMousePos()
+void KeyInput::UpdateMousePos()
 {
 	m_MouseWorldPoint->SetInfo(m_CameraPos);
 	m_MouseObject->LateUpdate(1.0f);
 }
 
-bool JEONG::KeyInput::KeyDown(const string & Name)
+BindAxis* KeyInput::FindAxis(const string& Name)
 {
-	JEONG::KeyInfo* getKey = FindKey(Name);
+	auto FindIter = m_KeyAxisMap.find(Name);
 
-	if (getKey == NULLPTR)
-		return false;
-
-	return getKey->KeyDown;
-}
-
-bool JEONG::KeyInput::KeyPress(const string & Name)
-{
-	JEONG::KeyInfo* getKey = FindKey(Name);
-
-	if (getKey == NULLPTR)
-		return false;
-
-	return getKey->KeyPress;
-}
-
-bool JEONG::KeyInput::KeyUp(const string & Name)
-{
-	JEONG::KeyInfo* getKey = FindKey(Name);
-
-	if (getKey == NULLPTR)
-		return false;
-
-	return getKey->KeyUp;
-}
-   
-JEONG::KeyInfo* JEONG::KeyInput::FindKey(const string& Name)
-{
-	unordered_map<string, JEONG::KeyInfo*>::iterator FindIter = m_KeyMap.find(Name);
-
-	if (FindIter == m_KeyMap.end())
+	if (FindIter == m_KeyAxisMap.end())
 		return NULLPTR;
-	
+
 	return FindIter->second;
 }
-void JEONG::KeyInput::SetEquipObject(JEONG::GameObject * object)
+
+BindAction* KeyInput::FindAction(const string& Name)
 {
-	m_EquipObject = object;
-	m_isEquip = true;
+	auto FindIter = m_KeyActionMap.find(Name);
+
+	if (FindIter == m_KeyActionMap.end())
+		return NULLPTR;
+
+	return FindIter->second;
 }
 
-void JEONG::KeyInput::ResetEquipObject()
+bool KeyInput::ReadKeyBoard()
 {
-	if (m_EquipObject != NULLPTR)
+	HRESULT	result = m_Keyboard->GetDeviceState(256, m_Key);
+
+	if (FAILED(result))
 	{
-		m_EquipObject = NULLPTR;
-		m_isEquip = false;
+		if (result == DIERR_INPUTLOST || result == DIERR_NOTACQUIRED)
+			m_Keyboard->Acquire();
+
+		else
+			return false;
 	}
+
+	return true;
 }

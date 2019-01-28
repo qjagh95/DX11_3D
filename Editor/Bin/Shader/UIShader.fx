@@ -43,7 +43,7 @@ PS_OUTPUT_SINGLE UIPS(VS_OUTPUT_UV input)
 {
     PS_OUTPUT_SINGLE output = (PS_OUTPUT_SINGLE) 0;
 
-    output.vTarget0 = Diffuse.Sample(DiffuseSampler, input.vUV) * g_ButtonColor;   
+    output.vTarget0 = Diffuse.Sample(DiffuseSampler, input.vUV) * g_ButtonColor;
 
     return output;
 }

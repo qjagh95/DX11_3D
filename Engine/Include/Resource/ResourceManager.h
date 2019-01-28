@@ -13,6 +13,10 @@ public:
 	bool CreateTexture(const string& KeyName, const TCHAR* FileName, const string& PathKey = TEXTURE_PATH);
 	bool CreateTextureFromFullPath(const string& KeyName, const TCHAR* FullPath);
 	bool CreateSampler(const string& KeyName, D3D11_FILTER eFilter = D3D11_FILTER_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_MODE eU = D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_MODE eV = D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_MODE eW = D3D11_TEXTURE_ADDRESS_WRAP);
+	void CreateSphereMesh(const string& KeyName, float Radius, int 가로Slice, int 세로Slice);
+
+private:
+
 
 private:
 	unordered_map<string, Mesh*> m_MeshMap;
@@ -23,6 +27,7 @@ public:
 	Mesh* FindMesh(const string& KeyName);
 	Texture* FindTexture(const string& KeyName);
 	Sampler* FindSampler(const string& KeyName);
+	Sampler* FindSamplerNoneCount(const string& KeyName);
 
 public:
 	CLASS_IN_SINGLE(ResourceManager)

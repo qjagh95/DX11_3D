@@ -277,6 +277,8 @@ void JEONG::Renderer_Com::UpdateTransform()
 
 	cBuffer.WV = cBuffer.World * cBuffer.View;
 	cBuffer.WVP = cBuffer.WV * cBuffer.Projection;
+	cBuffer.InvProjection = cBuffer.Projection;
+	cBuffer.InvProjection.Inverse();
 
 	cBuffer.Pivot = m_Transform->GetPivot();
 	cBuffer.Lenth = m_Mesh->GetLenth();
@@ -287,6 +289,7 @@ void JEONG::Renderer_Com::UpdateTransform()
 	cBuffer.Projection.Transpose();
 	cBuffer.WV.Transpose();
 	cBuffer.WVP.Transpose();
+	cBuffer.InvProjection.Transpose();
 
 	//미리 정의해놓은 상수버퍼(ID3D11Buffer)를 가져와서 업데이트 시킨다.
 	//버텍스쉐이더와 픽셀쉐이더에 위에서 값을 가져온 행렬들을 (상수버퍼) 셋팅해준다. 

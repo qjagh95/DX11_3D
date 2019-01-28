@@ -28,6 +28,7 @@ public:
 	void SetLightOutAngle(float OutAngle);
 	void SetLightColor(const Vector4& Ambient, const Vector4& Diffuse, const Vector4& Specular);
 	LIGHT_TYPE GetLightType() const { return (LIGHT_TYPE)m_tLightInfo.LightType; }
+	LightCBuffer GetLightInfo() const { return m_tLightInfo; }
 
 private:
 	LightCBuffer m_tLightInfo;

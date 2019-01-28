@@ -94,6 +94,8 @@ void ColliderPoint_Com::Render(float DeltaTime)
 	TransCBuffer.Projection = getCamera->GetProjection();
 	TransCBuffer.Pivot = Vector3{ 0.0f, 0.0f, 0.0f };
 	TransCBuffer.Lenth = m_Mesh->GetLenth();
+	TransCBuffer.InvProjection = TransCBuffer.Projection;
+	TransCBuffer.InvProjection.Inverse();
 
 	TransCBuffer.WV = TransCBuffer.World * TransCBuffer.View;
 	TransCBuffer.WVP = TransCBuffer.WV * TransCBuffer.Projection;
@@ -103,6 +105,7 @@ void ColliderPoint_Com::Render(float DeltaTime)
 	TransCBuffer.Projection.Transpose();
 	TransCBuffer.WV.Transpose();
 	TransCBuffer.WVP.Transpose();
+	TransCBuffer.InvProjection.Transpose();
 
 	ShaderManager::Get()->UpdateCBuffer("Transform", &TransCBuffer);
 	Collider_Com::Render(DeltaTime);

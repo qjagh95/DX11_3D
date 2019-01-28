@@ -39,7 +39,7 @@ WPARAM Core::m_wParam;
 Core::Core()
 {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	//_CrtSetBreakAlloc(390);  
+	//_CrtSetBreakAlloc(1201);
 	ZeroMemory(ClearColor, sizeof(float) * 4);
 	PathManager::Get();
 }
@@ -283,8 +283,8 @@ int Core::Update(float DeltaTime)
 {
 	SceneManager::Get()->Update(DeltaTime);
 
-	if (KeyInput::Get()->KeyDown("F1"))
-		GUIManager::Get()->m_isShow ^= true;
+	//if (KeyInput::Get()->KeyDown("F1"))
+	//	GUIManager::Get()->m_isShow ^= true;
 
 	return 0;
 }
@@ -298,7 +298,6 @@ int Core::LateUpdate(float DeltaTime)
 int Core::Collsion(float DeltaTime)
 {
 	SceneManager::Get()->Collision(DeltaTime);
-	
 	return 0;
 }
 

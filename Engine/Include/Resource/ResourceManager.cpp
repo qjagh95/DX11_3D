@@ -262,6 +262,16 @@ bool JEONG::ResourceManager::CreateSampler(const string & KeyName, D3D11_FILTER 
 	return true;
 }
 
+void ResourceManager::CreateSphereMesh(const string& KeyName, float Radius, int 가로Slice, int 세로Slice)
+{
+	vector<VertexNormalUV> vecVertexData;
+
+	for (int i = 0; i < 세로Slice; i++)
+	{
+
+	}
+}
+
 JEONG::Mesh* JEONG::ResourceManager::FindMesh(const string & TagName)
 {
 	unordered_map<string, JEONG::Mesh*>::iterator FindIter = m_MeshMap.find(TagName);
@@ -294,6 +304,16 @@ Sampler * JEONG::ResourceManager::FindSampler(const string & KeyName)
 		return NULLPTR;
 
 	FindIter->second->AddRefCount();
+
+	return FindIter->second;
+}
+
+Sampler * ResourceManager::FindSamplerNoneCount(const string & KeyName)
+{
+	unordered_map<string, JEONG::Sampler*>::iterator FindIter = m_SamplerMap.find(KeyName);
+
+	if (FindIter == m_SamplerMap.end())
+		return NULLPTR;
 
 	return FindIter->second;
 }

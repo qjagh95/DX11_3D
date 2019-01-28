@@ -20,11 +20,6 @@ FreeCamera_Com::~FreeCamera_Com()
 
 bool FreeCamera_Com::Init()
 {
-	KeyInput::Get()->AddKey("CameraUp", 'W');
-	KeyInput::Get()->AddKey("CameraDown", 'S');
-	KeyInput::Get()->AddKey("CameraLeft", 'A');
-	KeyInput::Get()->AddKey("CameraRight", 'D');
-
 	m_Speed = 1000.0f;
 	return true;
 }
@@ -36,15 +31,15 @@ int FreeCamera_Com::Input(float DeltaTime)
 
 int FreeCamera_Com::Update(float DeltaTime)
 {
-	if (KeyInput::Get()->KeyPress("CameraUp"))
-		m_Transform->Move(AXIS_Y, m_Speed, DeltaTime);
-	else if (KeyInput::Get()->KeyPress("CameraDown"))
-		m_Transform->Move(AXIS_Y, -m_Speed, DeltaTime);
+	//if (KeyInput::Get()->KeyPress("CameraUp"))
+	//	m_Transform->Move(AXIS_Y, m_Speed, DeltaTime);
+	//else if (KeyInput::Get()->KeyPress("CameraDown"))
+	//	m_Transform->Move(AXIS_Y, -m_Speed, DeltaTime);
 
-	if (KeyInput::Get()->KeyPress("CameraLeft"))
-		m_Transform->Move(AXIS_X, -m_Speed, DeltaTime);
-	else if (KeyInput::Get()->KeyPress("CameraRight"))
-		m_Transform->Move(AXIS_X, m_Speed, DeltaTime);
+	//if (KeyInput::Get()->KeyPress("CameraLeft"))
+	//	m_Transform->Move(AXIS_X, -m_Speed, DeltaTime);
+	//else if (KeyInput::Get()->KeyPress("CameraRight"))
+	//	m_Transform->Move(AXIS_X, m_Speed, DeltaTime);
 
 	return 0;
 }

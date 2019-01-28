@@ -83,11 +83,11 @@ void Button_Com::CollisionLateUpdate(float DeltaTime)
 {
 	if (m_ButtonState == BS_MOUSEOVER || m_ButtonState == BS_CLICK)
 	{
-		if (KeyInput::Get()->KeyPress("LButton"))
-			m_ButtonState = BS_CLICK;
+		//if (KeyInput::Get()->KeyPress("LButton"))
+		//	m_ButtonState = BS_CLICK;
 
-		else if (KeyInput::Get()->KeyUp("LButton"))
-			m_ButtonCallBack(DeltaTime);
+		//else if (KeyInput::Get()->KeyUp("LButton"))
+		//	m_ButtonCallBack(DeltaTime);
 	}
 }
 

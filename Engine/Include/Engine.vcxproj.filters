@@ -220,6 +220,9 @@
     <Filter Include="Core\09. Render\07. MultiRenderTarget">
       <UniqueIdentifier>{290a9996-7f30-4308-b480-e047c1bea53b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\09. Render\02. RenderState\ResterizerState">
+      <UniqueIdentifier>{61ca0a12-15db-4786-a7bb-6dcce4b76ed0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -414,6 +417,9 @@
     <ClInclude Include="Render\MultiRenderTarget.h">
       <Filter>Core\09. Render\07. MultiRenderTarget</Filter>
     </ClInclude>
+    <ClInclude Include="Render\ResterizerState.h">
+      <Filter>Core\09. Render\02. RenderState\ResterizerState</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Copy.bat">
@@ -600,6 +606,9 @@
     </ClCompile>
     <ClCompile Include="Render\MultiRenderTarget.cpp">
       <Filter>Core\09. Render\07. MultiRenderTarget</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\ResterizerState.cpp">
+      <Filter>Core\09. Render\02. RenderState\ResterizerState</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

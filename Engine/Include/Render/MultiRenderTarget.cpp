@@ -24,6 +24,8 @@ void MultiRenderTarget::AddRenderTargetView(const string& TargetName)
 	m_vecTargetView.push_back(getTarget->GetRenderTargetView());
 	m_vecOldTargetView.resize(m_vecTargetView.size());
 	m_vecShaderResourceView.push_back(getTarget->GetShaderResourceView());
+	
+	AddDepthView(TargetName);
 }
 
 void MultiRenderTarget::AddDepthView(const string & TargetName)

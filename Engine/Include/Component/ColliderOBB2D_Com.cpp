@@ -129,12 +129,15 @@ void ColliderOBB2D_Com::Render(float DeltaTime)
 
 	TransCBuffer.WV = TransCBuffer.World * TransCBuffer.View;
 	TransCBuffer.WVP = TransCBuffer.WV * TransCBuffer.Projection;
+	TransCBuffer.InvProjection = TransCBuffer.Projection;
+	TransCBuffer.InvProjection.Inverse();
 
 	TransCBuffer.World.Transpose();
 	TransCBuffer.View.Transpose();
 	TransCBuffer.Projection.Transpose();
 	TransCBuffer.WV.Transpose();
 	TransCBuffer.WVP.Transpose();
+	TransCBuffer.InvProjection.Transpose();
 
 	JEONG::ShaderManager::Get()->UpdateCBuffer("Transform", &TransCBuffer);
 

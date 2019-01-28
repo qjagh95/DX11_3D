@@ -15,6 +15,7 @@ public:
 
 	CBuffer* FindCBuffer(const string& KeyName);
 	Shader* FindShader(const string& KeyName);
+	Shader* FindShaderNoneCount(const string& KeyName);
 	ID3D11InputLayout* FindInputLayOut(const string& KeyName);
 
 private:

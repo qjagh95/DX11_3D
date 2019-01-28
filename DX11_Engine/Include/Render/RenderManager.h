@@ -53,18 +53,18 @@ public:
 	MultiRenderTarget* FindMultiTarget(const string& MultiKey);
 	
 private:
-	void Render2D(float DeltaTime);
 	void Render3D(float DeltaTime);
 	void RenderGBuffer(float DeltaTime);
 
 	void ForwardRender(float DeltaTime);
 	void DeferredRender(float DeltaTime);
-
 	void RenderLightAcc(float DeltaTime);
-	void RenderLightDirection(float DeltaTime, Light_Com* Light);
-	void RenderLightPoint(float DeltaTime, Light_Com* Light);
-	void RenderLightSpot(float DeltaTime, Light_Com* Light);
-	void LightBlend(float DeltaTime);
+
+	void RenderDirectionLight(float DeltaTime, Light_Com* light);
+	void RenderPointLight(float DeltaTime, Light_Com* light);
+	void RenderSpotLight(float DeltaTime, Light_Com* light);
+	void RenderBomiSpotLight(float DeltaTime, Light_Com* light);
+	void RenderLightBlend(float DeltaTime);
 
 private:
 	GAME_MODE m_GameMode;
@@ -79,6 +79,10 @@ private:
 	RenderState* m_DepthDisable;
 	Sampler* m_GBufferSampler;
 	Shader* m_LightAccDirShader;
+	Shader* m_LightAccPointShader;
+	Shader* m_LightAccSpotShader;
+	Shader* m_LightAccBlendShader;
+	Shader* m_LightAccFullScreenShader;
 
 	MultiRenderTarget* m_GBufferMultiTarget;
 	MultiRenderTarget* m_LightMultiTarget;

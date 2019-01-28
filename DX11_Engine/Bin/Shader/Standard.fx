@@ -126,9 +126,12 @@ PS_OUTPUT_GBUFFER StandardNormalColorPS(VS_OUTPUT_NORMAL_COLOR input)
         output.vAlbedo = input.vColor;
         output.vNormal.xyz = input.vNormalV;
         output.vNormal.w = g_Light.LightSpecular.w;
-
-        //TODO : 가까운놈 흰색, 먼놈 - 검은색
-        output.vDepth.rgb = float3(g_ProjectionFar - input.vPosV.z, g_ProjectionFar - input.vPosV.z, g_ProjectionFar - input.vPosV.z) / g_ProjectionFar;
+        //vPos.z = WVP공간변환 후 Z값.
+        //vPos.w = WV공간변환 후 Z값. (Perspective 공식 적용으로 WV의 Z값이 그대로 들어옴 _34 = 1)
+        //두개를나누게되면 0 ~ 1 사이의 값이 나옴.
+        output.vDepth.r = input.vPos.z / input.vPos.w;
+        output.vDepth.g = output.vDepth.r;
+        output.vDepth.b = output.vDepth.r;
         output.vDepth.a = input.vPos.w;
         output.vMaterial.r = CompressColor(g_Material.Diffuse);
         output.vMaterial.g = CompressColor(g_Material.Ambient);

@@ -162,6 +162,14 @@ bool JEONG::ShaderManager::Init()
 		return false;
 	}
 
+	Entry[ST_VERTEX] = "LightPointVS";
+	Entry[ST_PIXEL] = "LightAccPS";
+	if (LoadShader(LIGHT_POINT_ACC_SHADER, TEXT("LightDir.fx"), Entry) == false)
+	{
+		TrueAssert(true);
+		return false;
+	}
+
 	AddInputElement("POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 12);
 	AddInputElement("NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 12);
 	AddInputElement("COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 16);
@@ -322,6 +330,16 @@ JEONG::Shader * JEONG::ShaderManager::FindShader(const string & KeyName)
 		return NULLPTR;
 
 	FindIter->second->AddRefCount();
+
+	return FindIter->second;
+}
+
+Shader * ShaderManager::FindShaderNoneCount(const string & KeyName)
+{
+	unordered_map<string, JEONG::Shader*>::iterator FindIter = m_ShaderMap.find(KeyName);
+
+	if (FindIter == m_ShaderMap.end())
+		return NULLPTR;
 
 	return FindIter->second;
 }

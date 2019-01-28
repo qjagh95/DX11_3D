@@ -25,6 +25,7 @@
 #include <d2d1.h>
 #include <dwrite.h>
 #include <dxgidebug.h>
+#include <dinput.h>
 
 ///Excel
 #include "enum.h"
@@ -51,6 +52,10 @@
 //DWrite
 #pragma comment(lib, "d2d1")
 #pragma comment(lib, "dwrite")
+//DInput
+#pragma comment(lib, "dinput8")
+#pragma comment(lib, "dxguid")
+
 #pragma warning(disable:4099)
 
 ///Excel

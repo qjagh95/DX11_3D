@@ -24,6 +24,7 @@ public:
 	void SetEnableLayer(const string& TagName, bool isShow);
 	void SetLayerDie(const string& TagName, bool isActive);
 	Layer* FindLayer(const string& TagName);
+	Layer* FindLayerNoneCount(const string& TagName);
 	GameObject* FindObject(const string& TagName);
 
 	template<typename T>

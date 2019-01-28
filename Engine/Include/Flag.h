@@ -182,4 +182,20 @@ namespace JEONG
 		LT_END,
 	};
 
+	enum SPECIAL_KEY_TYPE
+	{
+		SKT_SHIFT,
+		SKT_CONTROL,
+		SKT_ALT,
+		SKT_MAX
+	};
+
+	enum KEY_STATE
+	{
+		KEY_PRESS,
+		KEY_PUSH,
+		KEY_RELEASE,
+		KEY_MAX
+	};
+
 }

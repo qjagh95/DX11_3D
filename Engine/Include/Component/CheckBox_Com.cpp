@@ -61,16 +61,16 @@ int CheckBox_Com::Input(float DeltaTime)
 {
 	if (m_ButtonState == BS_MOUSEOVER || m_ButtonState == BS_CLICK)
 	{
-		if (KeyInput::Get()->KeyUp("LButton"))
-		{
-			if(m_CheckState == CBS_TRUE)
-				m_CheckState = CBS_FALSE;
-			else if(m_CheckState == CBS_FALSE)
-				m_CheckState = CBS_TRUE;
+		//if (KeyInput::Get()->KeyUp("LButton"))
+		//{
+		//	if(m_CheckState == CBS_TRUE)
+		//		m_CheckState = CBS_FALSE;
+		//	else if(m_CheckState == CBS_FALSE)
+		//		m_CheckState = CBS_TRUE;
 
-			if (m_CheckButtonCallBack != NULLPTR)
-				m_CheckButtonCallBack(DeltaTime);
-		}
+		//	if (m_CheckButtonCallBack != NULLPTR)
+		//		m_CheckButtonCallBack(DeltaTime);
+		//}
 	}
 	return 0;
 }

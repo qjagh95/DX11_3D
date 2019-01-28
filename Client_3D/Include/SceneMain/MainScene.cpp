@@ -42,7 +42,6 @@ bool MainScene::Init()
 	Layer* TileLayer = m_Scene->FindLayer("Tile");
 
 	GameObject* newObject = GameObject::CreateObject("Pyramid", Default);
-	//newObject->GetTransform()->SetWorldRotX(-20.0f);
 	newObject->GetTransform()->SetWorldPos(0.0f, 0.0f, 2.0f);
 
 	Renderer_Com* RenderComponent = newObject->AddComponent<Renderer_Com>("Render");
