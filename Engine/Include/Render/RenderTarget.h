@@ -41,6 +41,8 @@ private:
 	Vector3	m_Pos;
 	Vector3	m_Scale;
 
+	PublicCBuffer m_CBuffer;
+
 public:
 	RenderTarget();
 	~RenderTarget();

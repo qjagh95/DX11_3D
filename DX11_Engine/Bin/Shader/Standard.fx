@@ -78,6 +78,31 @@ PS_OUTPUT_SINGLE Standard_UV_PS(VS_OUTPUT_UV input)
 }
 //////////////////////////////////UVShader/////////////////////////////
 
+
+//////////////////////////////////NormalColor/////////////////////////////
+VS_OUTPUT_NORMAL_COLOR StandardNormalColorVS(VS_INPUT_NORMAL_COLOR input)
+{
+    VS_OUTPUT_NORMAL_COLOR output = (VS_OUTPUT_NORMAL_COLOR) 0;
+
+    float3 vPos = input.vPos - g_Pivot * g_Length;
+
+    output.vPos = mul(float4(vPos, 1.f), g_WVP);
+    output.vColor = input.vColor;
+
+    return output;
+}
+
+PS_OUTPUT_SINGLE StandardNormalColorPS(VS_OUTPUT_NORMAL_COLOR input)
+{
+    PS_OUTPUT_SINGLE output = (PS_OUTPUT_SINGLE) 0;
+
+    output.vTarget0 = input.vColor;
+
+    return output;
+}
+//////////////////////////////////NormalColor/////////////////////////////
+
+
 //////////////////////////////////STAITC Shader/////////////////////////////
 
 VS_OUTPUT_UV StandardTexStaticVS(VS_INPUT_UV input)
@@ -120,3 +145,4 @@ PS_OUTPUT_SINGLE FullScreenPS(VS_OUTPUT_UV input)
     output.vTarget0 = Diffuse.Sample(DiffuseSampler, input.vUV);
     return output;
 }
+

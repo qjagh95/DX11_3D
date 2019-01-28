@@ -15,10 +15,6 @@ public:
 	void CollisionLateUpdate(float DeltaTime) override;
 	void Render(float DeltaTime) override;
 
-private:
-	UIBar_Com* m_TestBar;
-	Text_Com* m_TestText;
-
 public:
 	MainScene();
 	~MainScene();

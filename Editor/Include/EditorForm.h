@@ -1,5 +1,5 @@
 #pragma once
-#include <Component/Stage2D_Com.h>
+
 // EditorForm Æû ºäÀÔ´Ï´Ù.
 JEONG_USING
 class EditorForm : public CFormView
@@ -48,7 +48,6 @@ public:
 	int m_StartPosY;
 
 	GameObject* m_StageObject;
-	Stage2D_Com* m_StageCom;
 	Transform_Com* m_StageTransform;
 
 	int m_BackColorR;
@@ -58,18 +57,11 @@ public:
 
 	BOOL m_isLine;
 
-	GameObject* GetStageObject() const { return m_StageObject; }
-	Stage2D_Com* GetStageComponent() const { return m_StageCom; }
-	Transform_Com* GetStageTransform() const { return m_StageTransform; }
-
 	void AddWorkText(const wstring& Text, int Index = 0);
 	void AddWorkText(const string& Text, int Index = 0);
 	void AddWorkText(const CString& Text, int Index = 0);
 	void AddWorkText(wchar_t* Text, int Index = 0);
 	void AddWorkText(char* Text, int Index = 0);
-
-	void SaveStage(CString FileName);
-	void LoadStage(CString FileName);
 
 	CComboBox m_TileTypeBox;
 	CComboBox m_TileOptionBox;
@@ -89,8 +81,6 @@ public:
 	CString m_ImageName;
 	int m_CreateTileCount;
 
-	STAGE2D_TILE_TYPE GetTileType() const;
-	TILE2D_OPTION GetTileOption() const;
 
 	virtual void OnDraw(CDC* pDC);
 	virtual void OnInitialUpdate();

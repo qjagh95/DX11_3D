@@ -78,42 +78,75 @@ bool JEONG::ResourceManager::Init()
 
 	CreateMesh("ColliderCircle", COLLIDER_SHADER, POS_LAYOUT, DebugColliderCirclePos, 37, sizeof(Vector3), D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);
 
-	Vector3	IsoTileNomal[5] = {};
-	IsoTileNomal[0] = Vector3(0.5f, 1.0f, 0.0f);
-	IsoTileNomal[1] = Vector3(1.0f, 0.5f, 0.0f);
-	IsoTileNomal[2] = Vector3(0.5f, 0.0f, 0.0f);
-	IsoTileNomal[3] = Vector3(0.0f, 0.5f, 0.0f);
-	IsoTileNomal[4] = Vector3(0.5f, 1.0f, 0.0f);
-
-	CreateMesh("IsoTileNomal", TILE_SHADER, POS_LAYOUT, IsoTileNomal, 5, sizeof(Vector3), D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);
-
-	Vector3	IsoTileNoMove[8] = {};
-	IsoTileNoMove[0] = Vector3(0.5f, 1.0f, 0.0f);
-	IsoTileNoMove[1] = Vector3(1.0f, 0.5f, 0.0f);
-	IsoTileNoMove[2] = Vector3(0.5f, 0.0f, 0.0f);
-	IsoTileNoMove[3] = Vector3(0.0f, 0.5f, 0.0f);
-	IsoTileNoMove[4] = Vector3(0.5f, 1.0f, 0.0f);
-	IsoTileNoMove[5] = Vector3(0.5f, 0.0f, 0.0f);
-	IsoTileNoMove[6] = Vector3(1.0f, 0.5f, 0.0f);
-	IsoTileNoMove[7] = Vector3(0.0f, 0.5f, 0.0f);
-
-	CreateMesh("IsoTileNomove", TILE_SHADER, POS_LAYOUT, IsoTileNoMove, 8, sizeof(Vector3), D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);
-
-	Vector3	TileNoMove[9] =
+	Vector3	PyramidPos[5] =
 	{
-		Vector3(0.0f, 1.0f, 0.0f),
-		Vector3(1.0f, 1.0f, 0.0f),
-		Vector3(1.0f, 0.0f, 0.0f),
-		Vector3(0.0f, 0.0f, 0.0f),
-		Vector3(0.0f, 1.0f, 0.0f),
-		Vector3(0.0f, 0.0f, 0.0f),
-		Vector3(1.0f, 1.0f, 0.0f),
-		Vector3(1.0f, 0.0f, 0.0f),
-		Vector3(0.0f, 1.0f, 0.0f),
+		Vector3(0.0f, 0.5f, 0.0f),
+		Vector3(-0.5f, -0.5f, 0.5f),
+		Vector3(0.5f, -0.5f, 0.5f),
+		Vector3(-0.5f, -0.5f, -0.5f),
+		Vector3(0.5f, -0.5f, -0.5f)
 	};
 
-	CreateMesh("TileNoMove", COLLIDER_SHADER, POS_LAYOUT, TileNoMove, 9, sizeof(Vector3), D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);
+	Vector3	PlaneNormal[4];
+	Vector3	Edge1, Edge2;
 
+	Edge1 = PyramidPos[3] - PyramidPos[0];
+	Edge2 = PyramidPos[1] - PyramidPos[0];
+	Edge1.Nomallize();
+	Edge2.Nomallize();
+	PlaneNormal[0] = Edge1.Cross(Edge2);
+	PlaneNormal[0].Nomallize();
+
+	Edge1 = PyramidPos[1] - PlaneNormal[0];
+	Edge2 = PyramidPos[2] - PlaneNormal[0];
+	Edge1.Nomallize();
+	Edge2.Nomallize();
+	PlaneNormal[1] = Edge1.Cross(Edge2);
+	PlaneNormal[1].Nomallize();
+
+	Edge1 = PlaneNormal[2] - PyramidPos[0];
+	Edge2 = PlaneNormal[4] - PyramidPos[0];
+	Edge1.Nomallize();
+	Edge2.Nomallize();
+	PlaneNormal[2] = Edge1.Cross(Edge2);
+	PlaneNormal[2].Nomallize();
+
+	Edge1 = PyramidPos[4] - PyramidPos[0];
+	Edge2 = PyramidPos[3] - PyramidPos[0];
+	Edge1.Nomallize();
+	Edge2.Nomallize();
+	PlaneNormal[3] = Edge1.Cross(Edge2);
+	PlaneNormal[3].Nomallize();
+
+	Vector3	Normal[4];
+	Normal[0] = (PlaneNormal[0] + PlaneNormal[1]);
+	Normal[0].Nomallize();
+
+	Normal[1] = (PlaneNormal[2] + PlaneNormal[1]);
+	Normal[1].Nomallize();
+
+	Normal[2] = (PlaneNormal[0] + PlaneNormal[3]);
+	Normal[2].Nomallize();
+
+	Normal[3] = (PlaneNormal[2] + PlaneNormal[3]);
+	Normal[3].Nomallize();
+
+	VertexNormalColor Pyramid[9] =
+	{
+		VertexNormalColor(Vector3(0.0f, 0.5f, 0.0f), Vector3(0.0f, 1.0f, 0.0f),  Vector4::Red),
+		VertexNormalColor(Vector3(-0.5f, -0.5f, 0.5f), Normal[0], Vector4::Green),
+		VertexNormalColor(Vector3(0.5f, -0.5f, 0.5f), Normal[1], Vector4::Blue),
+		VertexNormalColor(Vector3(-0.5f, -0.5f, -0.5f), Normal[2], Vector4::Yellow),
+		VertexNormalColor(Vector3(0.5f, -0.5f, -0.5f), Normal[3], Vector4::Magenta),
+		VertexNormalColor(Vector3(-0.5f, -0.5f, 0.5f), Vector3(0.0f, -1.0f, 0.0f), Vector4::Green),
+		VertexNormalColor(Vector3(0.5f, -0.5f, 0.5f), Vector3(0.0f, -1.0f, 0.0f), Vector4::Blue),
+		VertexNormalColor(Vector3(-0.5f, -0.5f, -0.5f), Vector3(0.0f, -1.0f, 0.0f), Vector4::Yellow),
+		VertexNormalColor(Vector3(0.5f, -0.5f, -0.5f), Vector3(0.0f, -1.0f, 0.0f), Vector4::Magenta)
+	};
+
+	int	PyramidIdx[18] = { 1, 0, 3, 2, 0, 1, 4, 0, 2, 3, 0, 4, 7, 8, 6, 7, 6, 5 };
+
+	CreateMesh("Pyramid", STANDARD_NORMAL_COLOR_SHADER, POS_NORMAL_COLOR_LAYOUT, Pyramid, 9, sizeof(VertexNormalColor), D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, PyramidIdx, 18, 4, D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
 
 	return true;
 }

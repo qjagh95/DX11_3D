@@ -52,6 +52,21 @@ struct PS_OUTPUT_SINGLE
     float4 vTarget0 : SV_Target;
 };
 
+struct VS_INPUT_NORMAL_COLOR
+{
+    float3 vPos : POSITION;
+    float3 vNormal : NORMAL;
+    float4 vColor : COLOR;
+};
+
+struct VS_OUTPUT_NORMAL_COLOR
+{
+    float4 vPos : SV_POSITION;
+    float3 vNormal : NORMAL;
+    float4 vColor : COLOR;
+};
+
+
 static const float2 NULLPos[4] =
 {
     float2(-1.0f, 1.0f),
@@ -99,6 +114,13 @@ cbuffer Componeent : register(b2)
 {
     int g_Animation2DEnable;
     float3 g_Empty;
+}
+
+cbuffer Public : register(b10)
+{
+    float g_DeltaTime;
+    float g_PlusedDeltaTime;
+    float2 g_Empty12345;
 }
 
 //변수라인

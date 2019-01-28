@@ -149,6 +149,18 @@ bool JEONG::ShaderManager::Init()
 		return false;
 	}
 
+	Entry[ST_VERTEX] = "StandardNormalColorVS";
+	Entry[ST_PIXEL] = "StandardNormalColorPS";
+	if (LoadShader(STANDARD_NORMAL_COLOR_SHADER, TEXT("Standard.fx"), Entry) == false)
+		return false;
+
+	AddInputElement("POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 12);
+	AddInputElement("NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 12);
+	AddInputElement("COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 16);
+
+	if (CreateInputLayOut(POS_NORMAL_COLOR_LAYOUT, STANDARD_NORMAL_COLOR_SHADER) == false)
+		return false;
+
 	//상수버퍼 Create
 	CreateCBuffer("Transform", sizeof(TransformCBuffer), 0, CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("Material", sizeof(MaterialCbuffer), 1, CST_VERTEX | CST_PIXEL);
@@ -158,6 +170,7 @@ bool JEONG::ShaderManager::Init()
 	CreateCBuffer("ButtonCBuffer", sizeof(ButtonCBuffer), 9, CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("BarCBuffer", sizeof(BarCBuffer), 9, CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("CheckBoxCBuffer", sizeof(CheckBoxCBuffer), 9, CST_VERTEX | CST_PIXEL);
+	CreateCBuffer("PublicCBuffer", sizeof(PublicCBuffer), 10, CST_VERTEX | CST_PIXEL);
 
 	return true;
 }

@@ -44,23 +44,11 @@ bool StartScene::Init()
 	buttonCom->SetStateColor(BS_CLICK, Vector4::Red);
 	buttonCom->SetStateColor(BS_MOUSEOVER, Vector4::White * 2.0f);
 
-	GameObject* newCheck = GameObject::CreateObject("CheckBox", UILayer);
-	newCheck->GetTransform()->SetWorldPos(300.0f, 360.0f, 0.0f);
-	CheckBox_Com* CheckCom = newCheck->AddComponent<CheckBox_Com>("CheckBox");
-
-	GameObject* newRadio = GameObject::CreateObject("CheckBox", UILayer);
-	RadioButton_Com* RadioCom = newRadio->AddComponent<RadioButton_Com>("CheckBox");
-	RadioCom->CreateRadioGroup("Group1", 30, 10, newRadio->GetTransform()->GetWorldPos());
-
-	SAFE_RELEASE(newRadio);
-	SAFE_RELEASE(RadioCom);
 	SAFE_RELEASE(Default);
 	SAFE_RELEASE(UILayer);
 	SAFE_RELEASE(newButton);
 	SAFE_RELEASE(buttonCom);
 	SAFE_RELEASE(mainCamera);
-	SAFE_RELEASE(newCheck);
-	SAFE_RELEASE(CheckCom);
 
 	return true;
 }

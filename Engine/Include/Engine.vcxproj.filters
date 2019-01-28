@@ -190,26 +190,14 @@
     <Filter Include="Core\13. Sound">
       <UniqueIdentifier>{1595afb2-e9cd-40ef-8b3c-a9fdb4abcbee}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Core\08. Object\Component\BaseComponent\11. Stage2D">
-      <UniqueIdentifier>{babe6804-e133-47b2-8532-808354b484c6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core\08. Object\Component\BaseComponent\12. Tile2D">
-      <UniqueIdentifier>{3ac0f478-cef7-460a-824b-baa04615644e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Core\05. PathManager">
       <UniqueIdentifier>{48f6e9a7-548c-4725-8616-1a4015796c91}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core\08. Object\Component\BaseComponent\13. StaticManager">
-      <UniqueIdentifier>{48427f01-addd-4388-abb1-a58a2053d75a}</UniqueIdentifier>
     </Filter>
     <Filter Include="Core\09. Render\06. RenderTarget">
       <UniqueIdentifier>{3ab1ccf2-4ba5-4d07-80fd-d003e856cf09}</UniqueIdentifier>
     </Filter>
     <Filter Include="Core\14. ExcelManager">
       <UniqueIdentifier>{04100240-63b6-4673-b131-5f185849d76c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core\08. Object\Component\BaseComponent\14. Gravity">
-      <UniqueIdentifier>{400b20a6-b35f-4e74-a924-4bb4036751df}</UniqueIdentifier>
     </Filter>
     <Filter Include="Core\08. Object\Component\BaseComponent\07. UI\BackColor">
       <UniqueIdentifier>{ec5d490a-a726-4eee-a95d-6b87f2b7bea7}</UniqueIdentifier>
@@ -220,8 +208,11 @@
     <Filter Include="Core\03. Header">
       <UniqueIdentifier>{642d290c-399b-4462-9eda-78d5c20537d6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Core\08. Object\Component\BaseComponent\15. Number">
-      <UniqueIdentifier>{92fb79fa-5f04-4934-b4a7-6f8e806b517f}</UniqueIdentifier>
+    <Filter Include="Core\08. Object\Component\BaseComponent\12. Light">
+      <UniqueIdentifier>{0818a269-b25b-4fc2-83c5-5e657a863746}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\08. Object\Component\BaseComponent\11. StaticManager">
+      <UniqueIdentifier>{48427f01-addd-4388-abb1-a58a2053d75a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -387,14 +378,8 @@
     <ClInclude Include="SoundManager.h">
       <Filter>Core\13. Sound</Filter>
     </ClInclude>
-    <ClInclude Include="Component\Stage2D_Com.h">
-      <Filter>Core\08. Object\Component\BaseComponent\11. Stage2D</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\Tile2D_Com.h">
-      <Filter>Core\08. Object\Component\BaseComponent\12. Tile2D</Filter>
-    </ClInclude>
     <ClInclude Include="StaticManager.h">
-      <Filter>Core\08. Object\Component\BaseComponent\13. StaticManager</Filter>
+      <Filter>Core\08. Object\Component\BaseComponent\11. StaticManager</Filter>
     </ClInclude>
     <ClInclude Include="Render\RenderTarget.h">
       <Filter>Core\09. Render\06. RenderTarget</Filter>
@@ -405,9 +390,6 @@
     <ClInclude Include="ExcelManager.h">
       <Filter>Core\14. ExcelManager</Filter>
     </ClInclude>
-    <ClInclude Include="Component\Gravity_Com.h">
-      <Filter>Core\08. Object\Component\BaseComponent\14. Gravity</Filter>
-    </ClInclude>
     <ClInclude Include="Component\BackColor_Com.h">
       <Filter>Core\08. Object\Component\BaseComponent\07. UI\BackColor</Filter>
     </ClInclude>
@@ -417,11 +399,8 @@
     <ClInclude Include="BineryWriter.h">
       <Filter>Core\15. BineryIO</Filter>
     </ClInclude>
-    <ClInclude Include="Component\TileImage_Com.h">
-      <Filter>Core\08. Object\Component\BaseComponent\12. Tile2D</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\Number_Com.h">
-      <Filter>Core\08. Object\Component\BaseComponent\15. Number</Filter>
+    <ClInclude Include="Component\Light_Com.h">
+      <Filter>Core\08. Object\Component\BaseComponent\12. Light</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -580,14 +559,8 @@
     <ClCompile Include="SoundManager.cpp">
       <Filter>Core\13. Sound</Filter>
     </ClCompile>
-    <ClCompile Include="Component\Stage2D_Com.cpp">
-      <Filter>Core\08. Object\Component\BaseComponent\11. Stage2D</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\Tile2D_Com.cpp">
-      <Filter>Core\08. Object\Component\BaseComponent\12. Tile2D</Filter>
-    </ClCompile>
     <ClCompile Include="StaticManager.cpp">
-      <Filter>Core\08. Object\Component\BaseComponent\13. StaticManager</Filter>
+      <Filter>Core\08. Object\Component\BaseComponent\11. StaticManager</Filter>
     </ClCompile>
     <ClCompile Include="Render\RenderTarget.cpp">
       <Filter>Core\09. Render\06. RenderTarget</Filter>
@@ -598,9 +571,6 @@
     <ClCompile Include="ExcelManager.cpp">
       <Filter>Core\14. ExcelManager</Filter>
     </ClCompile>
-    <ClCompile Include="Component\Gravity_Com.cpp">
-      <Filter>Core\08. Object\Component\BaseComponent\14. Gravity</Filter>
-    </ClCompile>
     <ClCompile Include="Component\BackColor_Com.cpp">
       <Filter>Core\08. Object\Component\BaseComponent\07. UI\BackColor</Filter>
     </ClCompile>
@@ -610,11 +580,8 @@
     <ClCompile Include="BineryWriter.cpp">
       <Filter>Core\15. BineryIO</Filter>
     </ClCompile>
-    <ClCompile Include="Component\TileImage_Com.cpp">
-      <Filter>Core\08. Object\Component\BaseComponent\12. Tile2D</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\Number_Com.cpp">
-      <Filter>Core\08. Object\Component\BaseComponent\15. Number</Filter>
+    <ClCompile Include="Component\Light_Com.cpp">
+      <Filter>Core\08. Object\Component\BaseComponent\12. Light</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -644,9 +611,6 @@
       <Filter>Core\09. Render\05. HLSLSorce</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\Shader\CheckBoxShader.fx">
-      <Filter>Core\09. Render\05. HLSLSorce</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Bin\Shader\TileShader.fx">
       <Filter>Core\09. Render\05. HLSLSorce</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\Shader\BackColorShader.fx">

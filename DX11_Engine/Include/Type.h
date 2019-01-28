@@ -22,6 +22,18 @@ struct VertexColor
 	VertexColor(const Vector3& vec3, const Vector4& vec4) { m_Pos = vec3, m_Color = vec4; }
 };
 
+struct VertexNormalColor
+{
+	Vector3	m_Pos;
+	Vector3	m_Normal;
+	Vector4	m_Color;
+
+	VertexNormalColor() {}
+	VertexNormalColor(const VertexNormalColor& CopyData) { *this = CopyData; }
+	VertexNormalColor(const Vector3& Pos, const Vector3& Normal, const Vector4& Color) :m_Pos(Pos),	m_Normal(Normal), m_Color(Color)	{}
+};
+
+
 //UV좌표란 이미지크기에 상관없이 무조건 0에서 1까지의 범위를 갖는 숫자이다. (좌상단 좌표를 사용한다)
 //Left = 0 , Right = 1
 //Top = 0 , Bottom = 1
@@ -55,8 +67,16 @@ struct JEONG_DLL MaterialCbuffer
 {
 	//재질정보 (색상) 나머지필요한 변수들은 나중에 추가 예정.
 	Vector4 Diffuse;
+	Vector4 Ambient;
+	Vector4 Specular;
+	Vector4 Emissive; //자체발광
 
-	MaterialCbuffer() : Diffuse(Vector4::White) {}
+	MaterialCbuffer()
+		: Diffuse(Vector4::White), Ambient(Vector4(0.2f, 0.2f, 0.2f, 1.0f)), Specular(Vector4::White), Emissive(Vector4::White)
+	{
+		//w값을 SpecularPower로쓰겠다. 
+		Specular.w = 3.2f;
+	}
 };
 
 struct JEONG_DLL BoxInfo
@@ -179,5 +199,27 @@ struct JEONG_DLL BarCBuffer
 {
 	Vector4 Light;
 };
+
+struct JEONG_DLL LightCBuffer
+{
+	int	LightType;
+	Vector4	Diffuse;
+	Vector4	Ambient;
+	Vector4	Spcular;
+	Vector3	Direction;
+	Vector3	Pos;
+	float Range;
+	float InAngle;
+	float OutAngle;
+	Vector2 Empty;
+};
+
+struct JEONG_DLL PublicCBuffer
+{
+	float DeltaTime;
+	float PlusedDeltaTime;
+	Vector2 Empty;
+};
+
 
 JEONG_END

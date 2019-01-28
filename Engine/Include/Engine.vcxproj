@@ -192,13 +192,9 @@
     <ClInclude Include="Component\BackColor_Com.h" />
     <ClInclude Include="Component\Bar_Com.h" />
     <ClInclude Include="Component\FreeCamera_Com.h" />
-    <ClInclude Include="Component\Gravity_Com.h" />
     <ClInclude Include="Component\IconSlot_Com.h" />
-    <ClInclude Include="Component\Number_Com.h" />
-    <ClInclude Include="Component\Stage2D_Com.h" />
+    <ClInclude Include="Component\Light_Com.h" />
     <ClInclude Include="Component\Text_Com.h" />
-    <ClInclude Include="Component\Tile2D_Com.h" />
-    <ClInclude Include="Component\TileImage_Com.h" />
     <ClInclude Include="Component\UIBar_Com.h" />
     <ClInclude Include="Component\Button_Com.h" />
     <ClInclude Include="Component\Camera_Com.h" />
@@ -260,13 +256,9 @@
     <ClCompile Include="Component\BackColor_Com.cpp" />
     <ClCompile Include="Component\Bar_Com.cpp" />
     <ClCompile Include="Component\FreeCamera_Com.cpp" />
-    <ClCompile Include="Component\Gravity_Com.cpp" />
     <ClCompile Include="Component\IconSlot_Com.cpp" />
-    <ClCompile Include="Component\Number_Com.cpp" />
-    <ClCompile Include="Component\Stage2D_Com.cpp" />
+    <ClCompile Include="Component\Light_Com.cpp" />
     <ClCompile Include="Component\Text_Com.cpp" />
-    <ClCompile Include="Component\Tile2D_Com.cpp" />
-    <ClCompile Include="Component\TileImage_Com.cpp" />
     <ClCompile Include="Component\UIBar_Com.cpp" />
     <ClCompile Include="Component\Button_Com.cpp" />
     <ClCompile Include="Component\Camera_Com.cpp" />
@@ -417,24 +409,6 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">StandardColorVS</EntryPointName>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
-    </FxCompile>
-    <FxCompile Include="..\Bin\Shader\TileShader.fx">
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </EntryPointName>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-      </EntryPointName>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-      </EntryPointName>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-      </EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>

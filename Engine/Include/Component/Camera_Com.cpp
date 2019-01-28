@@ -72,7 +72,7 @@ int JEONG::Camera_Com::Update(float DeltaTime)
 	//역행렬 = 전치행렬
 	m_View.Transpose();
 
-	//물체를 원점으로 땡겨야하기때문에 -값을 곱함.
+	//물체를 원점으로 땡겨야하기때문에 -값을 곱함. 
 	TempPos *= -1.0f;
 
 	//내적하는 이유 : 카메라 축 * 행렬 = 내적값

@@ -9,7 +9,6 @@ JEONG::RenderManager::RenderManager()
 	:m_CreateState(NULLPTR)
 {
 	m_GameMode = GM_3D;
-	m_isZoomMode = false;
 }
 
 JEONG::RenderManager::~RenderManager()
@@ -265,6 +264,9 @@ void JEONG::RenderManager::Render2D(float DeltaTime)
 
 void JEONG::RenderManager::Render3D(float DeltaTime)
 {
+	//m_CBuffer.DeltaTime = DeltaTime;
+	//m_CBuffer.PlusedDeltaTime += DeltaTime;
+
 	// 포스트 이펙트 처리용 타겟으로 교체한다.
 	RenderTarget* getTarget = FindRenderTarget("PostEffect");
 	getTarget->ClearTarget();

@@ -109,14 +109,11 @@ public:
 	Matrix GetPosDelta() const { return m_DeltaPos; }
 	Matrix GetRotDelta() const { return m_DeltaRot; }
 
-	void ZoomScale();
-
 private:
 	//행렬연산은 연산자체가 무겁기 때문에 연산을 해줄때만 해주겠다.
 	bool m_isStatic;	///가만히 있는놈은 연산할 필요가 없다
 	bool m_isUpdate;	///움직일놈만 업데이트하겠다.
 	int m_ParentFlag;
-	bool m_isZoomMode;
 
 	//Rocal
 	Vector3 m_LocalScale;

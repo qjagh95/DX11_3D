@@ -33,11 +33,13 @@
 #define TILE_SHADER "TileShader"
 #define FULLSCREEN_SHADER "FullScreenShader"
 #define STANDARD_UV_STATIC_SHADER "StandardUVStaticShader"
+#define STANDARD_NORMAL_COLOR_SHADER "StandardNormalColorShader"
 
 //Base InputLayOut
 #define POS_COLOR_LAYOUT "PosColorLayOut"
 #define POS_UV_LAYOUT "PosUVLayOut"
 #define POS_LAYOUT "PosLayOut"
+#define POS_NORMAL_COLOR_LAYOUT "PosNormalColorLayOut"
 
 //Sampler
 #define LINER_SAMPLER "Linear"
