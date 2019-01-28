@@ -510,23 +510,32 @@ void JEONG::Scene::LightDebug(float DeltaTime)
 
 	ImGui::Text("LightInfo");
 
-	ImGui::SliderFloat4("Ambient", (float*)&getLight->m_tLightInfo.Ambient, 0.0f, 1.0f);
-	ImGui::SliderFloat4("Diffuse", (float*)&getLight->m_tLightInfo.Diffuse, 0.0f, 1.0f);
-	ImGui::SliderFloat4("Specular", (float*)&getLight->m_tLightInfo.Spcular, 0.0f, 1.0f);
-	ImGui::SliderFloat3("Direction", (float*)&getLight->m_tLightInfo.Direction, 0.0f, 1.0f);
-	ImGui::SliderFloat3("Attenuation", (float*)&getLight->m_tLightInfo.Attenuation, 0.0f, 1.0f);
+	ImGui::SliderFloat4("Ambient", (float*)&getLight->m_tLightInfo.Ambient, -1.0f, 1.0f);
+	ImGui::SliderFloat4("Diffuse", (float*)&getLight->m_tLightInfo.Diffuse, -1.0f, 1.0f);
+	ImGui::SliderFloat4("Specular", (float*)&getLight->m_tLightInfo.Spcular, -1.0f, 1.0f);
+	ImGui::SliderFloat3("Direction", (float*)&getLight->m_tLightInfo.Direction, -1.0f, 1.0f);
+	ImGui::SliderFloat3("Attenuation", (float*)&getLight->m_tLightInfo.Attenuation, -1.0f, 1.0f);
 	ImGui::SliderFloat("Range", (float*)&getLight->m_tLightInfo.Range, 0.0f, 20.0f);
-	ImGui::SliderFloat("FallOff", (float*)&getLight->m_tLightInfo.FallOff, 0.0f, 1.0f);
-	ImGui::SliderFloat("InAngle", (float*)&getLight->m_tLightInfo.InAngle , 0.0f, 1.0f);
-	ImGui::SliderFloat("OutAngle", (float*)&getLight->m_tLightInfo.OutAngle, 0.0f, 1.0f);
+	ImGui::SliderFloat("FallOff", (float*)&getLight->m_tLightInfo.FallOff, -1.0f, 10.0f);
+	ImGui::SliderFloat("InAngle", (float*)&getLight->m_tLightInfo.InAngle , -1.0f, 1.0f);
+	ImGui::SliderFloat("OutAngle", (float*)&getLight->m_tLightInfo.OutAngle, -1.0f, 1.0f);
 
-	ImGui::Text("Trasnform");
+	ImGui::Text("LightPos");
 
-	ImGui::SliderFloat3("Pos", (float*)&getLight->m_tLightInfo.Pos, 0.0f, 20.0f);
+	ImGui::SliderFloat3("Pos", (float*)&getLight->m_tLightInfo.Pos, -1.0f, 20.0f);
 	SAFE_RELEASE(getObject);
 	SAFE_RELEASE(getLight);
 
 	ImGui::BeginTabBar("BB");
+	ImGui::EndTabBar();
+
+	ImGui::Text("Camera");
+
+	static Vector3 CameraPos;
+	ImGui::SliderFloat3("CameraPos", (float*)&CameraPos, -0.0, 5.0f);
+	m_MainCameraTransform->SetWorldPos(CameraPos);
+
+	ImGui::BeginTabBar("Camera");
 	ImGui::EndTabBar();
 }
 

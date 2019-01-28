@@ -18,6 +18,8 @@ public:
 	void SetShader(int Register);
 	void SetClearColor(float ClearColor[4]) { memcpy(m_ClearColor, ClearColor, sizeof(float) * 4); }
 	void SetClearColor(const Vector4& Color) { memcpy(m_ClearColor, &Color, sizeof(Vector4)); }
+	ID3D11RenderTargetView* GetRenderTargetView() const { return m_TargetView; }
+	ID3D11DepthStencilView* GetDepthView() const { return m_DepthView; }
 
 private:
 	ID3D11Texture2D* m_TargetBuffer;

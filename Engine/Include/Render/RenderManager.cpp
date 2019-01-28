@@ -203,6 +203,91 @@ void JEONG::RenderManager::Render(float DeltaTime)
 	}
 }
 
+bool JEONG::RenderManager::AddMultiTarget(const string & MultiKey, const string & TargetKey)
+{
+	MultiRenderTarget* newMulti = FindMultiTarget(MultiKey);
+
+	if (newMulti == NULLPTR)
+	{
+		newMulti = new MultiRenderTarget();
+		newMulti->DepthView = NULLPTR;
+	}
+
+	RenderTarget* getTarget = FindRenderTarget(TargetKey);
+
+	if (getTarget == NULLPTR)
+		return false;
+
+	newMulti->vecTargetView.push_back(getTarget->GetRenderTargetView());
+
+	return true;
+}
+
+bool JEONG::RenderManager::AddMultiTargetDepth(const string & MultiKey, const string & TargetKey)
+{
+	MultiRenderTarget* newMulti = FindMultiTarget(MultiKey);
+
+	if (newMulti == NULLPTR)
+	{
+		newMulti = new MultiRenderTarget();
+		newMulti->DepthView = NULLPTR;
+	}
+
+	RenderTarget* getTarget = FindRenderTarget(TargetKey);
+
+	if (getTarget == NULLPTR)
+		newMulti->DepthView = NULLPTR;
+	else
+		newMulti->DepthView = getTarget->GetDepthView();
+
+	return true;
+}
+
+void JEONG::RenderManager::SetMultiTarget(const string & MultiKey)
+{
+	MultiRenderTarget* getMRT = FindMultiTarget(MultiKey);
+
+	if (getMRT == NULLPTR)
+		return;
+
+	if (getMRT->vecOldTargetView.empty())
+		getMRT->vecOldTargetView.resize(getMRT->vecTargetView.size());
+
+	Device::Get()->GetContext()->OMGetRenderTargets((UINT)getMRT->vecTargetView.size(), &getMRT->vecOldTargetView[0], &getMRT->OldDepthView);
+
+	ID3D11DepthStencilView*	pDepth = getMRT->DepthView;
+
+	if (pDepth == NULLPTR)
+		pDepth = getMRT->OldDepthView;
+
+	Device::Get()->GetContext()->OMSetRenderTargets((UINT)getMRT->vecTargetView.size(), &getMRT->vecTargetView[0], pDepth);
+}
+
+void JEONG::RenderManager::ResetMultiTarget(const string & MultiKey)
+{
+	MultiRenderTarget* getMRT = FindMultiTarget(MultiKey);
+
+	if (getMRT == NULLPTR)
+		return;
+
+	Device::Get()->GetContext()->OMSetRenderTargets((UINT)getMRT->vecOldTargetView.size(), &getMRT->vecOldTargetView[0], getMRT->OldDepthView);
+
+	for (size_t i = 0; i < getMRT->vecOldTargetView.size(); ++i)
+		SAFE_RELEASE(getMRT->vecOldTargetView[i]);
+	
+	SAFE_RELEASE(getMRT->OldDepthView);
+}
+
+JEONG::MultiRenderTarget * JEONG::RenderManager::FindMultiTarget(const string & MultiKey)
+{
+	unordered_map<string, MultiRenderTarget*>::iterator FindIter = m_MultiTargetMap.find(MultiKey);
+
+	if (FindIter == m_MultiTargetMap.end())
+		return NULLPTR;
+
+	return FindIter->second;
+}
+
 void JEONG::RenderManager::Render2D(float DeltaTime)
 {
 	// 포스트 이펙트 처리용 타겟으로 교체한다.
@@ -253,6 +338,10 @@ void JEONG::RenderManager::Render3D(float DeltaTime)
 		ForwardRender(DeltaTime);
 	else
 		DeferredRender(DeltaTime);
+}
+
+void JEONG::RenderManager::RenderGBuffer(float DeltaTime)
+{
 }
 
 void JEONG::RenderManager::ForwardRender(float DeltaTime)

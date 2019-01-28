@@ -172,7 +172,7 @@ void Core::Logic()
 	float Time = getTimer->GetDeltaTime();
 
 #ifdef _DEBUG
-	GUIManager::Get()->ImGuiBegin("Test");
+	GUIManager::Get()->ImGuiBegin("MaJaSinInNa");
 #endif
 	Input(Time);
 	Update(Time);

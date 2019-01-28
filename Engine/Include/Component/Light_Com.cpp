@@ -102,6 +102,7 @@ void Light_Com::SetLightFallOff(float FallOff)
 {
 	m_tLightInfo.FallOff = FallOff;
 }
+
 void Light_Com::SetLightAttenuation(const Vector3& Attenuation)
 {
 	m_tLightInfo.Attenuation = Attenuation;

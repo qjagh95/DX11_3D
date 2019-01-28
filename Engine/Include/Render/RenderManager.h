@@ -20,6 +20,14 @@ struct RenderGroup
 	}
 };
 
+struct JEONG_DLL MultiRenderTarget
+{
+	vector<ID3D11RenderTargetView*>	vecTargetView;
+	vector<ID3D11RenderTargetView*>	vecOldTargetView;
+	ID3D11DepthStencilView*	DepthView;
+	ID3D11DepthStencilView*	OldDepthView;
+};
+
 class RenderState;
 class BlendState;
 class RenderTarget;
@@ -40,13 +48,20 @@ public:
 	JEONG::RenderTarget* FindRenderTarget(const string& KeyName);
 
 	void EnableDeferredRender() { m_isDeferred = true; }
-
+	bool GetIsRenderMode() const { return m_isDeferred; }
 	void AddRenderObject(JEONG::GameObject* object);
 	void Render(float DeltaTime);
+
+	bool AddMultiTarget(const string& MultiKey, const string& TargetKey);
+	bool AddMultiTargetDepth(const string& MultiKey, const string& TargetKey);
+	void SetMultiTarget(const string& MultiKey);
+	void ResetMultiTarget(const string& MultiKey);
+	MultiRenderTarget* FindMultiTarget(const string& MultiKey);
 
 private:
 	void Render2D(float DeltaTime);
 	void Render3D(float DeltaTime);
+	void RenderGBuffer(float DeltaTime);
 
 	void ForwardRender(float DeltaTime);
 	void DeferredRender(float DeltaTime);
@@ -56,6 +71,7 @@ private:
 
 	unordered_map<string, RenderState*> m_RenderStateMap;
 	unordered_map<string, RenderTarget*> m_RenderTargetMap;
+	unordered_map<string, MultiRenderTarget*> m_MultiTargetMap;
 
 	BlendState* m_CreateState;
 	RenderGroup m_RenderGroup[RG_END];

@@ -38,12 +38,12 @@ bool MainScene::Init()
 	Layer* UILayer = m_Scene->FindLayer("UI");
 	Layer* TileLayer = m_Scene->FindLayer("Tile");
 
-	GameObject* newObject = GameObject::CreateObject("new", Default);
+	GameObject* newObject = GameObject::CreateObject("Pyramid", Default);
 	//newObject->GetTransform()->SetWorldRotX(-20.0f);
 	newObject->GetTransform()->SetWorldPos(0.0f, 0.0f, 2.0f);
 
 	Renderer_Com* RenderComponent = newObject->AddComponent<Renderer_Com>("Render");
-	RenderComponent->SetMesh("NormalRect");
+	RenderComponent->SetMesh("Pyramid");
 	RenderComponent->SetShader(STANDARD_NORMAL_COLOR_SHADER);
 
 	SAFE_RELEASE(RenderComponent);

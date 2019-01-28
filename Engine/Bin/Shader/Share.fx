@@ -68,8 +68,19 @@ struct VS_OUTPUT_NORMAL_COLOR
 {
     float4 vPos : SV_POSITION;
     float3 vPosV : POSITION;
-    float3 vNormalV : NORMAL; //법선
+    float3 vNormalV : NORMAL0; //법선View
+    float3 vNormal : NORMAL1; //법선
     float4 vColor : COLOR;
+};
+
+/////////////////////////////////////////////////////////////////////
+
+struct PS_OUTPUT_GBUFFER
+{
+    float4 vAlbedo : SV_Target;
+    float4 vNormal : SV_Target1;
+    float4 vDepth : SV_Target2;
+    float4 vMaterial : SV_Target3;
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -144,7 +155,8 @@ cbuffer Material : register(b1)
 cbuffer Componeent : register(b2)
 {
     int g_Animation2DEnable;
-    float3 g_Empty;
+    int g_isDeferred;
+    float2 g_Empty;
 }
 
 cbuffer Public : register(b10)
@@ -158,6 +170,9 @@ cbuffer Light : register(b3)
 {
     LightInfo g_Light;
 }
+
+#define RENDER_FORWARD 0
+#define RENDER_DEFERRED 1
 
 //변수라인
 /////////////////////////////////////////////////////////////////////
@@ -181,12 +196,12 @@ void ComputeDirectionLight(float3 vNormal, float3 vToCamera, out float4 Ambient,
     Ambient = g_Material.Ambient * g_Light.LightAmbient;
 
     //Light를 바라보는 방향, LightDir은 World좌표 기준이라서 View로 변환해준다
-    float3 vToLight = normalize(mul(float4(-g_Light.LightDirection, 0.0f), g_WV).xyz);
+    float3 vToLight = normalize(mul(float4(-g_Light.LightDirection, 0.0f), g_View).xyz);
 
     //cos == 내적값 렘버트 자동적용. 
     Diffuse = g_Material.Diffuse * g_Light.LightDiffuse * max(dot(vToLight, vNormal), 0.0f);
 
-    //불린 퐁. 빛을 보는 방향과 카메라를 보는 방향을 더한 중간벡터를 사용하겠다.
+    //불린 퐁. 빛을 보는 방향과 카메라를 보는 방향을 더한 중간벡터를 사용하겠다. 
     float3 vHalfWay = normalize(vToLight + vToCamera);
     Specular = g_Material.Specular * g_Light.LightSpecular * max(dot(vHalfWay, vNormal), 0.0f);
 }
@@ -194,7 +209,7 @@ void ComputeDirectionLight(float3 vNormal, float3 vToCamera, out float4 Ambient,
 void ComputePointLight(float3 vNormal, float3 vPos, float3 vToCamera, out float4 Ambient, out float4 Diffuse, out float4 Specular)
 {
     //뷰 공간변환
-    float3 LightPos = mul(float4(g_Light.LightPos, 1.0f), g_WV);
+    float3 LightPos = mul(float4(g_Light.LightPos, 1.0f), g_View).xyz;
     float Distance = distance(LightPos, vPos);
 
     if(g_Light.LightRange < Distance)
@@ -220,7 +235,30 @@ void ComputePointLight(float3 vNormal, float3 vPos, float3 vToCamera, out float4
 
 void ComputeSpotLight(float3 vNormal, float3 vPos, float3 vToCamera, out float4 Ambient, out float4 Diffuse, out float4 Specular)
 {
-    float3 LightPos = mul(float4(g_Light.LightPos, 1.0f), g_WV);
+    float3 LightPos = mul(float4(g_Light.LightPos, 1.0f), g_View).xyz;
+    float Distance = distance(LightPos, vPos);
+
+    if (g_Light.LightRange < Distance)
+    {
+        Ambient = g_Material.Ambient * g_Light.LightAmbient * 0.1f;
+        Diffuse = g_Material.Diffuse * g_Light.LightDiffuse * 0.1f;
+        Specular = g_Material.Specular * g_Light.LightSpecular * 0.1f;
+        return;
+    }
+
+    float3 vToLight = normalize(LightPos - vPos);
+    float3 vHalfWay = normalize(vToLight + vToCamera);
+    float SpotStrong;
+    SpotStrong = pow(max(dot(-vToLight, g_Light.LightDirection), 0.0f), g_Light.FallOff);
+
+    Ambient = g_Material.Ambient * g_Light.LightAmbient * SpotStrong;
+    Diffuse = g_Material.Diffuse * g_Light.LightDiffuse * max(dot(vToLight, vNormal), 0.0f) * SpotStrong;
+    Specular = g_Material.Specular * g_Light.LightSpecular * max(dot(vHalfWay, vNormal), 0.0f) * SpotStrong;
+}
+
+void ComputeSpotBomiLight(float3 vNormal, float3 vPos, float3 vToCamera, out float4 Ambient, out float4 Diffuse, out float4 Specular)
+{
+    float3 LightPos = mul(float4(g_Light.LightPos, 1.0f), g_View).xyz;
     float Distance = distance(LightPos, vPos);
 
     if (g_Light.LightRange < Distance)
@@ -234,36 +272,44 @@ void ComputeSpotLight(float3 vNormal, float3 vPos, float3 vToCamera, out float4 
     float3 vToLight = normalize(LightPos - vPos);
     float3 vHalfWay = normalize(vToLight + vToCamera);
     float LightStrong;
-    float SpotAmbientStrong;
-    SpotAmbientStrong = pow(max(dot(-vToLight, g_Light.LightDirection), 0.0f), g_Light.FallOff);
+    float SpotStrong;
+    SpotStrong = pow(max(dot(-vToLight, g_Light.LightDirection), 0.0f), g_Light.FallOff);
     LightStrong = 1.0f / dot(g_Light.Attenuation, float3(1.0f, Distance, Distance * Distance));
 
-    Ambient = g_Material.Ambient * g_Light.LightAmbient * SpotAmbientStrong;
-    Diffuse = g_Material.Diffuse * g_Light.LightDiffuse * max(dot(vToLight, vNormal), 0.0f) * LightStrong;
-    Specular = g_Material.Specular * g_Light.LightSpecular * max(dot(vHalfWay, vNormal), 0.0f) * LightStrong;
+    Ambient = g_Material.Ambient * g_Light.LightAmbient * SpotStrong * LightStrong;
+    Diffuse = g_Material.Diffuse * g_Light.LightDiffuse * max(dot(vToLight, vNormal), 0.0f) * SpotStrong * LightStrong;
+    Specular = g_Material.Specular * g_Light.LightSpecular * max(dot(vHalfWay, vNormal), 0.0f) * SpotStrong * LightStrong;
 }
 
-void ComputeSpotBomiLight(float3 vNormal, float3 vPos, float3 vToCamera, out float4 Ambient, out float4 Diffuse, out float4 Specular)
+float ConvertColor(float4 vColor)
 {
-    //float3 LightPos = mul(float4(g_Light.LightPos, 1.0f), g_WV);
-    //float Distance = distance(LightPos, vPos);
+    uint4 vColor1 = (uint4) 0;
+    vColor1.r = uint(vColor.r * 255);
+    vColor1.g = uint(vColor.g * 255);
+    vColor1.b = uint(vColor.b * 255);
+    vColor1.a = uint(vColor.a * 255);
 
-    //if (g_Light.LightRange < Distance)
-    //{
-    //    Ambient = g_Material.Ambient * g_Light.LightAmbient * 0.1f;
-    //    Diffuse = g_Material.Diffuse * g_Light.LightDiffuse * 0.1f;
-    //    Specular = g_Material.Specular * g_Light.LightSpecular * 0.1f;
-    //    return;
-    //}
+    uint InColor = 0;
+    //바로 넣고
+    InColor = (uint) (vColor1.a * 255);
+    //8비트 밀고 넣는다
+    InColor = (InColor << 8) | vColor1.r;
+    InColor = (InColor << 8) | vColor1.g;
+    InColor = (InColor << 8) | vColor1.b;
 
-    //float3 vToLight = normalize(LightPos - vPos);
-    //float3 vHalfWay = normalize(vToLight + vToCamera);
-    //float LightStrong;
-
-    //LightStrong = 1.0f / dot(g_Light.Attenuation, float3(1.0f, Distance, Distance * Distance));
-
-    //Ambient = g_Material.Ambient * g_Light.LightAmbient * LightStrong;
-    //Diffuse = g_Material.Diffuse * g_Light.LightDiffuse * max(dot(vToLight, vNormal), 0.0f) * LightStrong;
-    //Specular = g_Material.Specular * g_Light.LightSpecular * max(dot(vHalfWay, vNormal), 0.0f) * LightStrong;
+    //float으로 보다 정확하게 형변환해주는 함수.
+    return asfloat(InColor);
 }
 
+float4 ConvertColor(float Color)
+{
+    float4 vColor;
+    uint inColor = asuint(Color);
+
+    vColor.b = (inColor & 0x000000ff) / 255.0f;
+    vColor.g = (inColor >> 8 & 0x000000ff) / 255.0f;
+    vColor.r = (inColor >> 16 & 0x000000ff) / 255.0f;
+    vColor.a = (inColor >> 24 & 0x000000ff) / 255.0f;
+
+    return vColor;
+}

@@ -89,15 +89,15 @@ VS_OUTPUT_NORMAL_COLOR StandardNormalColorVS(VS_INPUT_NORMAL_COLOR input)
     //뷰공간변환만 된놈을 사용하겠다. (카메라를 원점으로 땡겼기때문에 카메라위치는 0, 0)
     output.vPosV = mul(float4(input.vPos, 1.0f), g_WV).xyz;
     output.vNormalV = normalize(mul(float4(input.vNormal, 0.0f), g_WV).xyz);
-
+    output.vNormal = input.vNormal;
     output.vColor = input.vColor;
 
     return output;
 }
 
-PS_OUTPUT_SINGLE StandardNormalColorPS(VS_OUTPUT_NORMAL_COLOR input)
+PS_OUTPUT_GBUFFER StandardNormalColorPS(VS_OUTPUT_NORMAL_COLOR input)
 { 
-    PS_OUTPUT_SINGLE output = (PS_OUTPUT_SINGLE) 0;
+    PS_OUTPUT_GBUFFER output = (PS_OUTPUT_GBUFFER) 0;
     
     float4 Ambient = float4(0.0f, 0.0f, 0.0f, 0.0f);
     float4 Diffuse = float4(0.0f, 0.0f, 0.0f, 0.0f);
@@ -106,16 +106,28 @@ PS_OUTPUT_SINGLE StandardNormalColorPS(VS_OUTPUT_NORMAL_COLOR input)
     //카메라를 바라보는 방향
     float3 toCamera = -normalize(input.vPosV);
 
-    if (g_Light.LightType == LIGHT_DIRECTION)
-        ComputeDirectionLight(input.vNormalV, toCamera, Ambient, Diffuse, Specular);
-    else if (g_Light.LightType == LIGHT_POINT)
-        ComputePointLight(input.vNormalV, input.vPosV, toCamera, Ambient, Diffuse, Specular);
-    else if (g_Light.LightType == LIGHT_SPOT)
-        ComputeSpotLight(input.vNormalV, input.vPosV, toCamera, Ambient, Diffuse, Specular);
-    //else if (g_Light.LightType == LIGHT_SPOT_BOMI)
-    //    ComputeSpotBomiLight(input.vNormalV, input.vPosV, toCamera, Ambient, Diffuse, Specular);
+    if (g_isDeferred == RENDER_FORWARD)
+    {
+        if (g_Light.LightType == LIGHT_DIRECTION)
+            ComputeDirectionLight(input.vNormalV, toCamera, Ambient, Diffuse, Specular);
+        else if (g_Light.LightType == LIGHT_POINT)
+            ComputePointLight(input.vNormalV, input.vPosV, toCamera, Ambient, Diffuse, Specular);
+        else if (g_Light.LightType == LIGHT_SPOT)
+            ComputeSpotLight(input.vNormalV, input.vPosV, toCamera, Ambient, Diffuse, Specular);
+        else if (g_Light.LightType == LIGHT_SPOT_BOMI)
+            ComputeSpotBomiLight(input.vNormalV, input.vPosV, toCamera, Ambient, Diffuse, Specular);
 
-    output.vTarget0 = input.vColor * (Ambient + Diffuse) + Specular;
+        output.vAlbedo = input.vColor * (Ambient + Diffuse) + Specular;
+    }
+    else
+    {
+        output.vAlbedo = input.vColor;
+        output.vNormal.xyz = input.vNormalV;
+        output.vNormal.w = 1.0f;
+        //z값을 w의 z값으로 나눈다 (w에는 z값이 그대로 들어가있음)
+        output.vDepth.rgb = (float3) (input.vPos.z / input.vPos.w);
+        output.vDepth.a = input.vPos.w;
+    }
 
     return output;
 }

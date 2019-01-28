@@ -180,7 +180,8 @@ struct JEONG_DLL TransformCBuffer
 struct JEONG_DLL ComponentCBuffer
 {
 	int TextureAnimation2D;
-	Vector3 Empty;
+	int isDeferred;
+	Vector2 Empty;
 };
 
 struct JEONG_DLL ButtonCBuffer

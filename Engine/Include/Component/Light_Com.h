@@ -28,7 +28,6 @@ public:
 	void SetLightOutAngle(float OutAngle);
 	void SetLightColor(const Vector4& Ambient, const Vector4& Diffuse, const Vector4& Specular);
 
-
 private:
 	LightCBuffer m_tLightInfo;
 
