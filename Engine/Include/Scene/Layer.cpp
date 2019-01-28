@@ -3,6 +3,7 @@
 #include "Scene.h"
 
 #include "../GameObject.h"
+#include "Render/RenderManager.h"
 
 JEONG_USING
 

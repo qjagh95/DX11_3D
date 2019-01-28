@@ -251,7 +251,7 @@ void Core::CreateWnd(const TCHAR * TitleName, const TCHAR * ClassName)
 
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 LRESULT Core::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
-{
+{  
 #ifdef _DEBUG
 
 	if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam))

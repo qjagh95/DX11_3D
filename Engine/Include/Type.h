@@ -169,6 +169,7 @@ namespace JEONG
 		Matrix World;
 		Matrix View;
 		Matrix Projection;
+		Matrix InvProjection;
 		Matrix WV;
 		Matrix WVP;
 		Vector3 Pivot; //12

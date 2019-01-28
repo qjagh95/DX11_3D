@@ -65,6 +65,7 @@ bool RenderTarget::CreateRenderTarget(DXGI_FORMAT TargetFormat, const Vector3 & 
 	textureDesc.Width = (UINT)WinSize.x;
 	textureDesc.Height = (UINT)WinSize.y;
 	textureDesc.ArraySize = 1;
+	textureDesc.MipLevels = 1;
 	textureDesc.SampleDesc.Count = 1;
 	textureDesc.SampleDesc.Quality = 0;
 	textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;

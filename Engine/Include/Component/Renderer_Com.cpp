@@ -9,8 +9,11 @@
 
 #include "../Scene/Scene.h"
 #include "../Resource/Mesh.h"
+#include "../Resource/ResourceManager.h"
 #include "../Render/Shader.h"
 #include "../Render/RenderState.h"
+#include "../Render/ShaderManager.h"
+#include "../Render/RenderManager.h"
 
 JEONG_USING
 
@@ -271,6 +274,8 @@ void JEONG::Renderer_Com::UpdateTransform()
 	cBuffer.World = m_Transform->GetWorldMatrix();
 	cBuffer.View = getCamera->GetViewMatrix();
 	cBuffer.Projection = getCamera->GetProjection();
+	cBuffer.InvProjection = getCamera->GetProjection();
+	cBuffer.InvProjection.Inverse();
 
 	cBuffer.WV = cBuffer.World * cBuffer.View;
 	cBuffer.WVP = cBuffer.WV * cBuffer.Projection;
@@ -284,6 +289,7 @@ void JEONG::Renderer_Com::UpdateTransform()
 	cBuffer.Projection.Transpose();
 	cBuffer.WV.Transpose();
 	cBuffer.WVP.Transpose();
+	cBuffer.InvProjection.Transpose();
 
 	//미리 정의해놓은 상수버퍼(ID3D11Buffer)를 가져와서 업데이트 시킨다.
 	//버텍스쉐이더와 픽셀쉐이더에 위에서 값을 가져온 행렬들을 (상수버퍼) 셋팅해준다. 

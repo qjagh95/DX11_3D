@@ -72,6 +72,7 @@ private:
 	void RenderLightDirection(float DeltaTime, Light_Com* Light);
 	void RenderLightPoint(float DeltaTime, Light_Com* Light);
 	void RenderLightSpot(float DeltaTime, Light_Com* Light);
+	void LightBlend(float DeltaTime);
 
 private:
 	GAME_MODE m_GameMode;
