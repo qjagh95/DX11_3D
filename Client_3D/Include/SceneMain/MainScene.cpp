@@ -31,13 +31,23 @@ MainScene::~MainScene()
 bool MainScene::Init()
 {
 	Camera_Com* mainCamera = m_Scene->GetMainCamera();
-	mainCamera->SetCameraType(CT_ORTHO);
-	mainCamera->SetNear(0.0f);
+	mainCamera->SetCameraType(CT_PERSPECTIVE);
 
 	Layer* BackLayer = m_Scene->FindLayer("BackGround");
 	Layer* Default = m_Scene->FindLayer("Default");
 	Layer* UILayer = m_Scene->FindLayer("UI");
 	Layer* TileLayer = m_Scene->FindLayer("Tile");
+
+	GameObject* newObject = GameObject::CreateObject("new", Default);
+	newObject->GetTransform()->SetWorldPos(0, 0, 0.0f);
+	//newObject->GetTransform()->SetWorldScale(100.0f, 100.0f, 100.0f);
+
+	Renderer_Com* RenderComponent = newObject->AddComponent<Renderer_Com>("Render");
+	RenderComponent->SetMesh("Pyramid");
+	RenderComponent->SetShader(STANDARD_NORMAL_COLOR_SHADER);
+
+	SAFE_RELEASE(RenderComponent);
+	SAFE_RELEASE(newObject);
 
 	SAFE_RELEASE(Default);
 	SAFE_RELEASE(UILayer);

@@ -101,7 +101,6 @@ int JEONG::Renderer_Com::Update(float DeltaTime)
 
 int JEONG::Renderer_Com::LateUpdate(float DeltaTime)
 {
-
 	return 0;
 }
 
@@ -132,7 +131,7 @@ void JEONG::Renderer_Com::Render(float DeltaTime)
 	unordered_map<string, RendererCBuffer*>::iterator StartIter = m_CBufferMap.begin();
 	unordered_map<string, RendererCBuffer*>::iterator EndIter = m_CBufferMap.end();
 
-	for (; StartIter != EndIter ; StartIter++)
+	for (; StartIter != EndIter; StartIter++)
 		ShaderManager::Get()->UpdateCBuffer(StartIter->first, StartIter->second->pBuffer);
 
 	////////////////////////////////////////////////////////////////////////////////////////////
@@ -146,9 +145,8 @@ void JEONG::Renderer_Com::Render(float DeltaTime)
 	{
 		for (size_t j = 0; j < m_Mesh->GetSubsetCount((int)i); j++)
 		{
-
 			m_Material->SetShader((int)i, (int)j);
- 			m_Mesh->Render((int)i, (int)j);
+			m_Mesh->Render((int)i, (int)j);
 		}
 	}
 
@@ -174,7 +172,7 @@ void JEONG::Renderer_Com::SetMesh(JEONG::Mesh * mesh)
 	SAFE_RELEASE(m_Mesh);
 	m_Mesh = mesh;
 
-	if(mesh != NULLPTR)
+	if (mesh != NULLPTR)
 	{
 		mesh->AddRefCount();
 
@@ -187,7 +185,6 @@ void JEONG::Renderer_Com::SetMesh(const string & KeyName)
 {
 	SAFE_RELEASE(m_Mesh);
 
-	//FindMesh에서 이미 Add해줌
 	m_Mesh = ResourceManager::Get()->FindMesh(KeyName);
 
 	if (m_Mesh != NULLPTR)
@@ -261,13 +258,8 @@ void JEONG::Renderer_Com::UpdateRendererCBuffer(const string & KeyName, void * p
 	memcpy(getCBuffer->pBuffer, pData, BufferSize);
 }
 
-//여기에서 실질적인 투영을위한 변환을 해준다!
 void JEONG::Renderer_Com::UpdateTransform()
 {
-	//m_Transform은 GameObject가 생성될때 동적할당으로 자동생성되며 자동초기화를 한다.
-	//AddComponent를 할때 Component가 가진 Transform_Com변수는 오브젝트가 가진 Transform_Com
-	//변수로 이미 초기화가 되어있다.
-
 	TransformCBuffer cBuffer = {};
 	JEONG::Camera_Com* getCamera = NULLPTR;
 
@@ -275,7 +267,7 @@ void JEONG::Renderer_Com::UpdateTransform()
 		getCamera = m_Scene->GetUICamera();
 	else
 		getCamera = m_Scene->GetMainCamera();
-	
+
 	cBuffer.World = m_Transform->GetWorldMatrix();
 	cBuffer.View = getCamera->GetViewMatrix();
 	cBuffer.Projection = getCamera->GetProjection();
@@ -315,13 +307,13 @@ void JEONG::Renderer_Com::CheckComponent()
 	list<Component_Base*>::const_iterator StartIter = TempList->begin();
 	list<Component_Base*>::const_iterator EndIter = TempList->end();
 
-	for (;StartIter != EndIter ;StartIter++)
+	for (; StartIter != EndIter; StartIter++)
 	{
 		switch ((*StartIter)->GetComType())
 		{
-			case CT_ANIMATION2D:
-				m_ComponentCBuffer.TextureAnimation2D = 1;
-				break;
+		case CT_ANIMATION2D:
+			m_ComponentCBuffer.TextureAnimation2D = 1;
+			break;
 		}
 	}
 }
@@ -330,9 +322,8 @@ void JEONG::Renderer_Com::DeleteComponentCBuffer(Component_Base * DeleteCom)
 {
 	switch (DeleteCom->GetComType())
 	{
-		case CT_ANIMATION2D:
-			m_ComponentCBuffer.TextureAnimation2D = 1;
-			break;
+	case CT_ANIMATION2D:
+		m_ComponentCBuffer.TextureAnimation2D = 1;
+		break;
 	}
 }
-	

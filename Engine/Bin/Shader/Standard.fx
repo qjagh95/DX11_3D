@@ -14,7 +14,7 @@ cbuffer Animation2D : register(b8)
 VS_OUTPUT_COLOR Standard_Color_VS(VS_INPUT_COLOR input)
 {
     //0으로 초기화
-    VS_OUTPUT_COLOR output = (VS_OUTPUT_COLOR)0;
+    VS_OUTPUT_COLOR output = (VS_OUTPUT_COLOR) 0;
     //mul = 곱하기 (벡터행렬곱)
     output.vPos = mul(float4(input.vPos, 1.0f), g_WVP);
     output.vColor = input.vColor;
@@ -25,7 +25,7 @@ VS_OUTPUT_COLOR Standard_Color_VS(VS_INPUT_COLOR input)
 //버텍스 쉐이더에서 뱉은 OutPut데이터가 픽셀쉐이더 Input으로 들어온다. (매쉬클래스 랜더에서 이미 다 지정을 해놨다(IA~) )
 PS_OUTPUT_SINGLE Standard_Color_PS(VS_OUTPUT_COLOR input)
 {
-    PS_OUTPUT_SINGLE output = (PS_OUTPUT_SINGLE)0;
+    PS_OUTPUT_SINGLE output = (PS_OUTPUT_SINGLE) 0;
 
     output.vTarget0 = g_MaterialDiffuse;
 
@@ -39,7 +39,7 @@ PS_OUTPUT_SINGLE Standard_Color_PS(VS_OUTPUT_COLOR input)
 
 VS_OUTPUT_UV Standard_UV_VS(VS_INPUT_UV input)
 {
-    VS_OUTPUT_UV output = (VS_OUTPUT_UV)0;
+    VS_OUTPUT_UV output = (VS_OUTPUT_UV) 0;
 
     //API때 했던 중심점공식 (newPos = Pos - Size * Pivot)이거랑 똑같음.
     //버텍스의 투영공간변환 전 좌표가 0.n상태에서 중심점을 잡는다.
@@ -69,7 +69,7 @@ VS_OUTPUT_UV Standard_UV_VS(VS_INPUT_UV input)
   
 PS_OUTPUT_SINGLE Standard_UV_PS(VS_OUTPUT_UV input)
 {
-    PS_OUTPUT_SINGLE output = (PS_OUTPUT_SINGLE)0;
+    PS_OUTPUT_SINGLE output = (PS_OUTPUT_SINGLE) 0;
     
     //Diffuse(Texture2D)에 SampleState(재질정보와 UV)를 넣어주고 색상정보를 곱한다
     output.vTarget0 = Diffuse.Sample(DiffuseSampler, input.vUV) * g_MaterialDiffuse;
@@ -78,7 +78,6 @@ PS_OUTPUT_SINGLE Standard_UV_PS(VS_OUTPUT_UV input)
 }
 //////////////////////////////////UVShader/////////////////////////////
 
-
 //////////////////////////////////NormalColor/////////////////////////////
 VS_OUTPUT_NORMAL_COLOR StandardNormalColorVS(VS_INPUT_NORMAL_COLOR input)
 {
@@ -86,7 +85,8 @@ VS_OUTPUT_NORMAL_COLOR StandardNormalColorVS(VS_INPUT_NORMAL_COLOR input)
 
     float3 vPos = input.vPos - g_Pivot * g_Length;
 
-    output.vPos = mul(float4(vPos, 1.f), g_WVP);
+    output.vPos = mul(float4(vPos, 1.0f), g_WVP);
+    output.vNormal = input.vNormal;
     output.vColor = input.vColor;
 
     return output;

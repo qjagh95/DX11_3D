@@ -144,7 +144,7 @@ bool JEONG::ResourceManager::Init()
 		VertexNormalColor(PyramidPos[4], Vector3(0.0f, -1.0f, 0.0f), Vector4::Magenta)
 	};
 
-	int	PyramidIdx[18] = { 0, 4, 1, 2, 1, 0, 3, 0, 2, 4, 0, 3, 8, 6, 5, 7, 6, 8 };
+	int	PyramidIdx[18] = { 0, 4, 1, 2, 0, 1, 3, 0, 2, 4, 0, 3, 8, 6, 5, 7, 6, 8 };
 	//{0, 4, 1}
 	//{2, 1, 0}
 	//{3, 0, 2}
