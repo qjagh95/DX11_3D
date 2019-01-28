@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "BineryReader.h"
+#include "PathManager.h"
 
 JEONG_USING
 

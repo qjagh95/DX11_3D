@@ -8,6 +8,10 @@
 
 #include "Component/Transform_Com.h"
 #include "Component/Renderer_Com.h"
+#include "StaticManager.h"
+
+#include "BineryReader.h"
+#include "BineryWriter.h"
 
 JEONG_USING
 

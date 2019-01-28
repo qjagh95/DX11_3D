@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "../stdafx.h"
 #include "ResourceManager.h"
 #include "Mesh.h"
 #include "Texture.h"
@@ -54,7 +54,6 @@ bool JEONG::ResourceManager::Init()
 	};
 
 	CreateMesh("TextureRect", STANDARD_UV_SHADER, POS_UV_LAYOUT, UVRect, 4, sizeof(VertexUV), D3D11_USAGE_DEFAULT,	D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, IndexRect, 6, 2);
-	CreateSampler(LINER_SAMPLER);
 
 	Vector3	DebugColliderPos[5] =
 	{
@@ -165,6 +164,10 @@ bool JEONG::ResourceManager::Init()
 	//{7, 6, 8}
 	CreateMesh("Pyramid", STANDARD_NORMAL_COLOR_SHADER, POS_NORMAL_COLOR_LAYOUT, Pyramid, 9, sizeof(VertexNormalColor), D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, PyramidIdx, 18, 4, D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
 
+	CreateSampler(LINER_SAMPLER);
+	//디퍼드에 최적화된 샘플러 = 포인트(픽셀값을 1:1매칭시켜서 가져온다)
+	CreateSampler(POINT_SAMPLER, D3D11_FILTER_MIN_MAG_MIP_POINT);
+	
 	return true;
 }
 

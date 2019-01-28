@@ -1,8 +1,6 @@
-#include "stdafx.h"
-
-#include "Mesh.h"
-
+#include "../stdafx.h"
 #include "../Device.h"
+#include "Mesh.h"
 
 JEONG_USING
 

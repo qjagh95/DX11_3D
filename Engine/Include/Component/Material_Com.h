@@ -1,6 +1,5 @@
 #pragma once
 #include "Component_Base.h"
-#include "../Resource/ResourceManager.h"
 
 JEONG_BEGIN
 

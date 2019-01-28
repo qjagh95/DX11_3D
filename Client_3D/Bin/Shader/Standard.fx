@@ -121,12 +121,18 @@ PS_OUTPUT_GBUFFER StandardNormalColorPS(VS_OUTPUT_NORMAL_COLOR input)
     }
     else
     {
+        //조명연산 또는 각종 연산을 전부 하게되면 연산이 너무 많이지기때문에 각각 나눠서 Texture의 rgb값에 저장해놓는다.
+        //이게 디퍼드를 사용하는 이유.
         output.vAlbedo = input.vColor;
         output.vNormal.xyz = input.vNormal;
-        output.vNormal.w = 1.0f;
+        output.vNormal.w = g_Material.Specular.w;
         //z값을 w의 z값으로 나눈다 (w에는 z값이 그대로 들어가있음)
         output.vDepth.rgb = (float3) (input.vPos.z / input.vPos.w);
         output.vDepth.a = input.vPos.w;
+        output.vMaterial.r = ConvertColor(g_Material.Diffuse);
+        output.vMaterial.g = ConvertColor(g_Material.Ambient);
+        output.vMaterial.b = ConvertColor(g_Material.Specular);
+        output.vMaterial.a = ConvertColor(g_Material.Emission);
     }
 
     return output;

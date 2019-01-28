@@ -1,3 +1,4 @@
+#pragma once
 #include "Collider_Com.h"
 
 JEONG_BEGIN

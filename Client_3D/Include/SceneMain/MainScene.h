@@ -1,7 +1,5 @@
 #pragma once
 #include "Scene/SceneComponent.h"
-#include "Component/UIBar_Com.h"
-#include "Component/Text_Com.h"
 
 JEONG_USING
 class MainScene : public SceneComponent

@@ -22,7 +22,7 @@ struct RenderGroup
 
 struct JEONG_DLL MultiRenderTarget
 {
-	vector<ID3D11RenderTargetView*>	vecTargetView;
+	vector<class RenderTarget*> vecTargetView;
 	vector<ID3D11RenderTargetView*>	vecOldTargetView;
 	ID3D11DepthStencilView*	DepthView;
 	ID3D11DepthStencilView*	OldDepthView;
@@ -32,6 +32,7 @@ class RenderState;
 class BlendState;
 class RenderTarget;
 class GameObject;
+class Light_Com;
 class JEONG_DLL RenderManager
 {
 public:
@@ -57,6 +58,7 @@ public:
 	void SetMultiTarget(const string& MultiKey);
 	void ResetMultiTarget(const string& MultiKey);
 	MultiRenderTarget* FindMultiTarget(const string& MultiKey);
+	void ClearMultiTarget(const string& MultiKey, float ClearColor[4]);
 
 private:
 	void Render2D(float DeltaTime);
@@ -66,16 +68,24 @@ private:
 	void ForwardRender(float DeltaTime);
 	void DeferredRender(float DeltaTime);
 
+	void RenderLightAcc(float DeltaTime);
+	void RenderLightDirection(float DeltaTime, Light_Com* Light);
+	void RenderLightPoint(float DeltaTime, Light_Com* Light);
+	void RenderLightSpot(float DeltaTime, Light_Com* Light);
+
 private:
 	GAME_MODE m_GameMode;
 
 	unordered_map<string, RenderState*> m_RenderStateMap;
 	unordered_map<string, RenderTarget*> m_RenderTargetMap;
 	unordered_map<string, MultiRenderTarget*> m_MultiTargetMap;
-
+	  
 	BlendState* m_CreateState;
 	RenderGroup m_RenderGroup[RG_END];
 	RenderGroup m_LightGroup;
+	RenderState* m_DepthDisable;
+	Sampler* m_GBufferSampler;
+	Shader* m_LightAccDirShader;
 
 	bool m_isDeferred;
 

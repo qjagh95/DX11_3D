@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "../stdafx.h"
 #include "BlendState.h"
 
 #include "../Device.h"

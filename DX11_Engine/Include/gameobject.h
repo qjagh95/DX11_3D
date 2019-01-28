@@ -6,6 +6,8 @@ class Layer;
 class Scene;
 class Component_Base;
 class Transform_Com;
+class BineryWrite;
+class BineryRead;
 class JEONG_DLL GameObject : public RefCount
 {
 public:

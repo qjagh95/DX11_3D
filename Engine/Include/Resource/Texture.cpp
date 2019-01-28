@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "../stdafx.h"
 #include "Texture.h"
 
 #include "../PathManager.h"
@@ -188,4 +188,24 @@ void Texture::SetShaderResource(int RegisterNumber)
 {
 	//픽셀쉐이더에 정보를 넘긴다.
 	Device::Get()->GetContext()->PSSetShaderResources(RegisterNumber, 1, &m_ShaderResourceView);
+}
+
+size_t Texture::GetWidth() const
+{
+	return m_vecImage[0]->GetImage(0, 0, 0)->width;
+}
+
+size_t Texture::GetHeight() const
+{
+	return m_vecImage[0]->GetImage(0, 0, 0)->height;
+}
+
+const uint8_t * Texture::GetPixels() const
+{
+	return m_vecImage[0]->GetPixels();
+}
+
+size_t Texture::GetPixelSize() const
+{
+	return m_vecImage[0]->GetPixelsSize();
 }

@@ -17,6 +17,9 @@
 #include "Component/CheckBox_Com.h"
 #include "Component/BackColor_Com.h"
 
+#include <Component/Renderer_Com.h>
+#include <Component/Camera_Com.h>
+#include <Component/Transform_Com.h>
 
 MainScene::MainScene()
 

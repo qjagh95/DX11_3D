@@ -91,15 +91,6 @@ BOOL EditorApp::InitInstance()
 	Core::Get()->Init(m_hInstance, abc->m_hWnd, 1280, 720);
 	Core::Get()->SetGameMode(GM_2D);
 
-	SceneManager::Get()->AddSceneComponent<EditScene>("EditScene");
-
-	Scene* CurScene = SceneManager::Get()->GetCurScene();
-	GameObject* mainCameraObject = CurScene->GetMainCameraObject();
-	FreeCamera_Com* freeCamera = mainCameraObject->AddComponent<FreeCamera_Com>("FreeCamera");
-
-	SAFE_RELEASE(freeCamera);
-	SAFE_RELEASE(CurScene);
-
 	return TRUE;
 }
 

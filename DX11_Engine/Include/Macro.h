@@ -34,6 +34,7 @@
 #define FULLSCREEN_SHADER "FullScreenShader"
 #define STANDARD_UV_STATIC_SHADER "StandardUVStaticShader"
 #define STANDARD_NORMAL_COLOR_SHADER "StandardNormalColorShader"
+#define LIGHT_DIR_ACC_SHADER "LightDirAccShader"
 
 //Base InputLayOut
 #define POS_COLOR_LAYOUT "PosColorLayOut"
@@ -43,10 +44,12 @@
 
 //Sampler
 #define LINER_SAMPLER "Linear"
+#define POINT_SAMPLER "Point"
 
 //AlphaBlend
 #define ALPHA_BLEND "AlphaBlend"
 #define DEPTH_DISABLE "DepthDisable"
+#define ACC_BLEND "AccBlend"
 
 template<typename T>
 void Safe_Delete_VecList(T& p)

@@ -14,10 +14,10 @@ public:
 	void SetShaderResource(int RegisterNumber);
 	size_t GetTextureCount() const { return m_vecImage.size(); }
 
-	size_t GetWidth() const { return m_vecImage[0]->GetImage(0, 0, 0)->width; }
-	size_t GetHeight()	const { return m_vecImage[0]->GetImage(0, 0, 0)->height; }
-	const uint8_t* GetPixels() const { return m_vecImage[0]->GetPixels(); }
-	size_t GetPixelSize() const { return m_vecImage[0]->GetPixelsSize(); }
+	size_t GetWidth() const;
+	size_t GetHeight()	const;
+	const uint8_t* GetPixels() const;
+	size_t GetPixelSize() const;
 
 private:
 	bool CreateShaderResource();

@@ -113,16 +113,5 @@ BOOL EditorView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 	MainFrame* mainFrame = (MainFrame*)AfxGetMainWnd();
 	EditorForm*	editorForm = mainFrame->GetEditorForm();
 
-	Scene* getScene = SceneManager::Get()->GetCurScene();
-	Camera_Com* getCamera = getScene->GetMainCamera();
-
-	Vector3 CameraNormal = Vector3::Normalize(getCamera->GetTransform()->GetWorldPos());
-	Vector3 MouseNormal = Vector3::Normalize(KeyInput::Get()->GetMouseWorldPos());
-
-	Vector3 CameraPos = getCamera->GetTransform()->GetWorldPos();
-	Vector3 MousePos = KeyInput::Get()->GetMouseWorldPos();
-
-	SAFE_RELEASE(getScene);
-
 	return CView::OnMouseWheel(nFlags, zDelta, pt);
 }

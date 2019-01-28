@@ -3,6 +3,29 @@
 #include "Device.h"
 #include "Timer.h"
 
+
+#include "Scene/SceneManager.h"
+#include "Scene/Scene.h"
+#include "Scene/Layer.h"
+
+#include "Component/Material_Com.h"
+#include "Component/Renderer_Com.h"
+#include "Component/Transform_Com.h"
+#include "Component/Camera_Com.h"
+#include "Component/Collider_Com.h"
+#include "Component/Bar_Com.h"
+
+#include "UserComponent/UserComponent_Base.h"
+
+#include "Resource/ResourceManager.h"
+#include "Resource/Mesh.h"
+
+#include "Render/RenderManager.h"
+#include "Render/ShaderManager.h"
+#include "Render/Shader.h"
+#include "Render/DepthStancilState.h"
+#include "Render/BlendState.h"
+
 #include "Resource/Mesh.h"
 
 #include "Render\Shader.h"

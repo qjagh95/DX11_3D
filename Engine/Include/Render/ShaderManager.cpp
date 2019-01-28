@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "../stdafx.h"
 #include "ShaderManager.h"
 #include "Shader.h"
 
@@ -153,6 +153,14 @@ bool JEONG::ShaderManager::Init()
 	Entry[ST_PIXEL] = "StandardNormalColorPS";
 	if (LoadShader(STANDARD_NORMAL_COLOR_SHADER, TEXT("Standard.fx"), Entry) == false)
 		return false;
+
+	Entry[ST_VERTEX] = "LightAccVS";
+	Entry[ST_PIXEL] = "LightAccPS";
+	if (LoadShader(LIGHT_DIR_ACC_SHADER, TEXT("LightDir.fx"), Entry) == false)
+	{
+		TrueAssert(true);
+		return false;
+	}
 
 	AddInputElement("POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 12);
 	AddInputElement("NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 12);

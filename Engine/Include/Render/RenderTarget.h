@@ -1,4 +1,4 @@
-
+#pragma once
 JEONG_BEGIN
 
 class Shader;
@@ -16,6 +16,7 @@ public:
 	void Render(float DeltaTime);
 	void RenderFullScreen();
 	void SetShader(int Register);
+	void ResetShader(int Register);
 	void SetClearColor(float ClearColor[4]) { memcpy(m_ClearColor, ClearColor, sizeof(float) * 4); }
 	void SetClearColor(const Vector4& Color) { memcpy(m_ClearColor, &Color, sizeof(Vector4)); }
 	ID3D11RenderTargetView* GetRenderTargetView() const { return m_TargetView; }

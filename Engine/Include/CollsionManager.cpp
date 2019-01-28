@@ -8,6 +8,7 @@
 #include "Scene/SceneManager.h"
 
 #include "Component/Transform_Com.h"
+#include "Component\Collider_Com.h"
 #include "Component/ColliderPoint_Com.h"
 
 JEONG_USING

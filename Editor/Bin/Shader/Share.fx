@@ -214,9 +214,9 @@ void ComputePointLight(float3 vNormal, float3 vPos, float3 vToCamera, out float4
 
     if(g_Light.LightRange < Distance)
     {
-        Ambient = g_Material.Ambient * g_Light.LightAmbient * 0.1f;
-        Diffuse = g_Material.Diffuse * g_Light.LightDiffuse * 0.1f;
-        Specular = g_Material.Specular * g_Light.LightSpecular * 0.1f;
+        Ambient = g_Material.Ambient * g_Light.LightAmbient * 0.2f;
+        Diffuse = g_Material.Diffuse * g_Light.LightDiffuse * 0.2f;
+        Specular = g_Material.Specular * g_Light.LightSpecular * 0.2f;
         return;
     }
 
@@ -240,9 +240,9 @@ void ComputeSpotLight(float3 vNormal, float3 vPos, float3 vToCamera, out float4 
 
     if (g_Light.LightRange < Distance)
     {
-        Ambient = g_Material.Ambient * g_Light.LightAmbient * 0.1f;
-        Diffuse = g_Material.Diffuse * g_Light.LightDiffuse * 0.1f;
-        Specular = g_Material.Specular * g_Light.LightSpecular * 0.1f;
+        Ambient = g_Material.Ambient * g_Light.LightAmbient * 0.2f;
+        Diffuse = g_Material.Diffuse * g_Light.LightDiffuse * 0.2f;
+        Specular = g_Material.Specular * g_Light.LightSpecular * 0.2f;
         return;
     }
 

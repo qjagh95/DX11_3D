@@ -1,5 +1,5 @@
 #pragma once
-#include "Component\Collider_Com.h"
+
 
 JEONG_BEGIN
 
@@ -9,6 +9,7 @@ enum JEONG_DLL COLLSION_GROUP_TYPE
 	CGT_3D,
 };
 
+class Collider_Com;
 class GameObject;
 class JEONG_DLL CollsionManager
 {

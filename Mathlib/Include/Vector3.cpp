@@ -1017,14 +1017,3 @@ void Vector3::Convert(const XMVECTOR & Xmvec)
 {
 	XMStoreFloat3((XMFLOAT3*)this, Xmvec);
 }
-
-float* Vector3::FloatConvert()
-{
-	float Temp[3];
-
-	Temp[0] = x;
-	Temp[1] = y;
-	Temp[2] = z;
-
-	return Temp;
-}

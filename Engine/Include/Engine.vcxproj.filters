@@ -625,5 +625,8 @@
     <FxCompile Include="..\Bin\Shader\BackColorShader.fx">
       <Filter>Core\09. Render\05. HLSLSorce</Filter>
     </FxCompile>
+    <FxCompile Include="..\Bin\Shader\LightDir.fx">
+      <Filter>Core\09. Render\05. HLSLSorce</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

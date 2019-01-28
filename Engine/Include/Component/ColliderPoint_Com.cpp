@@ -15,6 +15,7 @@
 #include "../Render/Shader.h"
 #include "../Render/ShaderManager.h"
 #include "../Render/RenderManager.h"
+#include "../Scene/SceneManager.h"
 
 JEONG_USING
 

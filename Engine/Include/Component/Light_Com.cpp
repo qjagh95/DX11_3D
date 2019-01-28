@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "Light_Com.h"
+#include "Transform_Com.h"
+#include "../Render/ShaderManager.h"
 
 JEONG_USING
 

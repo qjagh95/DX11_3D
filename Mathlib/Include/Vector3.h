@@ -152,7 +152,6 @@ union MATH_DLL Vector3
 
 	XMVECTOR Convert();
 	void Convert(const XMVECTOR & Xmvec);
-	float* FloatConvert();
 
 	static Vector3 Normalize(const Vector3& vec);
 
