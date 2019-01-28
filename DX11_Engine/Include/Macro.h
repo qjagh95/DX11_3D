@@ -49,6 +49,8 @@
 #define DEPTH_DISABLE "DepthDisable"
 #define ACC_BLEND "AccBlend"
 #define CULL_NONE "CullNone"
+#define WIRE_FRAME "WireFrame"
+
 
 template<typename T>
 void Safe_Delete_VecList(T& p)

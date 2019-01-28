@@ -16,6 +16,9 @@
     <ClCompile Include="SceneMain\StaticTestScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
+    <ClCompile Include="UserComponent\Player.cpp">
+      <Filter>Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ClientHeader.h">
@@ -30,6 +33,9 @@
     <ClInclude Include="SceneMain\StaticTestScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
+    <ClInclude Include="UserComponent\Player.h">
+      <Filter>Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="WinMain">
@@ -37,6 +43,9 @@
     </Filter>
     <Filter Include="Scene">
       <UniqueIdentifier>{59bfc487-37d0-4548-be46-38f2d29255b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Component">
+      <UniqueIdentifier>{a0031b1d-ce73-4860-bd98-7a4da5f5c643}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

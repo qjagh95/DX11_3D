@@ -45,6 +45,10 @@ VS_OUTPUT_UV Standard_UV_VS(VS_INPUT_UV input)
     //버텍스의 투영공간변환 전 좌표가 0.n상태에서 중심점을 잡는다.
     float3 TempPos = input.vPos - (g_Pivot * g_Length);
 
+    //화면이 출력이 안되는놈도 버텍스쉐이더에 들어옴.
+    //출력안할 정점정보가 필요하다.
+    //20000개짜리 정점 100개가있다면 전부 정점쉐이더로 들어옴.
+    //그렇게되면 행렬곱계산자체가 많다. 그래서 WVP을 미리 CPU에서 곱한 후 넘겨준다.
     output.vPos = mul(float4(TempPos, 1.0f), g_WVP);
 
     //애니메이션이 있다면 UV조절 후 출력 (UV값은 CPU연산 후 들어온다)

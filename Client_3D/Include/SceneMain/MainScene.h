@@ -13,8 +13,6 @@ public:
 	void CollisionLateUpdate(float DeltaTime) override;
 	void Render(float DeltaTime) override;
 
-	void Debug(float DeltaTime);
-
 public:
 	MainScene();
 	~MainScene();

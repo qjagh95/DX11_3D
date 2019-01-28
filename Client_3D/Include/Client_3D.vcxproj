@@ -233,6 +233,7 @@
     <ClCompile Include="SceneMain\MainScene.cpp" />
     <ClCompile Include="SceneMain\StartScene.cpp" />
     <ClCompile Include="SceneMain\StaticTestScene.cpp" />
+    <ClCompile Include="UserComponent\Player.cpp" />
     <ClCompile Include="WinMain.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -240,6 +241,7 @@
     <ClInclude Include="SceneMain\MainScene.h" />
     <ClInclude Include="SceneMain\StartScene.h" />
     <ClInclude Include="SceneMain\StaticTestScene.h" />
+    <ClInclude Include="UserComponent\Player.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\DirectXTK\DirectXTK_Desktop_2017_Win10.vcxproj" />

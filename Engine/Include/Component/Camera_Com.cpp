@@ -37,6 +37,9 @@ int JEONG::Camera_Com::Input(float DeltaTime)
 
 int JEONG::Camera_Com::Update(float DeltaTime)
 {
+	//카메라 뷰 변환은 사실 모든 오브젝트를 원점기준으로 
+	//오브젝트를 옮겨주는 역할이다.
+	//카메라가 움직이는게 아닌 오브젝트가 움직임.
 	m_View.Identity();
 
 	if (m_Target != NULLPTR)

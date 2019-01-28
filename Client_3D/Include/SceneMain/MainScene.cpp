@@ -7,15 +7,7 @@
 #include "Scene/Scene.h"
 #include "scene/Layer.h"
 
-#include "Component/Component_Base.h"
-#include "Component/ColliderPixel_Com.h"
-#include "Component/Button_Com.h"
-#include "Component/UICon_Com.h"
-#include "Component/IconSlot_Com.h"
-#include "Component/Stage2D_Com.h"
-#include "Component/Tile2D_Com.h"
-#include "Component/CheckBox_Com.h"
-#include "Component/BackColor_Com.h"
+#include "UserComponent/Player.h"
 
 #include <Component/Renderer_Com.h>
 #include <Component/Camera_Com.h>
@@ -48,6 +40,11 @@ bool MainScene::Init()
 	RenderComponent->SetMesh("Pyramid");
 	RenderComponent->SetShader(STANDARD_NORMAL_COLOR_SHADER);
 
+	GameObject* newObject2 = GameObject::CreateObject("Player", Default);
+	Player_Com* newPlayer = newObject2->AddComponent< Player_Com>("Player");
+
+	SAFE_RELEASE(newPlayer);
+	SAFE_RELEASE(newObject2);
 	SAFE_RELEASE(RenderComponent);
 	SAFE_RELEASE(newObject);
 

@@ -190,12 +190,19 @@ namespace JEONG
 		SKT_MAX
 	};
 
+	enum ACTION_KEY_FUNCTION_TYPE
+	{
+		AT_DOWN,
+		AT_PRESS,
+		AT_UP,
+		AT_MAX
+	};
+
 	enum KEY_STATE
 	{
-		KEY_PRESS,
-		KEY_PUSH,
-		KEY_RELEASE,
-		KEY_MAX
+		KEY_DOWN = 0x1,
+		KEY_PRESS = 0x2,
+		KEY_UP = 0x4
 	};
 
 }

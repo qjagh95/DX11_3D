@@ -9,31 +9,49 @@ struct JEONG_DLL KeyScale
 
 struct JEONG_DLL BindAxis
 {
-	string	KeyName;
+	string	strName;
 	bool isFunctionBind;
 	function<void(float, float)> Func;
-	list<KeyScale*>	KeyList;
+	vector<KeyScale*> KeyList;
 
-	BindAxis() :isFunctionBind(false){}
-	~BindAxis() { Safe_Delete_VecList(KeyList); }
+	BindAxis() : isFunctionBind(false) {}
+	~BindAxis()	{ Safe_Delete_VecList(KeyList);	}
 };
 
 struct JEONG_DLL ActionKey
 {
-	unsigned char KeyName;
+	unsigned char Key;
 	bool isSKey[SKT_MAX];
+	bool Press;
+	bool Down;
+	bool Up;
 
-	ActionKey() { memset(isSKey, 0, sizeof(bool) * SKT_MAX); }
+	ActionKey() 
+	{
+		ZeroMemory(isSKey, sizeof(bool) * SKT_MAX);
+		Press = false;
+		Down = false;
+		Up = false;
+	}
 };
 
 struct JEONG_DLL BindAction
 {
-	string	ActionName;
-	bool	isFunctionBind;
-	function<void(float)>	Func;
-	list<ActionKey*> KeyList;
-	KEY_STATE	KeyState;
+	string	strName;
+	bool isFunctionBind[AT_MAX];
+	function<void(float)> Func[AT_MAX];
+	vector<ActionKey*> KeyList;
+	int	KeyState;
+
+	BindAction()
+	{
+		KeyState = 0;
+		memset(isFunctionBind, 0, sizeof(bool) * AT_MAX);
+	}
+
+	~BindAction() { Safe_Delete_VecList(KeyList); }
 };
+
 
 class GameObject;
 class Scene;
@@ -62,38 +80,38 @@ private:
 private:
 	IDirectInput8* m_Input;
 	IDirectInputDevice8* m_Keyboard;
-	unsigned char	m_Key[256];
+
+	unsigned char m_Key[256];
 	bool m_KeyPress[256];
 	bool m_KeyDown[256];
 	bool m_KeyUp[256];
-	list<unsigned char>	m_KeyList;
+
+	vector<unsigned char> m_KeyList;
 	unordered_map<string, BindAxis*> m_KeyAxisMap;
 	unordered_map<string, BindAction*> m_KeyActionMap;
 
 public:
-
 	void AddKeyScale(const string& strName, unsigned char cKey, float fScale)
 	{
-		BindAxis* pBind = FindAxis(strName);
+		BindAxis* getBind = FindAxis(strName);
 
-		if (pBind == NULLPTR)
+		if (getBind == NULLPTR)
 		{
-			pBind = new BindAxis();
-			m_KeyAxisMap.insert(make_pair(strName, pBind));
+			getBind = new BindAxis();
+			m_KeyAxisMap.insert(make_pair(strName, getBind));
 		}
 
-		KeyScale* pKeyScale = new KeyScale();
+		KeyScale* newKeyScale = new KeyScale();
+		newKeyScale->Scale = fScale;
+		newKeyScale->Key = cKey;
 
-		pKeyScale->Scale = fScale;
-		pKeyScale->Key = cKey;
+		getBind->KeyList.push_back(newKeyScale);
 
-		pBind->KeyList.push_back(pKeyScale);
+		auto iter = m_KeyList.begin();;
+		auto iterEnd = m_KeyList.end();
+		bool bFind = false;
 
-		list<unsigned char>::iterator	iter;
-		list<unsigned char>::iterator	iterEnd = m_KeyList.end();
-
-		bool	bFind = false;
-		for (iter = m_KeyList.begin(); iter != iterEnd; ++iter)
+		for (;iter != iterEnd; ++iter)
 		{
 			if (*iter == cKey)
 			{
@@ -102,72 +120,71 @@ public:
 			}
 		}
 
-		if (!bFind)
+		if (bFind == false)
 			m_KeyList.push_back(cKey);
 	}
 
 	BindAxis* AddBindAxis(const string& strName, void(*pFunc)(float, float))
 	{
-		BindAxis* pBind = FindAxis(strName);
+		BindAxis* getBind = FindAxis(strName);
 
-		if (pBind == NULLPTR)
+		if (getBind == NULLPTR)
 		{
-			pBind = new BindAxis();
-
-			m_KeyAxisMap.insert(make_pair(strName, pBind));
+			getBind = new BindAxis();
+			m_KeyAxisMap.insert(make_pair(strName, getBind));
 		}
 
-		pBind->KeyName = strName;
-		pBind->isFunctionBind = true;
-		pBind->Func = bind(pFunc, placeholders::_1, placeholders::_2);
+		getBind->strName = strName;
+		getBind->isFunctionBind = true;
+		getBind->Func = bind(pFunc, placeholders::_1, placeholders::_2);
 
-		return pBind;
+		return getBind;
 	}
 
 	template <typename T>
-	BindAxis* AddBindAxis(const string& strName, T* pObj, void(T::*pFunc)(float, float))
+	BindAxis* AddBindAxis(const string& strName, T* Object, void(T::*pFunc)(float, float))
 	{
-		BindAxis* pBind = FindAxis(strName);
+		BindAxis* getBind = FindAxis(strName);
 
-		if (!pBind)
+		if (getBind == NULLPTR)
 		{
-			pBind = new BindAxis();
+			getBind = new BindAxis();
 
-			m_KeyAxisMap.insert(make_pair(strName, pBind));
+			m_KeyAxisMap.insert(make_pair(strName, getBind));
 		}
 
-		pBind->Name = strName;
-		pBind->isFunctionBind = true;
-		pBind->Func = bind(pFunc, pObj, placeholders::_1, placeholders::_2);
+		getBind->strName = strName;
+		getBind->isFunctionBind = true;
+		getBind->Func = bind(pFunc, Object, placeholders::_1, placeholders::_2);
 
 		return pBind;
 	}
 
 public:
-	void AddKeyAction(const string& strName, unsigned char cKey, bool* pSKey = nullptr)
+	void AddKeyAction(const string& strName, unsigned char cKey, bool* pSKey = NULLPTR)
 	{
-		BindAction*	pBind = FindAction(strName);
+		BindAction*	getBind = FindAction(strName);
 
-		if (pBind == NULLPTR)
+		if (getBind == NULLPTR)
 		{
-			pBind = new BindAction();
-			m_KeyActionMap.insert(make_pair(strName, pBind));
+			getBind = new BindAction();
+			m_KeyActionMap.insert(make_pair(strName, getBind));
 		}
 
-		ActionKey* pKeyAction = new ActionKey();
+		ActionKey* newKeyAction = new ActionKey();
 
-		pKeyAction->KeyName = cKey;
+		newKeyAction->Key = cKey;
 
 		if (pSKey)
-			memcpy(pKeyAction->isSKey, pSKey, sizeof(bool) * SKT_MAX);
+			memcpy(newKeyAction->isSKey, pSKey, sizeof(bool) * SKT_MAX);
 
-		pBind->KeyList.push_back(pKeyAction);
+		getBind->KeyList.push_back(newKeyAction);
 
-		list<unsigned char>::iterator	iter;
-		list<unsigned char>::iterator	iterEnd = m_KeyList.end();
+		auto iter = m_KeyList.begin();
+		auto iterEnd = m_KeyList.end();
+		bool bFind = false;
 
-		bool	bFind = false;
-		for (iter = m_KeyList.begin(); iter != iterEnd; ++iter)
+		for (; iter != iterEnd; ++iter)
 		{
 			if (*iter == cKey)
 			{
@@ -176,25 +193,39 @@ public:
 			}
 		}
 
-		if (!bFind)
+		if (bFind == false)
 			m_KeyList.push_back(cKey);
 	}
 
-	BindAction* AddBindAction(const string& strName, KEY_STATE eKeyState,
-		void(*pFunc)(float))
+	BindAction* AddBindAction(const string& strName, KEY_STATE eKeyState, void(*pFunc)(float))
 	{
 		BindAction*	pBind = FindAction(strName);
 
 		if (!pBind)
 		{
 			pBind = new BindAction();
-
 			m_KeyActionMap.insert(make_pair(strName, pBind));
 		}
 
-		pBind->ActionName = strName;
-		pBind->isFunctionBind = true;
-		pBind->Func = bind(pFunc, placeholders::_1);
+		ACTION_KEY_FUNCTION_TYPE eType;
+
+		switch (eKeyState)
+		{
+		case KEY_PRESS:
+			eType = AT_PRESS;
+			break;
+		case KEY_DOWN:
+			eType = AT_DOWN;
+			break;
+		case KEY_UP:
+			eType = AT_UP;
+			break;
+		}
+
+		pBind->strName = strName;
+		pBind->isFunctionBind[eType] = true;
+		pBind->Func[eType] = bind(pFunc, placeholders::_1);
+		pBind->KeyState |= eKeyState;
 
 		return pBind;
 	}
@@ -207,16 +238,28 @@ public:
 		if (!pBind)
 		{
 			pBind = new BindAction();
-
 			m_ActionKeyMap.insert(make_pair(strName, pBind));
 		}
 
-		pBind->ActionName = strName;
-		pBind->isFunctionBind = true;
-		pBind->KeyState = eKeyState;
-		pBind->Func = bind(pFunc, pObj, placeholders::_1);
+		ACTION_KEY_FUNCTION_TYPE eType;
 
-		return pBind;
+		switch (eKeyState)
+		{
+		case KEY_PRESS:
+			eType = AT_PRESS;
+			break;
+		case KEY_DOWN:
+			eType = AT_DOWN;
+			break;
+		case KEY_UP:
+			eType = AT_UP;
+			break;
+		}
+
+		pBind->strName = strName;
+		pBind->isFunctionBind[eType] = true;
+		pBind->Func[eType] = bind(pFunc, placeholders::_1); 
+		pBind->KeyState |= eKeyState;
 	}
 
 private:
@@ -235,5 +278,3 @@ public:
 };
 
 JEONG_END
-
-
