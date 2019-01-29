@@ -5,13 +5,13 @@
 #include "../Device.h"
 
 JEONG_USING
-SINGLETON_VAR_INIT(JEONG::ShaderManager)
+SINGLETON_VAR_INIT(ShaderManager)
 
-JEONG::ShaderManager::ShaderManager() : m_InputLayOutSize(0)
+ShaderManager::ShaderManager() : m_InputLayOutSize(0)
 {
 }
 
-JEONG::ShaderManager::~ShaderManager()
+ShaderManager::~ShaderManager()
 {
 	Safe_Release_Map(m_ShaderMap);
 	Safe_Release_Map(m_LayOutMap);
@@ -27,7 +27,7 @@ JEONG::ShaderManager::~ShaderManager()
 	m_CBufferMap.clear();
 }
 
-bool JEONG::ShaderManager::Init()
+bool ShaderManager::Init()
 {
 	char* Entry[ST_MAX] = {};
 
@@ -192,9 +192,9 @@ bool JEONG::ShaderManager::Init()
 	return true;
 }
 
-bool JEONG::ShaderManager::LoadShader(const string & KeyName, const TCHAR * FileName, char * Entry[ST_MAX], const string & PathKey)
+bool ShaderManager::LoadShader(const string & KeyName, const TCHAR * FileName, char * Entry[ST_MAX], const string & PathKey)
 {
-	JEONG::Shader* newShader = FindShader(KeyName);
+	Shader* newShader = FindShader(KeyName);
 
 	if (newShader != NULLPTR)
 	{
@@ -215,7 +215,7 @@ bool JEONG::ShaderManager::LoadShader(const string & KeyName, const TCHAR * File
 	return true;
 }
 
-void JEONG::ShaderManager::AddInputElement(char * Semantic, int Index, DXGI_FORMAT Format, int Size, int InputSlot, D3D11_INPUT_CLASSIFICATION eInputClass, int InstanceStepRate)
+void ShaderManager::AddInputElement(char * Semantic, int Index, DXGI_FORMAT Format, int Size, int InputSlot, D3D11_INPUT_CLASSIFICATION eInputClass, int InstanceStepRate)
 {
 	D3D11_INPUT_ELEMENT_DESC elementDesc;
 	elementDesc.SemanticName = Semantic;				///쉐이더 파일에있는 시맨틱 이름
@@ -231,7 +231,7 @@ void JEONG::ShaderManager::AddInputElement(char * Semantic, int Index, DXGI_FORM
 	m_vecInputElement.push_back(elementDesc);
 }
 
-bool JEONG::ShaderManager::CreateInputLayOut(const string & InputLayoutKeyName, const string & ShaderKey)
+bool ShaderManager::CreateInputLayOut(const string & InputLayoutKeyName, const string & ShaderKey)
 {
 	Shader* getShader = FindShader(ShaderKey);
 
@@ -262,7 +262,7 @@ bool JEONG::ShaderManager::CreateInputLayOut(const string & InputLayoutKeyName, 
 	return true;
 }
 
-bool JEONG::ShaderManager::CreateCBuffer(const string & KeyName, int BufferSize, int RegisterNumber, int ShaderType)
+bool ShaderManager::CreateCBuffer(const string & KeyName, int BufferSize, int RegisterNumber, int ShaderType)
 {
 	CBuffer* newCBuffer = FindCBuffer(KeyName);
 
@@ -289,7 +289,7 @@ bool JEONG::ShaderManager::CreateCBuffer(const string & KeyName, int BufferSize,
 }
 
 //버텍스와 픽셀쉐이더에 상수버퍼를 셋팅한다.
-bool JEONG::ShaderManager::UpdateCBuffer(const string& KeyName, void * Info)
+bool ShaderManager::UpdateCBuffer(const string& KeyName, void * Info)
 {
 	CBuffer* getBuffer = FindCBuffer(KeyName);
 
@@ -312,7 +312,7 @@ bool JEONG::ShaderManager::UpdateCBuffer(const string& KeyName, void * Info)
 	return true;
 }
 
-CBuffer * JEONG::ShaderManager::FindCBuffer(const string & KeyName)
+CBuffer * ShaderManager::FindCBuffer(const string & KeyName)
 {
 	unordered_map<string, CBuffer*>::iterator FindIter = m_CBufferMap.find(KeyName);
 
@@ -322,7 +322,7 @@ CBuffer * JEONG::ShaderManager::FindCBuffer(const string & KeyName)
 	return FindIter->second;
 }
 
-JEONG::Shader * JEONG::ShaderManager::FindShader(const string & KeyName)
+Shader * ShaderManager::FindShader(const string & KeyName)
 {
 	unordered_map<string, JEONG::Shader*>::iterator FindIter = m_ShaderMap.find(KeyName);
 

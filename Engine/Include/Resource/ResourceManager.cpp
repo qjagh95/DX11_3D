@@ -163,6 +163,7 @@ bool ResourceManager::Init()
 	//{8, 6, 5}
 	//{7, 6, 8}
 	CreateMesh("Pyramid", STANDARD_NORMAL_COLOR_SHADER, POS_NORMAL_COLOR_LAYOUT, Pyramid, 9, sizeof(VertexNormalColor), D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, PyramidIdx, 18, 4, D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
+	CreateSphereVolum("SphereVolum", 0.5f, 16, 32);
 
 	CreateSampler(LINER_SAMPLER);
 	//디퍼드에 최적화된 샘플러 = 포인트(픽셀값을 1:1매칭시켜서 가져온다)
@@ -262,30 +263,78 @@ bool ResourceManager::CreateSampler(const string & KeyName, D3D11_FILTER eFilter
 	return true;
 }
 
-void ResourceManager::CreateSphereMesh(const string& KeyName, const string& ShaderKeyName, const string& LayOutName, float Radius, int 가로Slice, int 세로Slice)
-{
-	vector<VertexNormalUV> vecVertexData;
+void ResourceManager::CreateSphereVolum(const string& KeyName, float Radius, int StackSlice, int SliceCount)
+{ 
+	vector<VertexNormalColor> vecVertexData;
 
-	for (int i = 0; i < 세로Slice; i++)
+	//ㅡ자로 짜른다 (최대180도)
+	float Phi = JEONG_PI / StackSlice;
+	//안쪽으로 원통형으로 자른다 (최대360도)
+	float Theta = JEONG_PI * 2.0f / SliceCount;
+
+	for (int i = 0; i <= StackSlice; i++)
 	{
-		for (size_t j = 0; j < 가로Slice; j++)
+		for (size_t j = 0; j < SliceCount; j++)
 		{
+			VertexNormalColor newVertex;
 
+			if(SliceCount / 2 > j) //StackSlice 기준 위쪽
+				newVertex.m_Pos = Vector3(Radius * sin(Phi * i) * cos(Theta * j), Radius * cos(Phi * i), Radius * sin(Phi * i) * sin(Theta * j));
+			else //아래쪽
+				newVertex.m_Pos = Vector3(Radius * sin(Phi * i) * -cos(Theta * j - JEONG_PI), Radius * cos(Phi * i), Radius * sin(Theta * i) * -sin(Theta * j - JEONG_PI));
+
+			newVertex.m_Normal = newVertex.m_Pos;
+			newVertex.m_Normal.Normalize();
+			newVertex.m_Color = Vector4((rand() % 100) * 0.01f, (rand() % 100) * 0.01f, (rand() % 100) * 0.01f, (rand() % 100) * 0.01f);
+
+			vecVertexData.push_back(newVertex);
 		}
 	}
 
-	CreateMesh(KeyName, ShaderKeyName, LayOutName, );
+	vector<unsigned int> vecIndex;
+
+	for (int i = 0; i <= StackSlice; ++i)
+	{
+		for (int j = 0; j < SliceCount; ++j)
+		{
+			unsigned int index[6];
+			index[0] = SliceCount * i + j;
+			index[1] = SliceCount * (i + 1) + j + 1;
+			index[2] = SliceCount * (i + 1) + j;
+			index[3] = SliceCount * i + j;
+			index[4] = SliceCount * i + j + 1;
+			index[5] = SliceCount * (i + 1) + j + 1;
+
+			if (SliceCount - 1 == j)
+			{
+				index[1] = SliceCount * i + j + 1;
+				index[4] = SliceCount * (i - 1) + j + 1;
+				index[5] = SliceCount * i + j + 1;
+			}
+
+			vecIndex.push_back(index[0]);
+			vecIndex.push_back(index[1]);
+			vecIndex.push_back(index[2]);
+			vecIndex.push_back(index[3]);
+			vecIndex.push_back(index[4]);
+			vecIndex.push_back(index[5]);
+		}
+	}
+
+	CreateMesh(KeyName, STANDARD_NORMAL_COLOR_SHADER, POS_NORMAL_COLOR_LAYOUT, &vecVertexData[0], (int)vecVertexData.size(),
+		sizeof(VertexNormalColor), D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
+		&vecIndex[0], (int)vecIndex.size(), sizeof(unsigned int), D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
 }
 
-void ResourceManager::CreateCapsulMesh(const string & KeyName, const string& ShaderKeyName, const string& LayOutName, float Radius, int 가로Slice, int 세로Slice)
+void ResourceManager::CreateCapsulVolum(const string & KeyName, float Radius, int 가로Slice, int 세로Slice)
 {
 }
 
-void ResourceManager::CreateCylinderMesh(const string & KeyName, const string& ShaderKeyName, const string& LayOutName, float Radius, int 가로Slice, int 세로Slice)
+void ResourceManager::CreateCylinderVolum(const string & KeyName, float Radius, int 가로Slice, int 세로Slice)
 {
 }
 
-void ResourceManager::CreateCornMesh(const string & KeyName, const string& ShaderKeyName, const string& LayOutName, float Radius, int 가로Slice, int 세로Slice)
+void ResourceManager::CreateCornVolum(const string & KeyName, float Radius, int 가로Slice, int 세로Slice)
 {
 }
 

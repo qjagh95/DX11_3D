@@ -113,13 +113,13 @@ PS_OUTPUT_GBUFFER StandardNormalColorPS(VS_OUTPUT_NORMAL_COLOR input)
     if (g_isDeferred == RENDER_FORWARD)
     {
         if (g_Light.LightType == LIGHT_DIRECTION)
-            ComputeDirectionLight(input.vNormalV, toCamera, Ambient, Diffuse, Specular);
+            ComputeDirectionLight(float4(input.vNormalV, g_Light.LightSpecular.w), toCamera, Ambient, Diffuse, Specular);
         else if (g_Light.LightType == LIGHT_POINT)
-            ComputePointLight(input.vNormalV, input.vPosV, toCamera, Ambient, Diffuse, Specular);
+            ComputePointLight(float4(input.vNormalV, g_Light.LightSpecular.w), input.vPosV, toCamera, Ambient, Diffuse, Specular);
         else if (g_Light.LightType == LIGHT_SPOT)
-            ComputeSpotLight(input.vNormalV, input.vPosV, toCamera, Ambient, Diffuse, Specular);
+            ComputeSpotLight(float4(input.vNormalV, g_Light.LightSpecular.w), input.vPosV, toCamera, Ambient, Diffuse, Specular);
         else if (g_Light.LightType == LIGHT_SPOT_BOMI)
-            ComputeSpotBomiLight(input.vNormalV, input.vPosV, toCamera, Ambient, Diffuse, Specular);
+            ComputeSpotBomiLight(float4(input.vNormalV, g_Light.LightSpecular.w), input.vPosV, toCamera, Ambient, Diffuse, Specular);
 
         output.vAlbedo = input.vColor * (Ambient + Diffuse) + Specular;
     }
@@ -129,7 +129,7 @@ PS_OUTPUT_GBUFFER StandardNormalColorPS(VS_OUTPUT_NORMAL_COLOR input)
         //이게 디퍼드를 사용하는 이유.
         output.vAlbedo = input.vColor;
         output.vNormal.xyz = input.vNormalV;
-        output.vNormal.w = g_Light.LightSpecular.w;
+        output.vNormal.w = g_Material.Specular.w;
         //vPos.z = WVP공간변환 후 Z값.
         //vPos.w = WV공간변환 후 Z값. (Perspective 공식 적용으로 WV의 Z값이 그대로 들어옴 _34 = 1)
         //두개를나누게되면 0 ~ 1 사이의 값이 나옴.
@@ -137,8 +137,8 @@ PS_OUTPUT_GBUFFER StandardNormalColorPS(VS_OUTPUT_NORMAL_COLOR input)
         output.vDepth.g = output.vDepth.r;
         output.vDepth.b = output.vDepth.r;
         output.vDepth.a = input.vPos.w;
-        output.vMaterial.r = CompressColor(g_Material.Diffuse);
-        output.vMaterial.g = CompressColor(g_Material.Ambient);
+        output.vMaterial.r = CompressColor(g_Material.Ambient);
+        output.vMaterial.g = CompressColor(g_Material.Diffuse);
         output.vMaterial.b = CompressColor(g_Material.Specular);
         output.vMaterial.a = CompressColor(g_Material.Emissive);
     }

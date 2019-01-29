@@ -37,8 +37,7 @@ bool MainScene::Init()
 	newObject->GetTransform()->SetWorldPos(0.0f, 0.0f, 2.0f);
 
 	Renderer_Com* RenderComponent = newObject->AddComponent<Renderer_Com>("Render");
-	RenderComponent->SetMesh("Pyramid");
-	RenderComponent->SetShader(STANDARD_NORMAL_COLOR_SHADER);
+	RenderComponent->SetMesh("SphereVolum");
 
 	GameObject* newObject2 = GameObject::CreateObject("Player", Default);
 	Player_Com* newPlayer = newObject2->AddComponent<Player_Com>("Player");

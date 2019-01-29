@@ -48,13 +48,6 @@ namespace JEONG
 		VertexUV(const Vector3& vec3, const Vector2& vec2) { m_Pos = vec3, m_UV = vec2; }
 	};
 
-	struct JEONG_DLL VertexNormalUV
-	{
-		Vector3	m_Pos;
-		Vector3	m_Normal;
-		Vector2	m_UV;
-	};
-
 	enum JEONG_DLL SHADER_TYPE
 	{
 		ST_VERTEX,
