@@ -62,6 +62,12 @@
 #pragma comment(lib, "libxl")
 #pragma comment(lib, "ImGui")
 
+//#pragma comment(lib, "libfbxsdk-md_Debug")
+//#pragma comment(lib, "libfbxsdk-md")
+//#pragma comment(lib, "libfbxsdk-md64")
+#pragma comment(lib, "libfbxsdk-md64_Debug")
+
+///Math
 #include "Macro.h"
 #include "Flag.h"
 #include "Type.h"

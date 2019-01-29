@@ -75,7 +75,7 @@
     <OutDir>../Bin\</OutDir>
     <IntDir>../BinObj\</IntDir>
     <TargetName>$(ProjectName)_Debug</TargetName>
-    <IncludePath>../../DX11_Engine/Include;$(IncludePath)</IncludePath>
+    <IncludePath>../../DX11_Engine/Include;$(IncludePath);../../DX11_Engine/Include/Resource/</IncludePath>
     <LibraryPath>../Bin;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -83,7 +83,7 @@
     <OutDir>../Bin\</OutDir>
     <IntDir>../BinObj\</IntDir>
     <TargetName>$(ProjectName)_64_Debug</TargetName>
-    <IncludePath>../../DX11_Engine/Include;$(IncludePath)</IncludePath>
+    <IncludePath>../../DX11_Engine/Include;$(IncludePath);../../DX11_Engine/Include/Resource/</IncludePath>
     <LibraryPath>../Bin;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -91,7 +91,7 @@
     <OutDir>../Bin\</OutDir>
     <IntDir>../BinObj\</IntDir>
     <TargetName>$(ProjectName)</TargetName>
-    <IncludePath>../../DX11_Engine/Include;$(IncludePath)</IncludePath>
+    <IncludePath>../../DX11_Engine/Include;$(IncludePath);../../DX11_Engine/Include/Resource/</IncludePath>
     <LibraryPath>../Bin;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -99,7 +99,7 @@
     <OutDir>../Bin\</OutDir>
     <IntDir>../BinObj\</IntDir>
     <TargetName>$(ProjectName)_64</TargetName>
-    <IncludePath>../../DX11_Engine/Include;$(IncludePath)</IncludePath>
+    <IncludePath>../../DX11_Engine/Include;$(IncludePath);../../DX11_Engine/Include/Resource/</IncludePath>
     <LibraryPath>../Bin;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -112,6 +112,7 @@
       <PrecompiledHeaderFile>ClientHeader.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <IncludeInUnityFile>true</IncludeInUnityFile>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -140,6 +141,7 @@
       <AdditionalIncludeDirectories>.\;$(SolutionDir)DirectXTK\Inc;</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <IncludeInUnityFile>true</IncludeInUnityFile>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

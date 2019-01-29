@@ -87,15 +87,6 @@ bool ShaderManager::Init()
 		return false;
 	}
 
-	Entry[ST_VERTEX] = "CheckBoxVS";
-	Entry[ST_PIXEL] = "CheckBoxPS";
-
-	if (LoadShader(CHECKBOX_SHADER, TEXT("CheckBoxShader.fx"), Entry) == false)
-	{
-		TrueAssert(true);
-		return false;
-	}
-
 //#ifdef _DEBUG
 	Entry[ST_VERTEX] = "ColliderVS";
 	Entry[ST_PIXEL] = "ColliderPS";
@@ -114,15 +105,6 @@ bool ShaderManager::Init()
 		return false;
 	}
 
-	Entry[ST_VERTEX] = "TileVS";
-	Entry[ST_PIXEL] = "TilePS";
-
-	if (LoadShader(TILE_SHADER, TEXT("TileShader.fx"), Entry) == false)
-	{
-		TrueAssert(true);
-		return false;
-	}
-
 //#endif
 
 	Entry[ST_VERTEX] = "FullScreenVS";
@@ -136,14 +118,6 @@ bool ShaderManager::Init()
 	Entry[ST_VERTEX] = "StandardTexStaticVS";
 	Entry[ST_PIXEL] = "StandardTexStaticPS";
 	if (LoadShader(STANDARD_UV_STATIC_SHADER, TEXT("Standard.fx"), Entry) == false)
-	{
-		TrueAssert(true);
-		return false;
-	}
-
-	Entry[ST_VERTEX] = "BackColorVS";
-	Entry[ST_PIXEL] = "BackColorPS";
-	if (LoadShader("BackColorShader", TEXT("BackColorShader.fx"), Entry) == false)
 	{
 		TrueAssert(true);
 		return false;

@@ -223,6 +223,9 @@
     <Filter Include="Core\09. Render\02. RenderState\ResterizerState">
       <UniqueIdentifier>{61ca0a12-15db-4786-a7bb-6dcce4b76ed0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\10. Resource\05. FBXLoader">
+      <UniqueIdentifier>{658465d8-edfb-4e71-8bff-2086d606db5c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -420,6 +423,9 @@
     <ClInclude Include="Render\ResterizerState.h">
       <Filter>Core\09. Render\02. RenderState\ResterizerState</Filter>
     </ClInclude>
+    <ClInclude Include="Resource\FBXLoader.h">
+      <Filter>Core\10. Resource\05. FBXLoader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Copy.bat">
@@ -609,6 +615,9 @@
     </ClCompile>
     <ClCompile Include="Render\ResterizerState.cpp">
       <Filter>Core\09. Render\02. RenderState\ResterizerState</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\FBXLoader.cpp">
+      <Filter>Core\10. Resource\05. FBXLoader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

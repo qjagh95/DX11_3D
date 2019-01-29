@@ -298,6 +298,7 @@ void ResourceManager::CreateSphereVolum(const string& KeyName, float Radius, int
 		for (int j = 0; j < SliceCount; ++j)
 		{
 			unsigned int index[6];
+
 			index[0] = SliceCount * i + j;
 			index[1] = SliceCount * (i + 1) + j + 1;
 			index[2] = SliceCount * (i + 1) + j;
@@ -321,20 +322,24 @@ void ResourceManager::CreateSphereVolum(const string& KeyName, float Radius, int
 		}
 	}
 
-	CreateMesh(KeyName, STANDARD_NORMAL_COLOR_SHADER, POS_NORMAL_COLOR_LAYOUT, &vecVertexData[0], (int)vecVertexData.size(),
-		sizeof(VertexNormalColor), D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
-		&vecIndex[0], (int)vecIndex.size(), sizeof(unsigned int), D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
+	CreateMesh(KeyName, STANDARD_NORMAL_COLOR_SHADER, POS_NORMAL_COLOR_LAYOUT, &vecVertexData[0], (int)vecVertexData.size(), sizeof(VertexNormalColor), D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, &vecIndex[0], (int)vecIndex.size(), sizeof(unsigned int), D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
 }
 
-void ResourceManager::CreateCapsulVolum(const string & KeyName, float Radius, int 가로Slice, int 세로Slice)
+void ResourceManager::CreateCapsulVolum(const string & KeyName, float Radius, int StackSlice, int SliceCount)
+{
+	//TODO : 작업목록
+	//매쉬 3개
+	//Volum처리
+	//디버그일때 와이어프레임처리
+	//LightBlend
+	//++
+}
+
+void ResourceManager::CreateCylinderVolum(const string & KeyName, float Radius, int StackSlice, int SliceCount)
 {
 }
 
-void ResourceManager::CreateCylinderVolum(const string & KeyName, float Radius, int 가로Slice, int 세로Slice)
-{
-}
-
-void ResourceManager::CreateCornVolum(const string & KeyName, float Radius, int 가로Slice, int 세로Slice)
+void ResourceManager::CreateCornVolum(const string & KeyName, float Radius, int StackSlice, int SliceCount)
 {
 }
 

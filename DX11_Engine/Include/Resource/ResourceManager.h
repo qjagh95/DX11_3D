@@ -19,9 +19,6 @@ public:
 	void CreateCornVolum(const string& KeyName, float Radius, int StackSlice, int SliceCount);
 
 private:
-
-
-private:
 	unordered_map<string, Mesh*> m_MeshMap;
 	unordered_map<string, Texture*> m_TextureMap;
 	unordered_map<string, Sampler*> m_SamplerMap;

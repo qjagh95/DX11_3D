@@ -71,8 +71,6 @@ bool Core::Init(HINSTANCE hInst, unsigned int Width, unsigned int Height, const 
 	Register(ClassName, iIconID ,iSmallIconID);
 	CreateWnd(TitleName, ClassName);
 
-	LoadLibrary(TEXT("libxl.dll"));
-	
 	return Init(m_hIstance,m_hWnd, Width, Height, bWindowMode);
 }
 
