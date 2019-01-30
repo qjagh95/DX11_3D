@@ -551,6 +551,22 @@ void JEONG::GameObject::DestroyProtoType()
 	m_ProtoTypeMap.clear();
 }
 
+void GameObject::DeleteComponent(COMPONENT_TYPE Type)
+{
+	list<Component_Base*>::iterator	StartIter = m_ComponentList.begin();
+	list<Component_Base*>::iterator	EndIter = m_ComponentList.begin();
+
+	for (; StartIter != EndIter; ++StartIter)
+	{
+		if ((*StartIter)->GetComType() == Type)
+		{
+			SAFE_RELEASE((*StartIter));
+			m_ComponentList.erase(StartIter);
+			return;
+		}
+	}
+}
+
 GameObject * GameObject::FindProtoType(Scene * scene, const string & TagName)
 {
 	unordered_map<JEONG::Scene*, unordered_map<string, JEONG::GameObject*>>::iterator FindIter = m_ProtoTypeMap.find(scene);

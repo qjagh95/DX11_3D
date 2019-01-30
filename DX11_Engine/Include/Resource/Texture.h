@@ -39,6 +39,7 @@ private:
 
 public:
 	friend class ResourceManager;
+	friend class Material_Com;
 };
 
 JEONG_END

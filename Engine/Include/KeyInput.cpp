@@ -74,6 +74,7 @@ bool KeyInput::Init()
 
 	Material_Com* MouseMeterial = m_MouseObject->FindComponentFromType<Material_Com>(CT_MATERIAL);
 	MouseMeterial->SetDiffuseTexture(0, "Mouse", TEXT("Mouse/Default/0.png"));
+	MouseMeterial->SetDiffuseSampler(0, LINER_SAMPLER);
 	SAFE_RELEASE(MouseMeterial);
 
 	m_MouseWindowPoint = m_MouseObject->AddComponent<ColliderPoint_Com>("MouseWindow");

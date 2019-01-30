@@ -151,6 +151,28 @@ bool ShaderManager::Init()
 	if (CreateInputLayOut(POS_NORMAL_COLOR_LAYOUT, STANDARD_NORMAL_COLOR_SHADER) == false)
 		return false;
 
+	Entry[ST_VERTEX] = "Vertex3DVS";
+	Entry[ST_PIXEL] = "Vertex3DPS";
+	if (LoadShader(VERTEX3D_SHADER, TEXT("Share.fx"), Entry) == false)
+	{
+		TrueAssert(true);
+		return false;
+	}
+
+	AddInputElement("POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 12);
+	AddInputElement("NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 12);
+	AddInputElement("TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 8);
+	AddInputElement("TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 12);
+	AddInputElement("BINORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 12);
+	AddInputElement("BLENDWEIGHTS", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 16);
+	AddInputElement("BLENDINDICES", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 16);
+
+	if (CreateInputLayOut(VERTEX3D_LAYOUT, VERTEX3D_SHADER) == false)
+	{
+		TrueAssert(true);
+		return false;
+	}
+
 	//상수버퍼 Create
 	CreateCBuffer("Transform", sizeof(TransformCBuffer), 0, CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("Material", sizeof(MaterialCbuffer), 1, CST_VERTEX | CST_PIXEL);

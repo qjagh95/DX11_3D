@@ -12,7 +12,13 @@ struct JEONG_DLL SubsetMaterial
 	vector<Texture*> vecDiffuseTexture;
 	vector<Sampler*> vecDiffuseSampler;
 
-	SubsetMaterial();
+	vector<Texture*> vecNormalTexture;
+	vector<Sampler*> vecNormalSampler;
+
+	vector<Texture*> vecSpecularTexture;
+	vector<Sampler*> vecSpecularSampler;
+
+	SubsetMaterial() { MatrialInfo.Specular.w = 3.2f; }
 	~SubsetMaterial();
 };
 
@@ -29,14 +35,23 @@ public:
 	void Render(float DeltaTime) override;
 	Material_Com* Clone() override;
 
-	void SetMaterial(const Vector4& Diffuse, int Container = 0, int Subset = 0);
+	void SetMaterial(const Vector4& Diffuse, const Vector4& Ambient, const Vector4& Specular, float SpecularPower, const Vector4& Emissive, int Container = 0, int Subset = 0);
 	void SetDiffuseTexture(int RegisterNumber, const string& KeyName, int Container = 0, int Subset = 0);
-	void SetDiffuseTexture(int RegisterNumber, const string& KeyName, const TCHAR* FileName,	const string& PathKey = TEXTURE_PATH, int Container = 0, int Subset = 0);
+	void SetDiffuseTexture(int RegisterNumber, const string& KeyName, const TCHAR* FileName, const string& PathKey = TEXTURE_PATH, int Container = 0, int Subset = 0);
 	void SetDiffuseTexture(int RegisterNumber, Texture* pTexture, int Container = 0, int Subset = 0);
 	void SetDiffuseTextureFromFullPath(int RegisterNumber, const string& KeyName, const TCHAR* FullPath, int Container = 0, int Subset = 0);
-	void SetSampler(int RegisterNumber, const string& KeyName, int Container = 0, int Subset = 0);
+	void SetNormalTexture(int RegisterNumber, const string& KeyName, const TCHAR* FileName, const string& PathKey = TEXTURE_PATH,int Container = 0, int Subset = 0);
+	void SetNormalTextureFromFullPath(int RegisterNumber, const string& strKey,	const TCHAR* FullPath, int Container = 0, int Subset = 0);
+	void SetNormalSampler(int RegisterNumber, const string& KeyName,int Container = 0, int Subset = 0);
+
+	void SetSpecularTexture(int iRegister, const string& strKey, const TCHAR* pFileName,const string& strPathKey = TEXTURE_PATH, int Container = 0, int Subset = 0);
+	void SetSpecularTextureFromFullPath(int iRegister, const string& strKey,const TCHAR* pFullPath, int Container = 0, int Subset = 0);
+	void SetSpecularSampler(int iRegister, const string& strKey,int iContainer = 0, int iSubset = 0);
+
+	void SetDiffuseSampler(int RegisterNumber, const string& KeyName, int Container = 0, int Subset = 0);
 	void SetShader(int Container = 0, int Subset = 0);
 	MaterialCbuffer GetMaterialInfo() const { return m_vecMaterial[0][0]->MatrialInfo; }
+	void ClearContainer();
 
 private:
 	//메쉬도 컨테이너와 서브셋개념으로 나눠져있기때문에 재질정보도 각 부위마다 달라질 수 있다.
@@ -52,6 +67,7 @@ private:
 public:
 	friend class GameObject;
 	friend class GUIManager;
+	friend class Mesh;
 };
 
 JEONG_END

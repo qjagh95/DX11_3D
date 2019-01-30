@@ -34,7 +34,17 @@ namespace JEONG
 		VertexNormalColor(const Vector3& Pos, const Vector3& Normal, const Vector4& Color) :m_Pos(Pos), m_Normal(Normal), m_Color(Color) {}
 	};
 
-
+	struct JEONG_DLL Vertex3D
+	{
+		Vector3	Pos;
+		Vector3	Normal;
+		Vector2	UV;
+		Vector3	Tangent;
+		Vector3	Binormal;
+		Vector4	Weight;
+		Vector4	Index;
+	};
+	
 	//UV좌표란 이미지크기에 상관없이 무조건 0에서 1까지의 범위를 갖는 숫자이다. (좌상단 좌표를 사용한다)
 	//Left = 0 , Right = 1
 	//Top = 0 , Bottom = 1

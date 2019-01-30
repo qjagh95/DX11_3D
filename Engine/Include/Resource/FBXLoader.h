@@ -23,17 +23,17 @@ struct JEONG_DLL FBXMeshContainer
 	vector<Vector2>	vecUV;
 	vector<Vector3>	vecTangent;
 	vector<Vector3>	vecBinormal;
-	//vector<Vector4> vecBlendWeight;
-	//vector<Vector4> vecBlendIndex;
+	vector<Vector4> vecBlendWeight;
+	vector<Vector4> vecBlendIndex;
 	vector<vector<UINT>> vecIndices;
 	//unordered_map<int, vector<FBXWEIGHT>>	mapWeights;
 	bool isBump;
-	//bool isAnimation;
+	bool isAnimation;
 
 	FBXMeshContainer()
 	{
 		isBump = false;
-		//Animation = false;
+		isAnimation = false;
 	}
 };
 

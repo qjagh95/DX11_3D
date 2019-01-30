@@ -199,9 +199,6 @@
     <Filter Include="Core\14. ExcelManager">
       <UniqueIdentifier>{04100240-63b6-4673-b131-5f185849d76c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Core\08. Object\Component\BaseComponent\07. UI\BackColor">
-      <UniqueIdentifier>{ec5d490a-a726-4eee-a95d-6b87f2b7bea7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Core\15. BineryIO">
       <UniqueIdentifier>{a30d73ac-14b8-4e86-9586-af92d2eafd4a}</UniqueIdentifier>
     </Filter>
@@ -399,9 +396,6 @@
     <ClInclude Include="ExcelManager.h">
       <Filter>Core\14. ExcelManager</Filter>
     </ClInclude>
-    <ClInclude Include="Component\BackColor_Com.h">
-      <Filter>Core\08. Object\Component\BaseComponent\07. UI\BackColor</Filter>
-    </ClInclude>
     <ClInclude Include="BineryReader.h">
       <Filter>Core\15. BineryIO</Filter>
     </ClInclude>
@@ -594,9 +588,6 @@
     </ClCompile>
     <ClCompile Include="ExcelManager.cpp">
       <Filter>Core\14. ExcelManager</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\BackColor_Com.cpp">
-      <Filter>Core\08. Object\Component\BaseComponent\07. UI\BackColor</Filter>
     </ClCompile>
     <ClCompile Include="BineryReader.cpp">
       <Filter>Core\15. BineryIO</Filter>

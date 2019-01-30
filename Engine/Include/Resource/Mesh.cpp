@@ -1,15 +1,20 @@
 #include "../stdafx.h"
 #include "../Device.h"
 #include "Mesh.h"
+#include "FBXLoader.h"
+
+#include "Component/Material_Com.h"
 
 JEONG_USING
 
-JEONG::Mesh::Mesh()
+Mesh::Mesh()
 {
 }
 
-JEONG::Mesh::~Mesh()
+Mesh::~Mesh()
 {
+	SAFE_RELEASE(m_Material);
+
 	for (size_t i = 0; i < m_vecMeshContainer.size(); i++)
 	{
 		SAFE_RELEASE(m_vecMeshContainer[i]->vertexBuffer.vBuffer);
@@ -26,7 +31,7 @@ JEONG::Mesh::~Mesh()
 	m_vecMeshContainer.clear();
 }
 
-void JEONG::Mesh::Render()
+void Mesh::Render()
 {
 	for (size_t i = 0; i < m_vecMeshContainer.size(); i++)
 	{
@@ -54,7 +59,7 @@ void JEONG::Mesh::Render()
 	}
 }
 
-void JEONG::Mesh::Render(int Container, int Subset)
+void Mesh::Render(int Container, int Subset)
 {
 	Device::Get()->GetContext()->IASetPrimitiveTopology(m_vecMeshContainer[Container]->PrimitiveType);
 
@@ -72,13 +77,13 @@ void JEONG::Mesh::Render(int Container, int Subset)
 	}
 }
 
-bool JEONG::Mesh::CreateMesh(const string & TagName, const string & ShaderKeyName, const string & LayOutKeyName, void * vertexInfo, int vertexCount, int vertexSize, D3D11_USAGE vertexUsage, D3D11_PRIMITIVE_TOPOLOGY primitiveType, void * indexInfo, int indexCount, int indexSize, D3D11_USAGE indexUsage, DXGI_FORMAT indexFormat)
+bool Mesh::CreateMesh(const string & TagName, const string & ShaderKeyName, const string & LayOutKeyName, void * vertexInfo, int vertexCount, int vertexSize, D3D11_USAGE vertexUsage, D3D11_PRIMITIVE_TOPOLOGY primitiveType, void * indexInfo, int indexCount, int indexSize, D3D11_USAGE indexUsage, DXGI_FORMAT indexFormat)
 {
 	SetTag(TagName);
 	m_ShaderKeyName = ShaderKeyName;
 	m_LayOutKeyName = LayOutKeyName;
 
-	JEONG::MeshContainer* newContainer = new MeshContainer();
+	MeshContainer* newContainer = new MeshContainer();
 	newContainer->PrimitiveType = primitiveType;
 
 	m_vecMeshContainer.push_back(newContainer);
@@ -101,10 +106,10 @@ bool JEONG::Mesh::CreateMesh(const string & TagName, const string & ShaderKeyNam
 	return true;
 }
 
-bool JEONG::Mesh::CreateVertexBuffer(void * vertexInfo, int vertexCount, int vertexSize, D3D11_USAGE vertexUsage)
+bool Mesh::CreateVertexBuffer(void * vertexInfo, int vertexCount, int vertexSize, D3D11_USAGE vertexUsage)
 {
 	//항상 마지막에 추가된 것을 가져온다.
-	JEONG::MeshContainer* getContainer = m_vecMeshContainer[m_vecMeshContainer.size() - 1];
+	MeshContainer* getContainer = m_vecMeshContainer[m_vecMeshContainer.size() - 1];
 	getContainer->vertexBuffer.vCount = vertexCount;
 	getContainer->vertexBuffer.vInfo = new char[vertexSize * vertexCount];
 	getContainer->vertexBuffer.vUsage = vertexUsage;
@@ -166,17 +171,17 @@ bool JEONG::Mesh::CreateVertexBuffer(void * vertexInfo, int vertexCount, int ver
 	//중심점
 	m_Center = (m_Min + m_Max) * 0.5f;
 	//길이
-	m_Lanth = m_Max - m_Min;
+	m_Lenth = m_Max - m_Min;
 	//반지름
-	m_Radius = m_Lanth.Lenth() * 0.5f;
+	m_Radius = m_Lenth.Lenth() * 0.5f;
 
 	return true;
 }
 
-bool JEONG::Mesh::CreateIndexBuffer(void * indexInfo, int indexCount, int indexSize, D3D11_USAGE indexUsage, DXGI_FORMAT indexFormat)
+bool Mesh::CreateIndexBuffer(void * indexInfo, int indexCount, int indexSize, D3D11_USAGE indexUsage, DXGI_FORMAT indexFormat)
 {
 	//항상 마지막에 추가된 것을 가져온다.  
-	JEONG::MeshContainer* getContainer = m_vecMeshContainer[m_vecMeshContainer.size() - 1];
+	MeshContainer* getContainer = m_vecMeshContainer[m_vecMeshContainer.size() - 1];
 
 	IndexBuffer TempIndexBuffer;
 	TempIndexBuffer.iCount = indexCount;
@@ -209,7 +214,50 @@ bool JEONG::Mesh::CreateIndexBuffer(void * indexInfo, int indexCount, int indexS
 	return true;
 }
 
-void JEONG::Mesh::UpdateVertexBuffer(void * vertexInfo, int ContainerIndex)
+bool Mesh::LoadMesh(const string & KeyName, const TCHAR * pFileName, const string & strPathKey)
+{
+	TCHAR strFullPath[MAX_PATH] = {};
+
+	const TCHAR* pPath = PathManager::Get()->FindPath(strPathKey);
+
+	if (pPath)
+		lstrcpy(strFullPath, pPath);
+
+	lstrcat(strFullPath, pFileName);
+	return LoadMeshFromFullPath(KeyName, strFullPath);
+}
+
+bool Mesh::LoadMeshFromFullPath(const string & KeyName, const TCHAR * pFullPath)
+{
+	m_TagName = KeyName;
+
+	string FullPath = CW2A(pFullPath);
+
+	char strExt[_MAX_EXT] = {};
+
+	_splitpath_s(FullPath.c_str(), 0, 0, 0, 0, 0, 0, strExt, _MAX_EXT);
+
+	_strupr_s(strExt);
+
+	if (strcmp(strExt, ".FBX") == 0)
+	{
+		FBXLoader loader;
+
+		if (loader.LoadFbx(FullPath.c_str()) == false)
+			return false;
+
+		return ConvertFbx(&loader);
+	}
+
+	return true;
+}
+
+Material_Com * Mesh::CloneMaterial()
+{
+	return m_Material->Clone();
+}
+
+void Mesh::UpdateVertexBuffer(void * vertexInfo, int ContainerIndex)
 {
 	if (ContainerIndex < 0 || ContainerIndex >= m_vecMeshContainer.size())
 		return;
@@ -233,4 +281,303 @@ void JEONG::Mesh::UpdateVertexBuffer(void * vertexInfo, int ContainerIndex)
 		}
 			break;
 	}//switch
+}
+
+bool Mesh::ConvertFbx(FBXLoader * pLoader)
+{
+	const vector<FBXMeshContainer*>* pvecContainer = pLoader->GetMeshContainers();
+	const vector<vector<FbxMaterial*>>*	pvecMaterials = pLoader->GetMaterials();
+
+	vector<FBXMeshContainer*>::const_iterator	StartIter = pvecContainer->begin();
+	vector<FBXMeshContainer*>::const_iterator	EndIter = pvecContainer->end();
+
+	vector<bool> vecEmptyIndex;
+
+	for (; StartIter != EndIter; ++StartIter)
+	{
+		MeshContainer*	pContainer = new MeshContainer();
+
+		m_LayOutKeyName = VERTEX3D_LAYOUT;
+
+		m_vecMeshContainer.push_back(pContainer);
+
+		int	iVtxSize = 0;
+
+		// 범프가 있을 경우
+		if ((*StartIter)->isBump)
+		{
+			if ((*StartIter)->isAnimation);
+				//m_strShaderKey = STANDARD_BUMP_ANIM_SHADER;
+			else
+				m_LayOutKeyName = STANDARD_BUMP_SHADER;
+		}
+
+		// 범프가 없을 경우
+		else
+		{
+			if ((*StartIter)->isAnimation);
+				//m_strShaderKey = STANDARD_TEX_NORMAL_ANIM_SHADER;
+			else;
+				//m_strShaderKey = STANDARD_TEX_NORMAL_SHADER;
+		}
+
+		vector<Vertex3D> vecVtx;
+		iVtxSize = sizeof(Vertex3D);
+
+		for (size_t i = 0; i < (*StartIter)->vecPos.size(); ++i)
+		{
+			Vertex3D	tVtx = {};
+
+			tVtx.Pos = (*StartIter)->vecPos[i];
+			tVtx.Normal = (*StartIter)->vecNormal[i];
+			tVtx.UV = (*StartIter)->vecUV[i];
+
+			if ((*StartIter)->vecTangent.empty() == false)
+				tVtx.Tangent = (*StartIter)->vecTangent[i];
+
+			if ((*StartIter)->vecBinormal.empty() == false)
+				tVtx.Binormal = (*StartIter)->vecBinormal[i];
+
+			if ((*StartIter)->vecBlendWeight.empty() == false)
+			{
+				tVtx.Weight = (*StartIter)->vecBlendWeight[i];
+				tVtx.Index = (*StartIter)->vecBlendIndex[i];
+			}
+
+			vecVtx.push_back(tVtx);
+		}
+
+		pContainer->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+
+		if (CreateVertexBuffer(&vecVtx[0], (int)vecVtx.size(), iVtxSize, D3D11_USAGE_DEFAULT) == false)
+			return false;
+
+		// 인덱스버퍼 생성
+		for (size_t i = 0; i < (*StartIter)->vecIndices.size(); ++i)
+		{
+			if ((*StartIter)->vecIndices[i].empty())
+			{
+				vecEmptyIndex.push_back(false);
+				continue;
+			}
+
+			vecEmptyIndex.push_back(true);
+
+			if (!CreateIndexBuffer(&(*StartIter)->vecIndices[i][0], (int)(*StartIter)->vecIndices[i].size(), 4, D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT))
+				return false;
+		}
+	}
+
+	// 재질 정보를 읽어온다.
+	const vector<vector<FbxMaterial*>>*	pMaterials = pLoader->GetMaterials();
+
+	if (!pMaterials->empty())
+	{
+		// 실제 사용할 재질 클래스를 생성한다.
+		m_Material = new Material_Com();
+
+		if (m_Material->Init() == false)
+		{
+			SAFE_RELEASE(m_Material);
+			return NULLPTR;
+		}
+
+		m_Material->ClearContainer();
+	}
+
+	vector<vector<FbxMaterial*>>::const_iterator StartIterM = pMaterials->begin();
+	vector<vector<FbxMaterial*>>::const_iterator EndIterM = pMaterials->end();
+
+	int	iContainer = 0;
+	for (; StartIterM != EndIterM; ++StartIterM, ++iContainer)
+	{
+		for (size_t i = 0; i < (*StartIterM).size(); ++i)
+		{
+			// 인덱스 버퍼가 비어있을 경우에는 재질을 추가하지 않는다.
+			if (vecEmptyIndex[i] == false)
+				continue;
+
+			// 재질 정보를 얻어온다.
+			FbxMaterial* pMtrl = (*StartIterM)[i];
+
+			m_Material->SetMaterial(pMtrl->Diffuse, pMtrl->Ambient, pMtrl->Spcular, pMtrl->Shininess, pMtrl->Emissive, iContainer, (int)i);
+
+			// 이름을 불러온다.
+			char strName[MAX_PATH] = {};
+			_splitpath_s(pMtrl->strDifTex.c_str(), NULLPTR, 0, NULLPTR, 0, strName, MAX_PATH, NULLPTR, 0);
+
+			TCHAR strPath[MAX_PATH] = {};
+
+#ifdef UNICODE
+			MultiByteToWideChar(CP_ACP, 0, pMtrl->strDifTex.c_str(), -1, strPath, (int)pMtrl->strDifTex.length());
+#endif // UNICODE
+
+			m_Material->SetDiffuseSampler(0, LINER_SAMPLER, iContainer, (int)i);
+			m_Material->SetDiffuseTextureFromFullPath(0, strName, strPath, iContainer, (int)i);
+
+			if (pMtrl->strBumpTex.empty() == false)
+			{
+				memset(strName, 0, MAX_PATH);
+				_splitpath_s(pMtrl->strBumpTex.c_str(), NULLPTR, 0, NULLPTR, 0, strName, MAX_PATH, NULLPTR, 0);
+
+				memset(strPath, 0, sizeof(wchar_t) * MAX_PATH);
+
+				MultiByteToWideChar(CP_ACP, 0, pMtrl->strBumpTex.c_str(), -1, strPath, (int)pMtrl->strBumpTex.length());
+
+				m_Material->SetNormalSampler((int)0, LINER_SAMPLER, iContainer, (int)i);
+				m_Material->SetNormalTextureFromFullPath((int)1, strName, strPath, iContainer, (int)i);
+			}
+
+			if (pMtrl->strSpcTex.empty() == false)
+			{
+				memset(strName, 0, MAX_PATH);
+				_splitpath_s(pMtrl->strSpcTex.c_str(), NULLPTR, 0, NULLPTR, 0, strName, MAX_PATH, NULLPTR, 0);
+
+				memset(strPath, 0, sizeof(wchar_t) * MAX_PATH);
+
+				MultiByteToWideChar(CP_ACP, 0, pMtrl->strSpcTex.c_str(), -1, strPath, (int)pMtrl->strSpcTex.length());
+
+				m_Material->SetSpecularSampler((int)0, LINER_SAMPLER, iContainer, (int)i);
+				m_Material->SetSpecularTextureFromFullPath((int)2, strName, strPath, iContainer, (int)i);
+			}
+		}
+	}
+
+	// 텍스쳐가 저장된 폴더명을 키로 변경한다.
+	//char	strFullName[MAX_PATH] = {};
+	//iterM = pMaterials->begin();
+	//strcpy_s(strFullName, (*iterM)[0]->strDifTex.c_str());
+
+	//int	iLength = strlen(strFullName);
+	//for (int i = iLength - 1; i >= 0; --i)
+	//{
+	//	if (strFullName[i] == '\\' || strFullName[i] == '/')
+	//	{
+	//		memset(strFullName + (i + 1), 0, sizeof(char) * (iLength - (i + 1)));
+	//		strFullName[i] = '\\';
+	//		//strFullName[i] = 0;
+	//		break;
+	//	}
+	//}
+
+	//char	strChange[MAX_PATH] = {};
+	//strcpy_s(strChange, strFullName);
+	//iLength = strlen(strChange);
+	//for (int i = iLength - 2; i >= 0; --i)
+	//{
+	//	if (strChange[i] == '\\' || strChange[i] == '/')
+	//	{
+	//		memset(strChange + (i + 1), 0, sizeof(char) * (iLength - (i + 1)));
+	//		break;
+	//	}
+	//}
+
+	//strcat_s(strChange, m_strTag.c_str());
+	//strcat_s(strChange, "\\");
+
+	//MoveFileA(strFullName, strChange);
+
+	// Mesh\\ 까지의 경로를 제거한다.
+	/*iLength = strlen(strChange);
+	for (int i = iLength - 2; i >= 0; --i)
+	{
+		char	cText[5] = {};
+		memcpy(cText, &strChange[i - 4], 4);
+		_strupr_s(cText);
+
+		if (strcmp(cText, "MESH") == 0)
+		{
+			memset(strChange, 0, sizeof(char) * (i + 1));
+			memcpy(strChange, &strChange[i + 1], sizeof(char) * (iLength - (i + 1)));
+			memset(strChange + (i + 1), 0, sizeof(char) * (iLength - (i + 1)));
+			break;
+		}
+	}*/
+
+	/*for (size_t i = 0; i < m_vecMeshContainer.size(); ++i)
+	{
+	PMESHCONTAINER	pContainer = m_vecMeshContainer[i];
+
+	for (size_t j = 0; j < pContainer->vecMaterial.size(); ++j)
+	{
+	pContainer->vecMaterial[j]->SetTexturePathKey(MESH_PATH);
+	pContainer->vecMaterial[j]->ChangeTexturePath(strChange);
+	}
+	}*/
+
+	m_Lenth = m_Max - m_Min;
+
+	m_Center = (m_Max + m_Min) / 2.0f;
+	m_Radius = m_Lenth.Lenth() / 2.0f;
+
+	// 애니메이션 처리
+	//const vector<PFBXBONE>*	pvecBone = pLoader->GetBones();
+
+	//if (pvecBone->empty())
+	//	return true;
+
+	//SAFE_RELEASE(m_pAnimation);
+
+	//m_pAnimation = new CAnimation;
+
+	//if (!m_pAnimation->Init())
+	//{
+	//	SAFE_RELEASE(m_pAnimation);
+	//	return false;
+	//}
+
+	////// 본 수만큼 반복한다.
+	//vector<PFBXBONE>::const_iterator	iterB;
+	//vector<PFBXBONE>::const_iterator	iterBEnd = pvecBone->end();
+
+	//for (iterB = pvecBone->begin(); iterB != iterBEnd; ++iterB)
+	//{
+	//	PBONE	pBone = new BONE;
+
+	//	pBone->strName = (*iterB)->strName;
+	//	pBone->iDepth = (*iterB)->iDepth;
+	//	pBone->iParentIndex = (*iterB)->iParentIndex;
+
+	//	float	fMat[4][4];
+
+	//	for (int i = 0; i < 4; ++i)
+	//	{
+	//		for (int j = 0; j < 4; ++j)
+	//		{
+	//			fMat[i][j] = (*iterB)->matOffset.mData[i].mData[j];
+	//		}
+	//	}
+
+	//	pBone->matOffset = new Matrix;
+	//	*pBone->matOffset = fMat;
+
+	//	for (int i = 0; i < 4; ++i)
+	//	{
+	//		for (int j = 0; j < 4; ++j)
+	//		{
+	//			fMat[i][j] = (*iterB)->matBone.mData[i].mData[j];
+	//		}
+	//	}
+
+	//	pBone->matBone = new Matrix;
+	//	*pBone->matBone = fMat;
+
+	//	m_pAnimation->AddBone(pBone);
+	//}
+
+	//m_pAnimation->CreateBoneTexture();
+
+	//// 애니메이션 클립을 추가한다.
+	//const vector<PFBXANIMATIONCLIP>* pvecClip = pLoader->GetClips();
+
+	//// 클립을 읽어온다.
+	//vector<PFBXANIMATIONCLIP>::const_iterator	iterC;
+	//vector<PFBXANIMATIONCLIP>::const_iterator	iterCEnd = pvecClip->end();
+
+	//for (iterC = pvecClip->begin(); iterC != iterCEnd; ++iterC)
+	//{
+	//	m_pAnimation->AddClip(AO_LOOP, *iterC);
+	//}
+
+	return true;
 }

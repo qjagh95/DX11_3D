@@ -73,6 +73,30 @@ struct VS_OUTPUT_NORMAL_COLOR
     float4 vColor : COLOR;
 };
 
+struct VS_INPUT_3D
+{
+    float3 vPos : POSITION0;
+    float3 vNormal : NORMAL0;
+    float2 vUV : TEXCOORD0;
+    float3 vTangent : TANGENT0;
+    float3 vBinormal : BINORMAL0;
+    float4 vBlendWeight : BLENDWEIGHTS0;
+    float4 vBlendIndex : BLENDINDICES0;
+};
+
+struct VS_OUTPUT_3D
+{
+    float4 vPos : SV_POSITION0;
+    float4 vProjPos : POSITION0;
+    float3 vViewPos : POSITION1;
+    float3 vNormalV : NORMAL0;
+    float2 vUV : TEXCOORD0;
+    float3 vTangentV : TANGENT0;
+    float3 vBinormalV : BINORMAL0;
+    float4 vBlendWeight : BLENDWEIGHTS0;
+    float4 vBlendIndex : BLENDINDICES0;
+};
+
 /////////////////////////////////////////////////////////////////////
 
 struct PS_OUTPUT_GBUFFER
@@ -179,7 +203,7 @@ cbuffer Light : register(b3)
 //변수라인
 /////////////////////////////////////////////////////////////////////
 
-Texture2D Diffuse : register(t0);
+Texture2D DiffuseTexture : register(t0);
 SamplerState DiffuseSampler : register(s0);
 Texture2D TargetDiffuse : register(t10);
 
@@ -328,3 +352,18 @@ float4 DecompressColor(float Color)
 
     return OutColor;
 }
+
+VS_OUTPUT_3D Vertex3DVS(VS_INPUT_3D input)
+{
+    VS_OUTPUT_3D output = (VS_OUTPUT_3D)0;
+
+    return output;
+}
+
+PS_OUTPUT_SINGLE Vertex3DPS(VS_OUTPUT_3D input)
+{
+    PS_OUTPUT_SINGLE output = (PS_OUTPUT_SINGLE) 0;
+
+    return output;
+}
+

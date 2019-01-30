@@ -47,7 +47,7 @@ PS_OUTPUT_SINGLE BarPS(VS_OUTPUT_UV input)
 {
     PS_OUTPUT_SINGLE output = (PS_OUTPUT_SINGLE) 0;
 
-    float4 OriginColor = Diffuse.Sample(DiffuseSampler, input.vUV);
+    float4 OriginColor = DiffuseTexture.Sample(DiffuseSampler, input.vUV);
     float4 LightColor = LightDiffuse.Sample(DiffuseSampler, input.vUV);
 
     output.vTarget0 = OriginColor * g_BarLight * LightColor;

@@ -18,8 +18,9 @@
 #define SHADER_PATH "ShaderPath"
 #define SOUND_PATH "SoundPath"
 #define DATA_PATH "DataPath"
+#define FBX_PATH "FBXPath"
 
-//BaseShader
+//Shader
 #define STANDARD_COLOR_SHADER "StandardColorShader"
 #define STANDARD_UV_SHADER "StandardUVShader"
 #define COLLIDER_SHADER "ColliderShader"
@@ -33,12 +34,15 @@
 #define LIGHT_DIR_ACC_SHADER "LightDirAccShader"
 #define LIGHT_POINT_ACC_SHADER "LightPointAccShader"
 #define LIGHT_BLEND_SHADER "LightBlendShader"
+#define	STANDARD_BUMP_SHADER "StandardBumpShader"
+#define	VERTEX3D_SHADER "Vertex3DShader"
 
 //Base InputLayOut
 #define POS_COLOR_LAYOUT "PosColorLayOut"
 #define POS_UV_LAYOUT "PosUVLayOut"
 #define POS_LAYOUT "PosLayOut"
 #define POS_NORMAL_COLOR_LAYOUT "PosNormalColorLayOut"
+#define	VERTEX3D_LAYOUT	"Vertex3DLayout"
 
 //Sampler
 #define LINER_SAMPLER "Linear"
@@ -50,7 +54,6 @@
 #define ACC_BLEND "AccBlend"
 #define CULL_NONE "CullNone"
 #define WIRE_FRAME "WireFrame"
-
 
 template<typename T>
 void Safe_Delete_VecList(T& p)

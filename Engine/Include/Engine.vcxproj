@@ -203,7 +203,6 @@
     <ClInclude Include="BineryWriter.h" />
     <ClInclude Include="CollsionManager.h" />
     <ClInclude Include="Component\Animation2D_Com.h" />
-    <ClInclude Include="Component\BackColor_Com.h" />
     <ClInclude Include="Component\Bar_Com.h" />
     <ClInclude Include="Component\FreeCamera_Com.h" />
     <ClInclude Include="Component\IconSlot_Com.h" />
@@ -271,7 +270,6 @@
     <ClCompile Include="BineryWriter.cpp" />
     <ClCompile Include="CollsionManager.cpp" />
     <ClCompile Include="Component\Animation2D_Com.cpp" />
-    <ClCompile Include="Component\BackColor_Com.cpp" />
     <ClCompile Include="Component\Bar_Com.cpp" />
     <ClCompile Include="Component\FreeCamera_Com.cpp" />
     <ClCompile Include="Component\IconSlot_Com.cpp" />

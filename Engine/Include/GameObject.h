@@ -126,6 +126,9 @@ public:
 		}
 		return NULLPTR;
 	}
+
+	void DeleteComponent(COMPONENT_TYPE Type);
+
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	static GameObject* FindProtoType(Scene* scene, const string& TagName);
 	static GameObject* FindObject(const string& TagName);

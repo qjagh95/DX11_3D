@@ -38,6 +38,8 @@ struct JEONG_DLL MeshContainer
 	D3D11_PRIMITIVE_TOPOLOGY PrimitiveType;
 };
 
+class Material_Com;
+class FBXLoader;
 class Mesh : public RefCount
 {
 public:
@@ -48,6 +50,9 @@ public:
 	string GetShaderKey() const { return m_ShaderKeyName; }
 	string GetLayOutKey() const { return m_LayOutKeyName; }
 	void* GetVertexInfo(int Index) const { return m_vecMeshContainer[Index]->vertexBuffer.vInfo; }
+	bool LoadMesh(const string& KeyName, const TCHAR* pFileName,const string& strPathKey = FBX_PATH);
+	bool LoadMeshFromFullPath(const string& KeyName, const TCHAR* pFullPath);
+	Material_Com* CloneMaterial();
 
 	void UpdateVertexBuffer(void* vertexInfo, int ContainerIndex = 0);
 
@@ -57,8 +62,11 @@ public:
 	Vector3 GetMin() const { return m_Min; }
 	Vector3 GetMax() const { return m_Max; }
 	Vector3 GetCenter() const { return m_Center; }
-	Vector3 GetLenth() const { return m_Lanth; }
+	Vector3 GetLenth() const { return m_Lenth; }
 	float GetRadius() const { return m_Radius; }
+
+private:
+	bool ConvertFbx(FBXLoader* pLoader);
 
 private:
 	vector<MeshContainer*> m_vecMeshContainer;
@@ -67,7 +75,8 @@ private:
 	Vector3 m_Center;
 	Vector3 m_Min;
 	Vector3 m_Max;
-	Vector3 m_Lanth;
+	Vector3 m_Lenth;
+	Material_Com* m_Material;
 	float m_Radius;
 
 private:

@@ -30,6 +30,20 @@ FBXLoader::~FBXLoader()
 
 bool FBXLoader::LoadFbx(const char * pFullPath)
 {
+	/*
+
+	1. Manager생성 - 최상위
+	2. IOSetting 생성
+	3. Importer 생성
+	4. Scene생성
+
+	Importer가 읽은 데이터를 Scene에 넘겨준다.
+	Scene은 그래프구조 (트리)
+
+	Scene에서 자식노드와 속성을 돌며 데이터 내 구조에 맞게 데이터를 입력한다.
+
+	*/
+
 	// FbxManager 객체를 생성한다.
 	m_Manager = FbxManager::Create();
 
@@ -71,7 +85,7 @@ void FBXLoader::Triangulate(FbxNode * pNode)
 	FbxNodeAttribute* pAttr = pNode->GetNodeAttribute();
 
 	if (pAttr && (pAttr->GetAttributeType() == FbxNodeAttribute::eMesh ||
-		pAttr->GetAttributeType() == FbxNodeAttribute::eNurbs || //곡선 즉 메쉬냐?를 물어봄.
+		pAttr->GetAttributeType() == FbxNodeAttribute::eNurbs || //곡선표현 즉 메쉬냐?를 물어봄.
 		pAttr->GetAttributeType() == FbxNodeAttribute::eNurbsSurface))
 	{
 		FbxGeometryConverter converter(m_Manager);

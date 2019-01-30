@@ -22,6 +22,7 @@ public:
 public:
 	void SetMesh(Mesh* mesh);
 	void SetMesh(const string& KeyName);
+	void SetMesh(const string& KeyName, const TCHAR* FileName, const string& PathKey = FBX_PATH);
 	void SetShader(Shader* shader);
 	void SetShader(const string& KeyName);
 	void SetLayOut(const string& KeyName);

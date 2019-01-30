@@ -240,6 +240,51 @@ bool ResourceManager::CreateTextureFromFullPath(const string & KeyName, const TC
 	return true;
 }
 
+bool ResourceManager::LoadMesh(const string & KeyName, const TCHAR * pFileName, const string & strPathKey)
+{
+	Mesh* newMesh = FindMesh(KeyName);
+
+	if (newMesh)
+	{
+		SAFE_RELEASE(newMesh);
+		return false;
+	}
+
+	newMesh = new Mesh();
+
+	if (newMesh->LoadMesh(KeyName, pFileName, strPathKey) == false)
+	{
+		SAFE_RELEASE(newMesh);
+		return false;
+	}
+
+	m_MeshMap.insert(make_pair(KeyName, newMesh));
+
+	return true;
+}
+
+bool ResourceManager::LoadMeshFromFullPath(const string & KeyName, const TCHAR * pFullPath)
+{
+	Mesh* newMesh = FindMesh(KeyName);
+
+	if (newMesh)
+	{
+		SAFE_RELEASE(newMesh);
+		return false;
+	}
+
+	newMesh = new Mesh();
+
+	if (newMesh->LoadMeshFromFullPath(KeyName, pFullPath) == false)
+	{
+		SAFE_RELEASE(newMesh);
+		return false;
+	}
+
+	m_MeshMap.insert(make_pair(KeyName, newMesh));
+	return true;
+}
+
 bool ResourceManager::CreateSampler(const string & KeyName, D3D11_FILTER eFilter, D3D11_TEXTURE_ADDRESS_MODE eU, D3D11_TEXTURE_ADDRESS_MODE eV, D3D11_TEXTURE_ADDRESS_MODE eW)
 {
 	Sampler* newSampler = FindSampler(KeyName);
@@ -345,7 +390,7 @@ void ResourceManager::CreateCornVolum(const string & KeyName, float Radius, int 
 
 Mesh* ResourceManager::FindMesh(const string & TagName)
 {
-	unordered_map<string, JEONG::Mesh*>::iterator FindIter = m_MeshMap.find(TagName);
+	unordered_map<string, Mesh*>::iterator FindIter = m_MeshMap.find(TagName);
 
 	if (FindIter == m_MeshMap.end())
 		return NULLPTR;
@@ -357,7 +402,7 @@ Mesh* ResourceManager::FindMesh(const string & TagName)
 
 Texture * ResourceManager::FindTexture(const string & KeyName)
 {
-	unordered_map<string, JEONG::Texture*>::iterator FindIter = m_TextureMap.find(KeyName);
+	unordered_map<string, Texture*>::iterator FindIter = m_TextureMap.find(KeyName);
 
 	if (FindIter == m_TextureMap.end())
 		return NULLPTR;
@@ -369,7 +414,7 @@ Texture * ResourceManager::FindTexture(const string & KeyName)
 
 Sampler * ResourceManager::FindSampler(const string & KeyName)
 {
-	unordered_map<string, JEONG::Sampler*>::iterator FindIter = m_SamplerMap.find(KeyName);
+	unordered_map<string, Sampler*>::iterator FindIter = m_SamplerMap.find(KeyName);
 
 	if (FindIter == m_SamplerMap.end())
 		return NULLPTR;
@@ -381,7 +426,7 @@ Sampler * ResourceManager::FindSampler(const string & KeyName)
 
 Sampler * ResourceManager::FindSamplerNoneCount(const string & KeyName)
 {
-	unordered_map<string, JEONG::Sampler*>::iterator FindIter = m_SamplerMap.find(KeyName);
+	unordered_map<string, Sampler*>::iterator FindIter = m_SamplerMap.find(KeyName);
 
 	if (FindIter == m_SamplerMap.end())
 		return NULLPTR;
