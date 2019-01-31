@@ -34,6 +34,7 @@ public:
 
 	void CheckComponent();
 	void DeleteComponentCBuffer(Component_Base* DeleteCom);
+	void InitMaterial();
 
 private:
 	void UpdateTransform();

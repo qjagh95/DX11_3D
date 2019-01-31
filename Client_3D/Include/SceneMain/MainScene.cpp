@@ -35,7 +35,9 @@ bool MainScene::Init()
 	newObject->GetTransform()->SetWorldPos(0.0f, 0.0f, 2.0f);
 
 	Renderer_Com* RenderComponent = newObject->AddComponent<Renderer_Com>("Render");
-	RenderComponent->SetMesh("Player", TEXT("Monster4.fbx"));
+	//RenderComponent->SetMesh("Player", TEXT("Monster4.fbx"));
+	RenderComponent->SetMesh("Pyramid");
+	RenderComponent->InitMaterial();
 
 	GameObject* newObject2 = GameObject::CreateObject("Player", Default);
 	Player_Com* newPlayer = newObject2->AddComponent<Player_Com>("Player");

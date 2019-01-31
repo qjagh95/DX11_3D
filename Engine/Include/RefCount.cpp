@@ -3,15 +3,18 @@
 
 JEONG_USING
 
-JEONG::RefCount::RefCount(): ReferanceCount(1), isActive(true), isShow(true)
+RefCount::RefCount()
 {
+	ReferanceCount = 1;
+	isActive = true;
+	isShow = true;
 }
 
-JEONG::RefCount::~RefCount()
+RefCount::~RefCount()
 {    
 }
 
-int JEONG::RefCount::Release()
+int RefCount::Release()
 {
 	ReferanceCount--;
 

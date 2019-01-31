@@ -11,9 +11,12 @@ public:
 	void WriteData(const Vector3& Data);
 	void WriteData(const Vector4& Data);
 	void WriteData(const string& Data);
+	void WriteData(const size_t& Data);
 	void WriteData(const wstring& Data);
 	void WriteData(const char* Data);
 	void WriteData(const wchar_t* Data);
+	void WriteData(const Matrix& Data);
+	void WriteData(const void* Data, size_t Size);
 
 private:
 	ofstream m_WriteFile;

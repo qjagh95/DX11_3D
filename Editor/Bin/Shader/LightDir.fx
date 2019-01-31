@@ -6,6 +6,9 @@ Texture2D g_GBufferNormalTex : register(t11);
 Texture2D g_GBufferDepthTex : register(t12);
 Texture2D g_GBufferMaterialTex : register(t13);
 
+Texture2D g_LightDiffuseTex : register(t14);
+Texture2D g_LightSpcularTex : register(t15);
+
 struct PS_OUTPUT_LIGHTACC
 {
     float4 vDiffuse : SV_TARGET0;
@@ -78,6 +81,23 @@ PS_OUTPUT_LIGHTACC LightAccPS(VS_OUTPUT_UV input)
 
     output.vDiffuse = Diffuse;
     output.vSpecluar = Specluar;
+
+    return output;
+}
+
+PS_OUTPUT_SINGLE LightBlendPS(VS_OUTPUT_UV input)
+{
+    PS_OUTPUT_SINGLE output = (PS_OUTPUT_SINGLE) 0;
+
+    float4 vAlbedo = g_GBufferAlbedoTex.Sample(g_GBufferSampler, input.vUV);
+
+    if (vAlbedo.a == 0.f)
+        clip(-1);
+
+    float4 vDif = g_LightDiffuseTex.Sample(g_GBufferSampler, input.vUV);
+    float4 vSpc = g_LightSpcularTex.Sample(g_GBufferSampler, input.vUV);
+
+    output.vTarget0 = vAlbedo * vDif + vSpc;
 
     return output;
 }

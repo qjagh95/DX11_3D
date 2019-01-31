@@ -189,7 +189,8 @@ cbuffer Public : register(b10)
     float g_DeltaTime;
     float g_PlusedDeltaTime;
     float g_ProjectionFar;
-    float g_Empty12345;
+    float2 g_ViewPortSize;
+    float3 g_Empty123124522534;
 }
 
 cbuffer Light : register(b3)

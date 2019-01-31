@@ -225,8 +225,8 @@ PS_OUTPUT_GBUFFER StandardBumpPS(VS_OUTPUT_3D input)
         output.vNormal.xyz = input.vNormalV;
         output.vNormal.w = g_Material.Specular.w;
         //vPos.z = WVP공간변환 후 Z값.
-        //vPos.w = WV공간변환 후 Z값. (Perspective 공식 적용으로 WV의 Z값이 그대로 들어옴 _34 = 1)
-        //두개를나누게되면 0 ~ 1 사이의 값이 나옴.
+        //vPos.w = WV공간변환 후 Z값. (Perspective 공식 적용으로 WV의 Z값이 그대로 들어옴 _34)
+        //두개를나누게되면 0 ~ 1 사이의 값이 나옴. (xy = -1 ~ 1, z = 0 ~ 1)
         output.vDepth.r = input.vPos.z / input.vPos.w;
         output.vDepth.g = output.vDepth.r;
         output.vDepth.b = output.vDepth.r;
@@ -259,4 +259,3 @@ PS_OUTPUT_SINGLE FullScreenPS(VS_OUTPUT_UV input)
     output.vTarget0 = DiffuseTexture.Sample(DiffuseSampler, input.vUV);
     return output;
 }
-

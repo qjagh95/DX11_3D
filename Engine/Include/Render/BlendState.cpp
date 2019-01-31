@@ -5,18 +5,18 @@
 
 JEONG_USING
 
-JEONG::BlendState::BlendState()
+BlendState::BlendState()
 {
 	m_SamplerMask = 0xffffffff;
 	m_State = RS_BLEND;
 }
 
-JEONG::BlendState::~BlendState()
+BlendState::~BlendState()
 {
 }
 
 //BlendDesc설정
-bool JEONG::BlendState::CreateState(BOOL bAlphaCoverage, BOOL bIndependent)
+bool BlendState::CreateState(BOOL bAlphaCoverage, BOOL bIndependent)
 {
 	D3D11_BLEND_DESC tDesc = {};
 
@@ -37,7 +37,7 @@ bool JEONG::BlendState::CreateState(BOOL bAlphaCoverage, BOOL bIndependent)
 	return true;
 }
 
-void JEONG::BlendState::AddTargetDesc(BOOL bEnable, D3D11_BLEND srcBlend, D3D11_BLEND destBlend, D3D11_BLEND_OP blendOp, D3D11_BLEND srcAlphaBlend, D3D11_BLEND destAlphaBlend, D3D11_BLEND_OP blendAlphaOp, UINT8 iWriteMask)
+void BlendState::AddTargetDesc(BOOL bEnable, D3D11_BLEND srcBlend, D3D11_BLEND destBlend, D3D11_BLEND_OP blendOp, D3D11_BLEND srcAlphaBlend, D3D11_BLEND destAlphaBlend, D3D11_BLEND_OP blendAlphaOp, UINT8 iWriteMask)
 {
 	D3D11_RENDER_TARGET_BLEND_DESC tDesc = {};
 	tDesc.BlendEnable = bEnable;
@@ -52,19 +52,19 @@ void JEONG::BlendState::AddTargetDesc(BOOL bEnable, D3D11_BLEND srcBlend, D3D11_
 	m_vecTargetDesc.push_back(tDesc);
 }
 
-void JEONG::BlendState::SetBlendFactor(float Factor[4])
+void BlendState::SetBlendFactor(float Factor[4])
 {
 	memcpy(m_BlendFactor, Factor, sizeof(float) * 4);
 }
 
-void JEONG::BlendState::SetState()
+void BlendState::SetState()
 {
 	// Get함수를 이용해서 state를 얻어오게 되면 레퍼런스 카운트가 증가한다.
 	Device::Get()->GetContext()->OMGetBlendState((ID3D11BlendState**)&m_OldRenderState, m_OldBlendFactor, &m_OldSamplerMask);
 	Device::Get()->GetContext()->OMSetBlendState((ID3D11BlendState*)m_RenderState, m_BlendFactor, m_SamplerMask);
 }
 
-void JEONG::BlendState::ResetState()
+void BlendState::ResetState()
 {
 	Device::Get()->GetContext()->OMSetBlendState((ID3D11BlendState*)m_OldRenderState, m_OldBlendFactor, m_OldSamplerMask);
 	SAFE_RELEASE(m_OldRenderState);

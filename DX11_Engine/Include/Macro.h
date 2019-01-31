@@ -41,6 +41,7 @@
 #define POS_COLOR_LAYOUT "PosColorLayOut"
 #define POS_UV_LAYOUT "PosUVLayOut"
 #define POS_LAYOUT "PosLayOut"
+#define POS_VOLUME_LAYOUT "PosVolumeLayOut"
 #define POS_NORMAL_COLOR_LAYOUT "PosNormalColorLayOut"
 #define	VERTEX3D_LAYOUT	"Vertex3DLayout"
 
@@ -54,6 +55,12 @@
 #define ACC_BLEND "AccBlend"
 #define CULL_NONE "CullNone"
 #define WIRE_FRAME "WireFrame"
+
+//VolumMesh
+#define SPHERE_VOLUM "SphereVolum"
+#define CAPSUL_VOLUM "CapsulVolum"
+#define CORN_VOLUM "CornVolum"
+#define CYLINDER_VOLUM "CylinderVolum"
 
 template<typename T>
 void Safe_Delete_VecList(T& p)

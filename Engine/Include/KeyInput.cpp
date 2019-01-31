@@ -66,6 +66,7 @@ bool KeyInput::Init()
 	m_MouseObject->GetTransform()->SetWorldPivot(Vector3(0.0f, 1.0f, 0.0f));
 
 	Renderer_Com* MouseRender = m_MouseObject->AddComponent<Renderer_Com>("MouseRenderer");
+	MouseRender->InitMaterial();
 	MouseRender->SetMesh("TextureRect");
 	MouseRender->SetRenderState(ALPHA_BLEND);
 	MouseRender->SetShader(STANDARD_UV_STATIC_SHADER);

@@ -19,10 +19,10 @@ JEONG_USING
 SINGLETON_VAR_INIT(JEONG::RenderManager)
 
 JEONG::RenderManager::RenderManager()
-	:m_CreateState(NULLPTR)
 {
 	m_GameMode = GM_3D;
 	m_isDeferred = true;
+	m_CreateState = NULLPTR;
 	m_DepthDisable = NULLPTR;
 	m_GBufferSampler = NULLPTR;
 	m_LightAccDirShader = NULLPTR;
@@ -32,12 +32,18 @@ JEONG::RenderManager::RenderManager()
 	m_LightAccPointShader = NULLPTR;
 	m_LightAccSpotShader = NULLPTR;
 	m_LightAccBlendShader = NULLPTR;
-	m_LightAccFullScreenShader = NULLPTR;
+	m_FullScreenShader = NULLPTR;
+	m_LightBlendTarget = NULLPTR;
+	m_LightDiffuseTarget = NULLPTR;
+	m_LightSpcularTarget = NULLPTR;
+	m_AlbedoTarget = NULLPTR;
+	m_SphereVolum = NULLPTR;
+	m_CornVolum = NULLPTR;
 
 	m_CBuffer = {};
 }
 
-JEONG::RenderManager::~RenderManager()
+RenderManager::~RenderManager()
 {
 	ShaderManager::Delete();
 	Safe_Release_Map(m_RenderStateMap);
@@ -68,16 +74,18 @@ JEONG::RenderManager::~RenderManager()
 	SAFE_RELEASE(m_LightAccPointShader);
 	SAFE_RELEASE(m_LightAccSpotShader);
 	SAFE_RELEASE(m_LightAccBlendShader);
-	SAFE_RELEASE(m_LightAccFullScreenShader);
+	SAFE_RELEASE(m_FullScreenShader);
 }
 
-bool JEONG::RenderManager::Init()
+bool RenderManager::Init()
 {
 	if (ShaderManager::Get()->Init() == false)
 	{
 		TrueAssert(true);
 		return false;
 	}
+
+	m_CBuffer.ViewPortSize = Vector2((float)Device::Get()->GetWinSize().Width, (float)Device::Get()->GetWinSize().Height);
 
 	AddBlendTargetDesc(TRUE);
 	CreateBlendState(ALPHA_BLEND);
@@ -149,6 +157,12 @@ bool JEONG::RenderManager::Init()
 	if (CreateRenderTarget("LightAccSpcular", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.0f, 100.0f, 1.0f), true) == false)
 		return false;
 
+	// Light Spc
+	vPos.x = 200.0f;
+	vPos.y = 0.0f;
+	if (CreateRenderTarget("LightBlend", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.0f, 100.0f, 1.0f), true) == false)
+		return false;
+
 	CreateMultiTarget("LightAcc");
 	AddMultiRenderTarget("LightAcc", "LightAccDiffuse");
 	AddMultiRenderTarget("LightAcc", "LightAccSpcular");
@@ -163,11 +177,23 @@ bool JEONG::RenderManager::Init()
 
 	m_LightAccDirShader = ShaderManager::Get()->FindShaderNoneCount(LIGHT_DIR_ACC_SHADER);
 	m_LightAccPointShader = ShaderManager::Get()->FindShaderNoneCount(LIGHT_POINT_ACC_SHADER);
+	m_LightAccBlendShader = ShaderManager::Get()->FindShaderNoneCount(LIGHT_BLEND_SHADER);
+	m_FullScreenShader = ShaderManager::Get()->FindShaderNoneCount(FULLSCREEN_SHADER);
+
+	m_LightBlendTarget = FindRenderTarget("LightBlend");
+	m_LightBlendTarget->SetClearColor(Vector4::Pink);
+
+	m_LightDiffuseTarget = FindRenderTarget("LightAccDiffuse");
+	m_LightSpcularTarget = FindRenderTarget("LightAccSpcular");
+	m_AlbedoTarget = FindRenderTarget("Albedo");
+
+	m_SphereVolum = ResourceManager::Get()->FindMeshNoneCount(SPHERE_VOLUM);
+	m_CornVolum = ResourceManager::Get()->FindMeshNoneCount(CORN_VOLUM);
 
 	return true;
 }
 
-void JEONG::RenderManager::AddBlendTargetDesc(BOOL bEnable, D3D11_BLEND srcBlend, D3D11_BLEND destBlend, D3D11_BLEND_OP blendOp, D3D11_BLEND srcAlphaBlend, D3D11_BLEND destAlphaBlend, D3D11_BLEND_OP blendAlphaOp, UINT8 iWriteMask)
+void RenderManager::AddBlendTargetDesc(BOOL bEnable, D3D11_BLEND srcBlend, D3D11_BLEND destBlend, D3D11_BLEND_OP blendOp, D3D11_BLEND srcAlphaBlend, D3D11_BLEND destAlphaBlend, D3D11_BLEND_OP blendAlphaOp, UINT8 iWriteMask)
 {
 	if (m_CreateState == NULLPTR)
 		m_CreateState = new BlendState();
@@ -175,7 +201,7 @@ void JEONG::RenderManager::AddBlendTargetDesc(BOOL bEnable, D3D11_BLEND srcBlend
 	m_CreateState->AddTargetDesc(bEnable, srcBlend, destBlend,blendOp, srcAlphaBlend, destAlphaBlend, blendAlphaOp,iWriteMask);
 }
 
-bool JEONG::RenderManager::CreateDepthStencilState(const string & KeyName, BOOL bDepthEnable, D3D11_DEPTH_WRITE_MASK eMask, D3D11_COMPARISON_FUNC eDepthFunc, BOOL bStencilEnable, UINT8 iStencilReadMask, UINT8 iStencilWriteMask, D3D11_DEPTH_STENCILOP_DESC tFrontFace, D3D11_DEPTH_STENCILOP_DESC tBackFace)
+bool RenderManager::CreateDepthStencilState(const string & KeyName, BOOL bDepthEnable, D3D11_DEPTH_WRITE_MASK eMask, D3D11_COMPARISON_FUNC eDepthFunc, BOOL bStencilEnable, UINT8 iStencilReadMask, UINT8 iStencilWriteMask, D3D11_DEPTH_STENCILOP_DESC tFrontFace, D3D11_DEPTH_STENCILOP_DESC tBackFace)
 {
 	DepthStancilState* newState = (DepthStancilState*)FindRenderState(KeyName);
 
@@ -195,7 +221,7 @@ bool JEONG::RenderManager::CreateDepthStencilState(const string & KeyName, BOOL 
 	return true;
 }
 
-bool JEONG::RenderManager::CreateRenderTarget(const string & KeyName, DXGI_FORMAT TargetFormat, const Vector3 & Pos, const Vector3 & Scale, bool isDebugDraw, const Vector4 & ClearColor, DXGI_FORMAT DepthFormat)
+bool RenderManager::CreateRenderTarget(const string & KeyName, DXGI_FORMAT TargetFormat, const Vector3 & Pos, const Vector3 & Scale, bool isDebugDraw, const Vector4 & ClearColor, DXGI_FORMAT DepthFormat)
 {
 	RenderTarget* newTarget = FindRenderTarget(KeyName);
 
@@ -218,7 +244,7 @@ bool JEONG::RenderManager::CreateRenderTarget(const string & KeyName, DXGI_FORMA
 	return true;
 }
 
-bool JEONG::RenderManager::CreateBlendState(const string & KeyName, BOOL bAlphaCoverage, BOOL bIndependent)
+bool RenderManager::CreateBlendState(const string & KeyName, BOOL bAlphaCoverage, BOOL bIndependent)
 {
 	if (m_CreateState == NULLPTR)
 		return false;
@@ -235,7 +261,7 @@ bool JEONG::RenderManager::CreateBlendState(const string & KeyName, BOOL bAlphaC
 	return true;
 }
 
-JEONG::RenderState * JEONG::RenderManager::FindRenderState(const string & KeyName)
+RenderState * RenderManager::FindRenderState(const string & KeyName)
 {
 	unordered_map<string, JEONG::RenderState*>::iterator FindIter = m_RenderStateMap.find(KeyName);
 
@@ -247,9 +273,9 @@ JEONG::RenderState * JEONG::RenderManager::FindRenderState(const string & KeyNam
 	return FindIter->second;
 }
 
-JEONG::RenderTarget * JEONG::RenderManager::FindRenderTarget(const string & KeyName)
+RenderTarget * RenderManager::FindRenderTarget(const string & KeyName)
 {
-	unordered_map<string, JEONG::RenderTarget*>::iterator FindIter = m_RenderTargetMap.find(KeyName);
+	unordered_map<string, RenderTarget*>::iterator FindIter = m_RenderTargetMap.find(KeyName);
 
 	if (FindIter == m_RenderTargetMap.end())
 		return NULLPTR;
@@ -257,7 +283,7 @@ JEONG::RenderTarget * JEONG::RenderManager::FindRenderTarget(const string & KeyN
 	return FindIter->second;
 }
 
-void JEONG::RenderManager::AddRenderObject(JEONG::GameObject * object)
+void RenderManager::AddRenderObject(GameObject * object)
 {
 	RENDER_GROUP group = object->GetRenderGroup();
 	
@@ -299,8 +325,9 @@ void JEONG::RenderManager::AddRenderObject(JEONG::GameObject * object)
 	}
 }
 
-void JEONG::RenderManager::Render(float DeltaTime)
+void RenderManager::Render(float DeltaTime)
 {
+	ShaderManager::Get()->UpdateCBuffer("PublicCBuffer", &m_CBuffer);
 	Render3D(DeltaTime);
 
 	m_CBuffer.DeltaTime = DeltaTime;
@@ -308,7 +335,6 @@ void JEONG::RenderManager::Render(float DeltaTime)
 
 	//TODO : Far값 임의로 10
 	m_CBuffer.Far = 2.0f;
-	ShaderManager::Get()->UpdateCBuffer("PublicCBuffer", &m_CBuffer);
 }
 
 bool JEONG::RenderManager::CreateMultiTarget(const string & MultiKey)
@@ -319,6 +345,7 @@ bool JEONG::RenderManager::CreateMultiTarget(const string & MultiKey)
 		return false;
 
 	newTarget = new MultiRenderTarget();
+
 	m_MultiTargetMap.insert(make_pair(MultiKey, newTarget));
 	return true;
 }
@@ -331,7 +358,6 @@ bool RenderManager::AddMultiRenderTarget(const string & MultiKey, const string &
 		return false;
 
 	getMulti->AddRenderTargetView(TargetKey);
-
 	return true;
 }
 
@@ -343,7 +369,6 @@ bool RenderManager::AddMultiRenderTargetDepthView(const string & MultiKey, const
 		return false;
 
 	getMulti->AddDepthView(TargetKey);
-
 	return true;
 }
 
@@ -364,8 +389,8 @@ void RenderManager::Render3D(float DeltaTime)
 	else
 		DeferredRender(DeltaTime);
 
-	unordered_map<string, RenderTarget*>::iterator	StartIter = m_RenderTargetMap.begin();
-	unordered_map<string, RenderTarget*>::iterator	EndIter = m_RenderTargetMap.end();
+	unordered_map<string, RenderTarget*>::iterator StartIter = m_RenderTargetMap.begin();
+	unordered_map<string, RenderTarget*>::iterator EndIter = m_RenderTargetMap.end();
 	 
 	//사각형 출력하기만 함
 	for (; StartIter != EndIter; ++StartIter)
@@ -377,6 +402,8 @@ void RenderManager::DeferredRender(float DeltaTime)
 	// GBuffer를 만들어준다.
 	RenderGBuffer(DeltaTime);
 	RenderLightAcc(DeltaTime);
+	RenderLightBlend(DeltaTime);
+	RenderFullScreen(DeltaTime);
 
 	//UI부터~출력
 	for (int i = RG_UI; i < RG_END; ++i)
@@ -416,6 +443,7 @@ void RenderManager::RenderLightAcc(float DeltaTime)
 	m_LightMultiTarget->ClearRenderTarget(ClearColor);
 	m_LightMultiTarget->SetTarget();
 	m_GBufferSampler->SetSamplerState(10);
+	m_AddBlend->SetState();
 	m_DepthDisable->SetState();
 	//GBuffer타겟에서 뽑아져나온 픽셀데이터들을 10번에 셋팅하겠다.
 	//LightGBuffer 10번에 쓰겠다고 할때 경고 나온이유
@@ -448,6 +476,7 @@ void RenderManager::RenderLightAcc(float DeltaTime)
 	m_GBufferMultiTarget->ResetShaderResource(10);
 	m_DepthDisable->ResetState();
 	m_LightMultiTarget->ResetTarget();
+	m_AddBlend->ResetState();
 }
 
 void RenderManager::RenderDirectionLight(float DeltaTime, Light_Com * light)
@@ -470,6 +499,7 @@ void RenderManager::RenderDirectionLight(float DeltaTime, Light_Com * light)
 void RenderManager::RenderPointLight(float DeltaTime, Light_Com * light)
 {
 	m_LightAccPointShader->SetShader();
+
 }
 
 void RenderManager::RenderSpotLight(float DeltaTime, Light_Com * light)
@@ -506,12 +536,57 @@ void RenderManager::RenderBomiSpotLight(float DeltaTime, Light_Com * light)
 	Device::Get()->GetContext()->Draw(4, 0);
 }
 
-void RenderManager::RenderLightBlend(float DeltaTime)
+void RenderManager::RenderFullScreen(float DeltaTime)
 {
+	m_DepthDisable->SetState();
+	m_LightBlendTarget->SetShader(0);
+	m_FullScreenShader->SetShader();
+	m_GBufferSampler->SetSamplerState(0);
 
+	// NULL Buffer로 전체 화면크기의 사각형을 출력한다.
+	Device::Get()->GetContext()->IASetInputLayout(NULLPTR);
+
+	UINT iOffset = 0;
+	Device::Get()->GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	Device::Get()->GetContext()->IASetVertexBuffers(0, 0, NULLPTR, 0, &iOffset);
+	Device::Get()->GetContext()->IASetIndexBuffer(0, DXGI_FORMAT_UNKNOWN, 0);
+	Device::Get()->GetContext()->Draw(4, 0);
+
+	m_DepthDisable->ResetState();
+	m_LightBlendTarget->ResetShader(0);
 }
 
-void JEONG::RenderManager::ForwardRender(float DeltaTime)
+void RenderManager::RenderLightBlend(float DeltaTime)
+{
+	m_DepthDisable->SetState();
+	m_GBufferSampler->SetSamplerState(10);
+
+	m_AlbedoTarget->SetShader(10);
+	m_LightDiffuseTarget->SetShader(14);
+	m_LightSpcularTarget->SetShader(15);
+
+	m_LightAccBlendShader->SetShader();
+
+	m_LightBlendTarget->ClearTarget();
+	m_LightBlendTarget->SetTarget();
+	// NULL Buffer로 전체 화면크기의 사각형을 출력한다.
+	Device::Get()->GetContext()->IASetInputLayout(NULLPTR);
+
+	UINT iOffset = 0;
+	Device::Get()->GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	Device::Get()->GetContext()->IASetVertexBuffers(0, 0, NULLPTR, 0, &iOffset);
+	Device::Get()->GetContext()->IASetIndexBuffer(0, DXGI_FORMAT_UNKNOWN, 0);
+	Device::Get()->GetContext()->Draw(4, 0);
+
+	m_AlbedoTarget->ResetShader(10);
+	m_LightDiffuseTarget->ResetShader(14);
+	m_LightSpcularTarget->ResetShader(15);
+
+	m_DepthDisable->ResetState();
+	m_LightBlendTarget->ResetTarget();
+}
+
+void RenderManager::ForwardRender(float DeltaTime)
 {
 	RenderTarget* getTarget = FindRenderTarget("PostEffect");
 	getTarget->ClearTarget();

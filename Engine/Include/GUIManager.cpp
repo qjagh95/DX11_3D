@@ -8,15 +8,15 @@
 
 
 JEONG_USING
-SINGLETON_VAR_INIT(JEONG::GUIManager)
+SINGLETON_VAR_INIT(GUIManager)
 using namespace ImGui;
 
-JEONG::GUIManager::GUIManager()
+GUIManager::GUIManager()
 {
 	m_isShow = true;
 }
 
-JEONG::GUIManager::~GUIManager()
+GUIManager::~GUIManager()
 {
 	ImGui_ImplDX11_Shutdown();
 	ImGui_ImplWin32_Shutdown();
@@ -24,7 +24,7 @@ JEONG::GUIManager::~GUIManager()
 	ImGui::DestroyContext();
 }
 
-void JEONG::GUIManager::CreateImGui(HWND hWnd, ID3D11Device * Device, ID3D11DeviceContext * DeviceConstext)
+void GUIManager::CreateImGui(HWND hWnd, ID3D11Device * Device, ID3D11DeviceContext * DeviceConstext)
 {
 #ifdef _DEBUG
 	IMGUI_CHECKVERSION();
@@ -51,7 +51,7 @@ void JEONG::GUIManager::ImGuiBegin(const char * TitleName)
 	Debug();
 }
 
-void JEONG::GUIManager::ImGuiEnd()
+void GUIManager::ImGuiEnd()
 {
 	if (m_isShow == false)
 		return;

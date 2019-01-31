@@ -64,6 +64,7 @@ private:
 	void RenderPointLight(float DeltaTime, Light_Com* light);
 	void RenderSpotLight(float DeltaTime, Light_Com* light);
 	void RenderBomiSpotLight(float DeltaTime, Light_Com* light);
+	void RenderFullScreen(float DeltaTime);
 	void RenderLightBlend(float DeltaTime);
 
 private:
@@ -82,12 +83,18 @@ private:
 	Shader* m_LightAccPointShader;
 	Shader* m_LightAccSpotShader;
 	Shader* m_LightAccBlendShader;
-	Shader* m_LightAccFullScreenShader;
+	Shader* m_FullScreenShader;
 
 	MultiRenderTarget* m_GBufferMultiTarget;
 	MultiRenderTarget* m_LightMultiTarget;
-
+	RenderTarget* m_LightBlendTarget;
+	RenderTarget* m_LightDiffuseTarget;
+	RenderTarget* m_LightSpcularTarget;
+	RenderTarget* m_AlbedoTarget;
 	RenderState* m_AddBlend;
+
+	Mesh* m_SphereVolum;
+	Mesh* m_CornVolum;
 
 	bool m_isDeferred;
 	PublicCBuffer m_CBuffer;

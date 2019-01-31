@@ -9,6 +9,7 @@ JEONG_USING
 
 Mesh::Mesh()
 {
+	m_Material = NULLPTR;
 }
 
 Mesh::~Mesh()
@@ -28,7 +29,7 @@ Mesh::~Mesh()
 
 	m_vecMeshContainer.clear();
 
-	//SAFE_RELEASE(m_Material);
+	SAFE_RELEASE(m_Material);
 }
 
 void Mesh::Render()

@@ -85,8 +85,6 @@ Renderer_Com::~Renderer_Com()
 
 bool Renderer_Com::Init()
 {
-	//내가 가지고있는 오브젝트에 AddComponent
-	m_Material = AddComponent<Material_Com>("Material");
 	CheckComponent();
 
 	return true;
@@ -207,12 +205,17 @@ void Renderer_Com::SetMesh(const string & KeyName, const TCHAR * FileName, const
 	{
 		SetShader(m_Mesh->GetShaderKey());
 		SetLayOut(m_Mesh->GetLayOutKey());
-		m_Material = m_Mesh->CloneMaterial();
 
-		if (m_Material != NULLPTR)
+		Material_Com* clone = m_Mesh->CloneMaterial();
+
+		if (clone != NULLPTR)
 		{
+			m_Material = clone;
+
 			m_Object->DeleteComponent(CT_MATERIAL);
-			m_Object->AddComponent(m_Material);
+			m_Object->AddComponent(clone);
+
+			SAFE_RELEASE(clone);
 		}
 	}
 }
@@ -352,5 +355,11 @@ void Renderer_Com::DeleteComponentCBuffer(Component_Base * DeleteCom)
 			m_ComponentCBuffer.TextureAnimation2D = 1;
 			break;
 	}
+}
+
+void Renderer_Com::InitMaterial()
+{
+	m_Material = AddComponent<Material_Com>("Material");
+	CheckComponent();
 }
 	

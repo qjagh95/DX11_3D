@@ -56,17 +56,18 @@ bool FBXLoader::LoadFbx(const char * pFullPath)
 	// FbxScene을 생성한다.
 	m_FBXScene = FbxScene::Create(m_Manager, "");
 
+	//정점에는 영향을 미치지 않고 애니메이션, Transform에만 영향을 미친다.
+	if (m_FBXScene->GetGlobalSettings().GetAxisSystem() != FbxAxisSystem::Max)
+		m_FBXScene->GetGlobalSettings().SetAxisSystem(FbxAxisSystem::Max);
+
 	// FbxImporter 를 이용해서 fbx 파일로부터 메쉬 정보를 읽어온다.
 	FbxImporter* pImporter = FbxImporter::Create(m_Manager, "");
 
 	// 해당 경로에 있는 fbx 파일을 읽어오고 정보를 만들어낸다.
 	pImporter->Initialize(pFullPath, -1, m_Manager->GetIOSettings());
-
+	
 	// 위에서 만들어낸 정보를 FbxScene에 노드를 구성한다.
-	pImporter->Import(m_FBXScene);
-
-	if (m_FBXScene->GetGlobalSettings().GetAxisSystem() != FbxAxisSystem::Max)
-		m_FBXScene->GetGlobalSettings().SetAxisSystem(FbxAxisSystem::Max);
+	pImporter->Import(m_FBXScene);  
 
 	Triangulate(m_FBXScene->GetRootNode());
 	LoadMesh(m_FBXScene->GetRootNode());

@@ -3,6 +3,13 @@
 
 JEONG_BEGIN
 
+struct TextureSet
+{
+	int m_RegisterNumber;
+	class Texture* m_Texture;
+	class Sampler* m_Sampler;
+};
+
 class Texture;
 class Sampler;
 struct JEONG_DLL SubsetMaterial

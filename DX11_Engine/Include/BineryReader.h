@@ -13,6 +13,7 @@ public:
 	Vector3 ReadVector3();
 	Vector4 ReadVector4();
 	string ReadString();
+	size_t ReadSizeT();
 	wstring ReadWString();
 
 	void ReadData(bool& Data);
@@ -24,6 +25,11 @@ public:
 	void ReadData(Vector4& Data);
 	void ReadData(string& Data);
 	void ReadData(wstring& Data);
+	void ReadData(size_t& Data);
+	void ReadData(Matrix& Data);
+	void ReadData(char* Data);
+	void ReadData(wchar_t* Data);
+	void ReadData(void* Data, size_t Size);
 
 private:
 	ifstream m_ReadFile;

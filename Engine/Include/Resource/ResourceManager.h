@@ -15,21 +15,27 @@ public:
 	bool LoadMesh(const string& KeyName, const TCHAR* pFileName,const string& strPathKey = FBX_PATH);
 	bool LoadMeshFromFullPath(const string& KeyName, const TCHAR* pFullPath);
 	bool CreateSampler(const string& KeyName, D3D11_FILTER eFilter = D3D11_FILTER_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_MODE eU = D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_MODE eV = D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_MODE eW = D3D11_TEXTURE_ADDRESS_WRAP);
+
 	void CreateSphereVolum(const string& KeyName, float Radius, int StackSlice, int SliceCount);
-	void CreateCapsulVolum(const string& KeyName, float Radius, int StackSlice, int SliceCount);
-	void CreateCylinderVolum(const string& KeyName, float Radius, int StackSlice, int SliceCount);
-	void CreateCornVolum(const string& KeyName, float Radius, int StackSlice, int SliceCount);
+	void CreateCapsulVolum(const string& KeyName, float Radius, float Height, int StackSlice, int SliceCount);
+	void CreateCornVolum(const string& KeyName, float Radius, float Height, int StackSlice, int SliceCount);
+	void CreateCylinderVolum(const string& KeyName, float Radius, int Height, int SliceCount);
+
+	void CreatePureSphereVolum(const string& KeyName, float Radius, int StackSlice, int SliceCount);
+	void CreatePureCapsulVolum(const string& KeyName, float Radius, float Height, int StackSlice, int SliceCount);
+	void CreatePureCornVolum(const string& KeyName, float Radius, float Height, int StackSlice, int SliceCount);
+	void CreatePureCylinderVolum(const string& KeyName, float Radius, int Height, int SliceCount);
+
+	Mesh* FindMesh(const string& KeyName);
+	Mesh* FindMeshNoneCount(const string& KeyName);
+	Texture* FindTexture(const string& KeyName);
+	Sampler* FindSampler(const string& KeyName);
+	Sampler* FindSamplerNoneCount(const string& KeyName);
 
 private:
 	unordered_map<string, Mesh*> m_MeshMap;
 	unordered_map<string, Texture*> m_TextureMap;
 	unordered_map<string, Sampler*> m_SamplerMap;
-
-public:
-	Mesh* FindMesh(const string& KeyName);
-	Texture* FindTexture(const string& KeyName);
-	Sampler* FindSampler(const string& KeyName);
-	Sampler* FindSamplerNoneCount(const string& KeyName);
 
 public:
 	CLASS_IN_SINGLE(ResourceManager)

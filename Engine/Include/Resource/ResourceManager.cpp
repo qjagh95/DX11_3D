@@ -13,6 +13,7 @@ ResourceManager::ResourceManager()
 
 ResourceManager::~ResourceManager()
 {
+	//TODO : 릭
 	Safe_Release_Map(m_MeshMap);
 	Safe_Release_Map(m_TextureMap);
 	Safe_Release_Map(m_SamplerMap);
@@ -163,7 +164,10 @@ bool ResourceManager::Init()
 	//{8, 6, 5}
 	//{7, 6, 8}
 	CreateMesh("Pyramid", STANDARD_NORMAL_COLOR_SHADER, POS_NORMAL_COLOR_LAYOUT, Pyramid, 9, sizeof(VertexNormalColor), D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, PyramidIdx, 18, 4, D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
-	CreateSphereVolum("SphereVolum", 0.5f, 16, 32);
+	CreateSphereVolum(SPHERE_VOLUM, 0.5f, 16, 32);
+	CreateCylinderVolum(CYLINDER_VOLUM, 0.5f, 3, 32);
+	CreateCapsulVolum(CAPSUL_VOLUM, 0.5f, 3, 16, 32);
+	CreateCornVolum(CORN_VOLUM, 0.5f, 0.5f, 16, 32);
 
 	CreateSampler(LINER_SAMPLER);
 	//디퍼드에 최적화된 샘플러 = 포인트(픽셀값을 1:1매칭시켜서 가져온다)
@@ -351,7 +355,9 @@ void ResourceManager::CreateSphereVolum(const string& KeyName, float Radius, int
 			index[4] = SliceCount * i + j + 1;
 			index[5] = SliceCount * (i + 1) + j + 1;
 
-			if (SliceCount - 1 == j)
+
+			//마지막에 인덱스가 맞지않기때문에 다시 처음으로 맞춰준다.
+			if (j == SliceCount - 1)
 			{
 				index[1] = SliceCount * i + j + 1;
 				index[4] = SliceCount * (i - 1) + j + 1;
@@ -370,22 +376,263 @@ void ResourceManager::CreateSphereVolum(const string& KeyName, float Radius, int
 	CreateMesh(KeyName, STANDARD_NORMAL_COLOR_SHADER, POS_NORMAL_COLOR_LAYOUT, &vecVertexData[0], (int)vecVertexData.size(), sizeof(VertexNormalColor), D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, &vecIndex[0], (int)vecIndex.size(), sizeof(unsigned int), D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
 }
 
-void ResourceManager::CreateCapsulVolum(const string & KeyName, float Radius, int StackSlice, int SliceCount)
+void ResourceManager::CreateCapsulVolum(const string & KeyName, float Radius, float Height, int StackSlice, int SliceCount)
 {
-	//TODO : 작업목록
-	//매쉬 3개
-	//Volum처리
-	//디버그일때 와이어프레임처리
-	//LightBlend
-	//++
+	vector<VertexNormalColor> vecVertex{};
+
+	auto stack_count = StackSlice;
+
+	//짝수라면 홀수로 만든다. (중앙점 찾기가 쉬움)
+	if (stack_count % 2 == 0)
+		stack_count -= 1;
+
+	float phi = JEONG_PI / stack_count;
+	float theta = JEONG_PI * 2.0f / SliceCount;
+
+	for (auto i = 0; i <= stack_count; ++i)
+	{
+		for (auto j = 0; j < SliceCount; ++j)
+		{
+			VertexNormalColor vertex{};
+
+			auto y = Radius * cos(phi * i);
+
+			if (j < SliceCount / 2)
+				vertex.m_Pos = Vector3{ Radius * sin(phi * i) * cos(theta * j), y, Radius * sin(phi * i) * sin(theta * j) };
+			else
+				vertex.m_Pos = Vector3{ Radius * sin(phi * i) * -cos(theta * j - JEONG_PI), y, Radius * sin(phi * i) * -sin(theta * j - JEONG_PI) };
+
+			vertex.m_Normal = vertex.m_Pos;
+			vertex.m_Normal.Normalize();
+
+			//중앙을 찾아서 위라면 높이고 아래면 내린다.
+			if (i <= stack_count / 2)
+				vertex.m_Pos.y += Height * 0.5f;
+			else
+				vertex.m_Pos.y += -Height * 0.5f;
+
+			vertex.m_Color = Vector4{ (rand() % 100) * 0.01f, (rand() % 100) * 0.01f, (rand() % 100) * 0.01f, (rand() % 100) * 0.01f };
+
+			vecVertex.push_back(vertex);
+		}
+	}
+
+	vector<unsigned int> vecIndex;
+
+	for (auto i = 0; i < stack_count; ++i)
+	{
+		for (auto j = 0; j < SliceCount; ++j)
+		{
+			unsigned int index[6];
+
+			index[0] = SliceCount * i + j;
+			index[1] = SliceCount * (i + 1) + j + 1;
+			index[2] = SliceCount * (i + 1) + j;
+			index[3] = SliceCount * i + j;
+			index[4] = SliceCount * i + j + 1;
+			index[5] = SliceCount * (i + 1) + j + 1;
+
+			//마지막에 인덱스가 맞지않기때문에 다시 처음으로 맞춰준다.
+			if (j == SliceCount - 1)
+			{
+				index[1] = SliceCount * i + j + 1;
+				index[4] = SliceCount * (i - 1) + j + 1;
+				index[5] = SliceCount * i + j + 1;
+			}
+
+			vecIndex.push_back(index[0]);
+			vecIndex.push_back(index[1]);
+			vecIndex.push_back(index[2]);
+			vecIndex.push_back(index[3]);
+			vecIndex.push_back(index[4]);
+			vecIndex.push_back(index[5]);
+		}
+	}
+
+	CreateMesh(KeyName, STANDARD_NORMAL_COLOR_SHADER, POS_NORMAL_COLOR_LAYOUT, &vecVertex[0], (int)vecVertex.size(), sizeof(VertexNormalColor), D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, &vecIndex[0], (int)vecIndex.size(), sizeof(unsigned int), D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
 }
 
-void ResourceManager::CreateCylinderVolum(const string & KeyName, float Radius, int StackSlice, int SliceCount)
+void ResourceManager::CreateCylinderVolum(const string & KeyName, float Radius, int Height, int SliceCount)
 {
+	vector<VertexNormalColor> vecVertex;
+
+	//돌려야 되니 360도
+	auto theta = JEONG_PI * 2.0f / SliceCount;
+
+	//윗면 아랫면 2개
+	for (auto i = 0; i < 2; ++i)
+	{
+		for (auto j = 0; j < SliceCount; ++j)
+		{
+			VertexNormalColor vertex;
+
+			//구면좌표계를 보면 x = Radius * cos(세타), z는 Radius * sin(세타)
+			if (j < SliceCount / 2)
+				vertex.m_Pos = Vector3{ Radius * cos(theta * j), (0.5f - i) * Height, Radius * sin(theta * j) };
+			else
+				vertex.m_Pos = Vector3{ Radius * -cos(theta * j - JEONG_PI), (0.5f - i) * Height, Radius * -sin(theta * j - JEONG_PI) };
+
+			//X, Z의 Normal을 들고있는 정점
+			vertex.m_Normal = vertex.m_Pos;
+			vertex.m_Normal.y = 0.0f;
+			vertex.m_Normal.Normalize();
+			vertex.m_Color = Vector4{ (rand() % 100) * 0.01f, (rand() % 100) * 0.01f, (rand() % 100) * 0.01f, (rand() % 100) * 0.01f };
+
+			vecVertex.push_back(vertex);
+
+			//윗, 아랫면의 Y의 Normal을 들고 있는 정점
+			//그지같네 시발롬아? 이놈때문에 밑에 인덱스가 꼬임.
+			if (0 == i)
+				vertex.m_Normal = Vector3(0.0f, 1.0f, 0.0f);
+			else if (1 == i)
+				vertex.m_Normal = Vector3(0.0f, -1.0f, 0.0f);
+
+			//정점을 2개추가한다.
+			vecVertex.push_back(vertex);
+		}
+	}
+
+	vector<unsigned int> vecIndex{};
+
+	// 윗면
+	for (auto i = 0; i < SliceCount - 2; ++i)
+	{
+		unsigned int index[3];
+
+		index[0] = 1;
+		index[1] = 1 + (i + 2) * 2; //* 2 = 위 아래 두개.
+		index[2] = 1 + (i + 1) * 2;
+
+		vecIndex.push_back(index[0]);
+		vecIndex.push_back(index[1]);
+		vecIndex.push_back(index[2]);
+	}
+
+	// 옆면
+	for (auto i = 0; i < SliceCount; ++i)
+	{
+		unsigned int index[6];
+
+		index[0] = i * 2;
+		index[1] = (i + SliceCount + 1) * 2;
+		index[2] = (i + SliceCount) * 2;
+		index[3] = i * 2;
+		index[4] = (i + 1) * 2;
+		index[5] = (i + SliceCount + 1) * 2;
+
+		if (i == SliceCount - 1)
+		{
+			index[1] = (i + 1) * 2;
+			index[4] = (i - SliceCount + 1) * 2;
+			index[5] = (i + 1) * 2;
+		}
+
+		vecIndex.push_back(index[0]);
+		vecIndex.push_back(index[1]);
+		vecIndex.push_back(index[2]);
+		vecIndex.push_back(index[3]);
+		vecIndex.push_back(index[4]);
+		vecIndex.push_back(index[5]);
+	}
+
+	// 아랫면
+	for (auto i = 0; i < SliceCount - 2; ++i)
+	{
+		unsigned int index[3];
+
+		index[0] = 1 + SliceCount * 2;
+		index[1] = 1 + SliceCount * 2 + (i + 1) * 2;
+		index[2] = 1 + SliceCount * 2 + (i + 2) * 2;
+
+		vecIndex.push_back(index[0]);
+		vecIndex.push_back(index[1]);
+		vecIndex.push_back(index[2]);
+	}
+
+	CreateMesh(KeyName, STANDARD_NORMAL_COLOR_SHADER, POS_NORMAL_COLOR_LAYOUT, &vecVertex[0], (int)vecVertex.size(), sizeof(VertexNormalColor), D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, &vecIndex[0], (int)vecIndex.size(), sizeof(unsigned int), D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
 }
 
-void ResourceManager::CreateCornVolum(const string & KeyName, float Radius, int StackSlice, int SliceCount)
+void ResourceManager::CreateCornVolum(const string & KeyName, float Radius, float Height, int StackSlice, int SliceCount)
 {
+	vector<VertexNormalColor> vecVertex{};
+
+	//구를 45도 잘랐다.
+	float phi = (JEONG_PI / 4.0f) / StackSlice;
+	float theta = JEONG_PI * 2.0f / SliceCount;
+
+	for (auto i = 0; i <= StackSlice; ++i)
+	{
+		for (auto j = 0; j < SliceCount; ++j)
+		{
+			VertexNormalColor vertex{};
+
+			if (j < SliceCount / 2)
+				vertex.m_Pos = Vector3{ Radius * sin(phi * i) * cos(theta * j), Radius * cos(phi * i), Radius * sin(phi * i) * sin(theta * j) };
+			else
+				vertex.m_Pos = Vector3{ Radius * sin(phi * i) * -cos(theta * j - JEONG_PI), Radius * cos(phi * i), Radius * sin(phi * i) * -sin(theta * j - JEONG_PI) };
+
+			vertex.m_Normal = vertex.m_Pos;
+			vertex.m_Normal.Normalize();
+			vertex.m_Color = Vector4{ (rand() % 100) * 0.01f, (rand() % 100) * 0.01f, (rand() % 100) * 0.01f, (rand() % 100) * 0.01f };
+
+			vertex.m_Pos.y += Height;
+
+			vecVertex.push_back(vertex);
+		}
+	}
+
+	vecVertex.push_back(VertexNormalColor{ Vector3::Zero, Vector3(0.0f, -1.0f, 0.0f), Vector4::White});
+
+	vector<unsigned int> vecIndex;
+
+	//원을 말아준다.
+	for (auto i = 0; i < StackSlice; ++i)
+	{
+		for (auto j = 0; j < SliceCount; ++j)
+		{
+			unsigned int index[6];
+
+			index[0] = SliceCount * i + j;
+			index[1] = SliceCount * (i + 1) + j + 1;
+			index[2] = SliceCount * (i + 1) + j;
+			index[3] = SliceCount * i + j;
+			index[4] = SliceCount * i + j + 1;
+			index[5] = SliceCount * (i + 1) + j + 1;
+
+			if (j == SliceCount - 1)
+			{
+				index[1] = SliceCount * i + j + 1;
+				index[4] = SliceCount * (i - 1) + j + 1;
+				index[5] = SliceCount * i + j + 1;
+			}
+
+			vecIndex.push_back(index[0]);
+			vecIndex.push_back(index[1]);
+			vecIndex.push_back(index[2]);
+			vecIndex.push_back(index[3]);
+			vecIndex.push_back(index[4]);
+			vecIndex.push_back(index[5]);
+		}
+	}
+
+	//밑에점과 삼각형으로 연결한다.
+	for (auto i = 0; i < SliceCount; ++i)
+	{
+		unsigned int index[3]{};
+
+		index[0] = SliceCount * StackSlice + i;
+		index[1] = SliceCount * StackSlice + i + 1;
+		index[2] = (unsigned int)vecVertex.size() - 1;
+
+		if (i == SliceCount - 1)
+			index[1] = SliceCount * (StackSlice - 1) + i + 1;
+
+		vecIndex.push_back(index[0]);
+		vecIndex.push_back(index[1]);
+		vecIndex.push_back(index[2]);
+	}
+
+	CreateMesh(KeyName, STANDARD_NORMAL_COLOR_SHADER, POS_NORMAL_COLOR_LAYOUT, &vecVertex[0], (int)vecVertex.size(), sizeof(VertexNormalColor), D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, &vecIndex[0], (int)vecIndex.size(), sizeof(unsigned int), D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
 }
 
 Mesh* ResourceManager::FindMesh(const string & TagName)
@@ -396,6 +643,16 @@ Mesh* ResourceManager::FindMesh(const string & TagName)
 		return NULLPTR;
 
 	FindIter->second->AddRefCount();
+
+	return FindIter->second;
+}
+
+Mesh * ResourceManager::FindMeshNoneCount(const string & KeyName)
+{
+	unordered_map<string, Mesh*>::iterator FindIter = m_MeshMap.find(KeyName);
+
+	if (FindIter == m_MeshMap.end())
+		return NULLPTR;
 
 	return FindIter->second;
 }

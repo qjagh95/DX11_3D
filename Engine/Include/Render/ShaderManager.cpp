@@ -147,6 +147,14 @@ bool ShaderManager::Init()
 		return false;
 	}
 
+	Entry[ST_VERTEX] = "LightAccVS";
+	Entry[ST_PIXEL] = "LightBlendPS";
+	if (LoadShader(LIGHT_BLEND_SHADER, TEXT("LightDir.fx"), Entry) == false)
+	{
+		TrueAssert(true);
+		return false;
+	}
+
 	AddInputElement("POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 12);
 	AddInputElement("NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 12);
 	AddInputElement("COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 16);
