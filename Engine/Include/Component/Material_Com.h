@@ -19,7 +19,7 @@ struct JEONG_DLL SubsetMaterial
 	vector<Sampler*> vecSpecularSampler;
 
 	SubsetMaterial() { MatrialInfo.Specular.w = 3.2f; }
-	~SubsetMaterial();
+	~SubsetMaterial() {}
 };
 
 class Texture;

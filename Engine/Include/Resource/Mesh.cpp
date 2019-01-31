@@ -13,8 +13,6 @@ Mesh::Mesh()
 
 Mesh::~Mesh()
 {
-	SAFE_RELEASE(m_Material);
-
 	for (size_t i = 0; i < m_vecMeshContainer.size(); i++)
 	{
 		SAFE_RELEASE(m_vecMeshContainer[i]->vertexBuffer.vBuffer);
@@ -29,6 +27,8 @@ Mesh::~Mesh()
 	}
 
 	m_vecMeshContainer.clear();
+
+	//SAFE_RELEASE(m_Material);
 }
 
 void Mesh::Render()
@@ -232,11 +232,9 @@ bool Mesh::LoadMeshFromFullPath(const string & KeyName, const TCHAR * pFullPath)
 	m_TagName = KeyName;
 
 	string FullPath = CW2A(pFullPath);
-
 	char strExt[_MAX_EXT] = {};
 
 	_splitpath_s(FullPath.c_str(), 0, 0, 0, 0, 0, 0, strExt, _MAX_EXT);
-
 	_strupr_s(strExt);
 
 	if (strcmp(strExt, ".FBX") == 0)
@@ -288,15 +286,14 @@ bool Mesh::ConvertFbx(FBXLoader * pLoader)
 	const vector<FBXMeshContainer*>* pvecContainer = pLoader->GetMeshContainers();
 	const vector<vector<FbxMaterial*>>*	pvecMaterials = pLoader->GetMaterials();
 
-	vector<FBXMeshContainer*>::const_iterator	StartIter = pvecContainer->begin();
-	vector<FBXMeshContainer*>::const_iterator	EndIter = pvecContainer->end();
+	vector<FBXMeshContainer*>::const_iterator StartIter = pvecContainer->begin();
+	vector<FBXMeshContainer*>::const_iterator EndIter = pvecContainer->end();
 
 	vector<bool> vecEmptyIndex;
 
 	for (; StartIter != EndIter; ++StartIter)
 	{
 		MeshContainer*	pContainer = new MeshContainer();
-
 		m_LayOutKeyName = VERTEX3D_LAYOUT;
 
 		m_vecMeshContainer.push_back(pContainer);
@@ -306,18 +303,18 @@ bool Mesh::ConvertFbx(FBXLoader * pLoader)
 		// 범프가 있을 경우
 		if ((*StartIter)->isBump)
 		{
-			if ((*StartIter)->isAnimation);
+			//if ((*StartIter)->isAnimation);
 				//m_strShaderKey = STANDARD_BUMP_ANIM_SHADER;
-			else
-				m_LayOutKeyName = STANDARD_BUMP_SHADER;
+			//else
+				m_ShaderKeyName = STANDARD_BUMP_SHADER;
 		}
 
 		// 범프가 없을 경우
 		else
 		{
-			if ((*StartIter)->isAnimation);
+			//if ((*StartIter)->isAnimation);
 				//m_strShaderKey = STANDARD_TEX_NORMAL_ANIM_SHADER;
-			else;
+			//else;
 				//m_strShaderKey = STANDARD_TEX_NORMAL_SHADER;
 		}
 
@@ -371,7 +368,7 @@ bool Mesh::ConvertFbx(FBXLoader * pLoader)
 	// 재질 정보를 읽어온다.
 	const vector<vector<FbxMaterial*>>*	pMaterials = pLoader->GetMaterials();
 
-	if (!pMaterials->empty())
+	if (pMaterials->empty() == false)
 	{
 		// 실제 사용할 재질 클래스를 생성한다.
 		m_Material = new Material_Com();
@@ -417,7 +414,7 @@ bool Mesh::ConvertFbx(FBXLoader * pLoader)
 
 			if (pMtrl->strBumpTex.empty() == false)
 			{
-				memset(strName, 0, MAX_PATH);
+				ZeroMemory(strName, MAX_PATH);
 				_splitpath_s(pMtrl->strBumpTex.c_str(), NULLPTR, 0, NULLPTR, 0, strName, MAX_PATH, NULLPTR, 0);
 
 				memset(strPath, 0, sizeof(wchar_t) * MAX_PATH);
@@ -430,7 +427,7 @@ bool Mesh::ConvertFbx(FBXLoader * pLoader)
 
 			if (pMtrl->strSpcTex.empty() == false)
 			{
-				memset(strName, 0, MAX_PATH);
+				ZeroMemory(strName, MAX_PATH);
 				_splitpath_s(pMtrl->strSpcTex.c_str(), NULLPTR, 0, NULLPTR, 0, strName, MAX_PATH, NULLPTR, 0);
 
 				memset(strPath, 0, sizeof(wchar_t) * MAX_PATH);

@@ -126,7 +126,10 @@ bool ShaderManager::Init()
 	Entry[ST_VERTEX] = "StandardNormalColorVS";
 	Entry[ST_PIXEL] = "StandardNormalColorPS";
 	if (LoadShader(STANDARD_NORMAL_COLOR_SHADER, TEXT("Standard.fx"), Entry) == false)
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	Entry[ST_VERTEX] = "LightAccVS";
 	Entry[ST_PIXEL] = "LightAccPS";
@@ -154,6 +157,14 @@ bool ShaderManager::Init()
 	Entry[ST_VERTEX] = "Vertex3DVS";
 	Entry[ST_PIXEL] = "Vertex3DPS";
 	if (LoadShader(VERTEX3D_SHADER, TEXT("Share.fx"), Entry) == false)
+	{
+		TrueAssert(true);
+		return false;
+	}
+
+	Entry[ST_VERTEX] = "StandardBumpVS";
+	Entry[ST_PIXEL] = "StandardBumpPS";
+	if (LoadShader(STANDARD_BUMP_SHADER, TEXT("Standard.fx"), Entry) == false)
 	{
 		TrueAssert(true);
 		return false;

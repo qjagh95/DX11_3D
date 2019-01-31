@@ -14,13 +14,11 @@
 #include <Component/Transform_Com.h>
 
 MainScene::MainScene()
-
 {
 }
 
 MainScene::~MainScene()
 {
-
 }
 
 bool MainScene::Init()

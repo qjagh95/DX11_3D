@@ -549,7 +549,7 @@ void Scene::LightDebug(float DeltaTime)
 	ImGui::Text("Camera");
 
 	static Vector3 CameraPos;
-	ImGui::SliderFloat3("CameraPos", (float*)&CameraPos, -0.0, 5.0f);
+	ImGui::SliderFloat3("CameraPos", (float*)&CameraPos, -100.0f, 100.0f);
 	m_MainCameraTransform->SetWorldPos(CameraPos);
 
 	ImGui::BeginTabBar("Camera");

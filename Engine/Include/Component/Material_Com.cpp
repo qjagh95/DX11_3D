@@ -12,10 +12,6 @@
 
 JEONG_USING
 
-SubsetMaterial::~SubsetMaterial()
-{
-}
-
 Material_Com::Material_Com()
 {
 	m_ComType = CT_MATERIAL;
@@ -35,51 +31,71 @@ Material_Com::Material_Com(const Material_Com& copyData)
 		{
 			SubsetMaterial* newMaterial = new SubsetMaterial();
 			newMaterial->MatrialInfo = copyData.m_vecMaterial[i][j]->MatrialInfo;
+			//newMaterial->vecDiffuseSampler.resize(copyData.m_vecMaterial[i][j]->vecDiffuseSampler.size());
+			//newMaterial->vecDiffuseTexture.resize(copyData.m_vecMaterial[i][j]->vecDiffuseTexture.size());
+			//newMaterial->vecNormalSampler.resize(copyData.m_vecMaterial[i][j]->vecNormalSampler.size());
+			//newMaterial->vecNormalTexture.resize(copyData.m_vecMaterial[i][j]->vecNormalTexture.size());
+			//newMaterial->vecSpecularSampler.resize(copyData.m_vecMaterial[i][j]->vecSpecularSampler.size());
+			//newMaterial->vecSpecularTexture.resize(copyData.m_vecMaterial[i][j]->vecSpecularTexture.size());
 
-			//TODO : ลอมü
 			for (size_t a = 0; a < copyData.m_vecMaterial[i][j]->vecDiffuseSampler.size(); a++)
 			{
-				newMaterial->vecDiffuseSampler[a] = copyData.m_vecMaterial[i][j]->vecDiffuseSampler[a];
+				Sampler* newSampler = new Sampler();
+				*newSampler = *copyData.m_vecMaterial[i][j]->vecDiffuseSampler[a];
 
-				if (newMaterial->vecDiffuseSampler[a] != NULLPTR)
-					newMaterial->vecDiffuseSampler[a]->AddRefCount();
+				newMaterial->vecDiffuseSampler.push_back(newSampler);
 			}
 			for (size_t b = 0; b < copyData.m_vecMaterial[i][j]->vecDiffuseTexture.size(); b++)
 			{
-				newMaterial->vecDiffuseTexture[b] = copyData.m_vecMaterial[i][j]->vecDiffuseTexture[b];
+				if (copyData.m_vecMaterial[i][j]->vecDiffuseTexture[b] == NULLPTR)
+					newMaterial->vecDiffuseTexture.push_back(NULLPTR);
+				else
+				{
+					Texture* newTex = new Texture();
+					*newTex = *copyData.m_vecMaterial[i][j]->vecDiffuseTexture[b];
 
-				if (newMaterial->vecDiffuseTexture[b] != NULLPTR)
-					newMaterial->vecDiffuseTexture[b]->AddRefCount();
+					newMaterial->vecDiffuseTexture.push_back(newTex);
+				}
 			}
 
 			for (size_t c = 0; c < copyData.m_vecMaterial[i][j]->vecNormalSampler.size(); c++)
 			{
-				newMaterial->vecNormalSampler[c] = copyData.m_vecMaterial[i][j]->vecNormalSampler[c];
+				Sampler* newSampler = new Sampler();
+				*newSampler = *copyData.m_vecMaterial[i][j]->vecNormalSampler[c];
 
-				if (newMaterial->vecNormalSampler[c] != NULLPTR)
-					newMaterial->vecNormalSampler[c]->AddRefCount();
+				newMaterial->vecNormalSampler.push_back(newSampler);
 			}
 			for (size_t d = 0; d < copyData.m_vecMaterial[i][j]->vecNormalTexture.size(); d++)
 			{
-				newMaterial->vecNormalTexture[d] = copyData.m_vecMaterial[i][j]->vecNormalTexture[d];
+				if(copyData.m_vecMaterial[i][j]->vecNormalTexture[d] == NULLPTR)
+					newMaterial->vecNormalTexture.push_back(NULLPTR);
+				else
+				{
+					Texture* newTex = new Texture();
+					*newTex = *copyData.m_vecMaterial[i][j]->vecNormalTexture[d];
 
-				if (newMaterial->vecNormalTexture[d] != NULLPTR)
-					newMaterial->vecNormalTexture[d]->AddRefCount();
+					newMaterial->vecNormalTexture.push_back(newTex);
+				}
 			}
 
 			for (size_t e = 0; e < copyData.m_vecMaterial[i][j]->vecSpecularSampler.size(); e++)
 			{
-				newMaterial->vecSpecularSampler[e] = copyData.m_vecMaterial[i][j]->vecSpecularSampler[e];
+				Sampler* newSampler = new Sampler();
+				*newSampler = *copyData.m_vecMaterial[i][j]->vecSpecularSampler[e];
 
-				if (newMaterial->vecSpecularSampler[e] != NULLPTR)
-					newMaterial->vecSpecularSampler[e]->AddRefCount();
+				newMaterial->vecSpecularSampler.push_back(newSampler);
 			}
 			for (size_t f = 0; f < copyData.m_vecMaterial[i][j]->vecSpecularTexture.size(); f++)
 			{
-				newMaterial->vecSpecularTexture[f] = copyData.m_vecMaterial[i][j]->vecSpecularTexture[f];
+				if (copyData.m_vecMaterial[i][j]->vecSpecularTexture[f] == NULLPTR)
+					newMaterial->vecSpecularTexture.push_back(NULLPTR);
+				else
+				{
+					Texture* newTex = new Texture();
+					*newTex = *copyData.m_vecMaterial[i][j]->vecSpecularTexture[f];
 
-				if (newMaterial->vecSpecularTexture[f] != NULLPTR)
-					newMaterial->vecSpecularTexture[f]->AddRefCount();
+					newMaterial->vecSpecularTexture.push_back(newTex);
+				}
 			}
 
 			m_vecMaterial[i].push_back(newMaterial);
@@ -93,12 +109,12 @@ Material_Com::~Material_Com()
 	{
 		for (size_t j = 0; j < m_vecMaterial[i].size(); ++j)
 		{
-			Safe_Release_VecList(m_vecMaterial[i][j]->vecDiffuseSampler);
-			Safe_Release_VecList(m_vecMaterial[i][j]->vecDiffuseTexture);
-			Safe_Release_VecList(m_vecMaterial[i][j]->vecNormalSampler);
-			Safe_Release_VecList(m_vecMaterial[i][j]->vecNormalTexture);
-			Safe_Release_VecList(m_vecMaterial[i][j]->vecSpecularSampler);
-			Safe_Release_VecList(m_vecMaterial[i][j]->vecSpecularTexture);
+			Safe_Release_VecList(m_vecMaterial[i][j]);
+			Safe_Release_VecList(m_vecMaterial[i][j]);
+			Safe_Release_VecList(m_vecMaterial[i][j]);
+			Safe_Release_VecList(m_vecMaterial[i][j]);
+			Safe_Release_VecList(m_vecMaterial[i][j]);
+			Safe_Release_VecList(m_vecMaterial[i][j]);
 
 			SAFE_DELETE(m_vecMaterial[i][j]);
 		}
@@ -453,7 +469,6 @@ void Material_Com::ClearContainer()
 SubsetMaterial* Material_Com::CreateSubSet()
 {
 	SubsetMaterial* newSubset = new SubsetMaterial();
-	newSubset->vecDiffuseSampler.push_back(ResourceManager::Get()->FindSampler(LINER_SAMPLER));
 
 	return newSubset;
 }
