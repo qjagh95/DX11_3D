@@ -199,8 +199,7 @@ namespace JEONG
 	struct JEONG_DLL ComponentCBuffer
 	{
 		int TextureAnimation2D;
-		int isDeferred;
-		Vector2 Empty;
+		Vector3 Empty;
 	};
 
 	struct JEONG_DLL ButtonCBuffer
@@ -241,7 +240,8 @@ namespace JEONG
 		float DeltaTime;
 		float PlusedDeltaTime;
 		float Far;
+		int isDeferred;
 		Vector2 ViewPortSize;
-		Vector3 Empty;
+		Vector2 Empty;
 	};
 }

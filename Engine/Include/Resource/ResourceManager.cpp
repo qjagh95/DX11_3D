@@ -373,7 +373,7 @@ void ResourceManager::CreateSphereVolum(const string& KeyName, float Radius, int
 		}
 	}
 
-	CreateMesh(KeyName, STANDARD_NORMAL_COLOR_SHADER, POS_NORMAL_COLOR_LAYOUT, &vecVertexData[0], (int)vecVertexData.size(), sizeof(VertexNormalColor), D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, &vecIndex[0], (int)vecIndex.size(), sizeof(unsigned int), D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
+	CreateMesh(KeyName, LIGHT_POINT_ACC_SHADER, POS_NORMAL_COLOR_LAYOUT, &vecVertexData[0], (int)vecVertexData.size(), sizeof(VertexNormalColor), D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, &vecIndex[0], (int)vecIndex.size(), sizeof(unsigned int), D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
 }
 
 void ResourceManager::CreateCapsulVolum(const string & KeyName, float Radius, float Height, int StackSlice, int SliceCount)
@@ -476,7 +476,7 @@ void ResourceManager::CreateCylinderVolum(const string & KeyName, float Radius, 
 			vertex.m_Normal = vertex.m_Pos;
 			vertex.m_Normal.y = 0.0f;
 			vertex.m_Normal.Normalize();
-			vertex.m_Color = Vector4{ (rand() % 100) * 0.01f, (rand() % 100) * 0.01f, (rand() % 100) * 0.01f, (rand() % 100) * 0.01f };
+			vertex.m_Color = Vector4::Red;
 
 			vecVertex.push_back(vertex);
 
@@ -573,7 +573,7 @@ void ResourceManager::CreateCornVolum(const string & KeyName, float Radius, floa
 
 			vertex.m_Normal = vertex.m_Pos;
 			vertex.m_Normal.Normalize();
-			vertex.m_Color = Vector4{ (rand() % 100) * 0.01f, (rand() % 100) * 0.01f, (rand() % 100) * 0.01f, (rand() % 100) * 0.01f };
+			vertex.m_Color = Vector4::Red;
 
 			vertex.m_Pos.y += Height;
 
@@ -632,7 +632,7 @@ void ResourceManager::CreateCornVolum(const string & KeyName, float Radius, floa
 		vecIndex.push_back(index[2]);
 	}
 
-	CreateMesh(KeyName, STANDARD_NORMAL_COLOR_SHADER, POS_NORMAL_COLOR_LAYOUT, &vecVertex[0], (int)vecVertex.size(), sizeof(VertexNormalColor), D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, &vecIndex[0], (int)vecIndex.size(), sizeof(unsigned int), D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
+	CreateMesh(KeyName, LIGHT_POINT_ACC_SHADER, POS_NORMAL_COLOR_LAYOUT, &vecVertex[0], (int)vecVertex.size(), sizeof(VertexNormalColor), D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, &vecIndex[0], (int)vecIndex.size(), sizeof(unsigned int), D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
 }
 
 Mesh* ResourceManager::FindMesh(const string & TagName)

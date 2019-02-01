@@ -26,8 +26,6 @@
 #define COLLIDER_SHADER "ColliderShader"
 #define BUTTON_SHADER "ButtonShader"
 #define BAR_SHADER "BarShader"
-#define CHECKBOX_SHADER "CheckBoxShader"
-#define TILE_SHADER "TileShader"
 #define FULLSCREEN_SHADER "FullScreenShader"
 #define STANDARD_UV_STATIC_SHADER "StandardUVStaticShader"
 #define STANDARD_NORMAL_COLOR_SHADER "StandardNormalColorShader"
@@ -55,6 +53,8 @@
 #define ACC_BLEND "AccBlend"
 #define CULL_NONE "CullNone"
 #define WIRE_FRAME "WireFrame"
+#define DEPTH_GRATER "DepthGrater"
+#define FRONT_CULL "FrontCull"
 
 //VolumMesh
 #define SPHERE_VOLUM "SphereVolum"

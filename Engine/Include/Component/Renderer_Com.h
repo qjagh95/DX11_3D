@@ -35,6 +35,7 @@ public:
 	void CheckComponent();
 	void DeleteComponentCBuffer(Component_Base* DeleteCom);
 	void InitMaterial();
+	Mesh* GetMesh() const { return m_Mesh; }
 
 private:
 	void UpdateTransform();

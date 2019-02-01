@@ -2,6 +2,7 @@
 #include "RenderManager.h"
 #include "RenderTarget.h"
 #include "BlendState.h"
+#include "ResterizerState.h"
 #include "MultiRenderTarget.h"
 
 #include "../GameObject.h"
@@ -14,6 +15,7 @@
 #include "Render/Shader.h"
 
 #include "Resource/ResourceManager.h"
+#include "Resource/Mesh.h"
 
 JEONG_USING
 SINGLETON_VAR_INIT(JEONG::RenderManager)
@@ -35,10 +37,9 @@ JEONG::RenderManager::RenderManager()
 	m_FullScreenShader = NULLPTR;
 	m_LightBlendTarget = NULLPTR;
 	m_LightDiffuseTarget = NULLPTR;
+	m_LightAmbiemtTarget = NULLPTR;
 	m_LightSpcularTarget = NULLPTR;
 	m_AlbedoTarget = NULLPTR;
-	m_SphereVolum = NULLPTR;
-	m_CornVolum = NULLPTR;
 
 	m_CBuffer = {};
 }
@@ -93,6 +94,10 @@ bool RenderManager::Init()
 	AddBlendTargetDesc(TRUE, D3D11_BLEND_ONE, D3D11_BLEND_ONE, D3D11_BLEND_OP_ADD, D3D11_BLEND_ONE, D3D11_BLEND_ONE);
 	CreateBlendState(ACC_BLEND);
 	CreateDepthStencilState(DEPTH_DISABLE, FALSE);
+	CreateDepthStencilState(DEPTH_GRATER, TRUE, D3D11_DEPTH_WRITE_MASK_ZERO, D3D11_COMPARISON_GREATER);
+	CreateResterizerState(FRONT_CULL, D3D11_FILL_SOLID, D3D11_CULL_FRONT);
+	CreateResterizerState(WIRE_FRAME, D3D11_FILL_WIREFRAME);
+	CreateResterizerState(CULL_NONE, D3D11_FILL_SOLID, D3D11_CULL_NONE);
 
 	m_DepthDisable = FindRenderState(DEPTH_DISABLE);
 
@@ -145,6 +150,12 @@ bool RenderManager::Init()
 	AddMultiRenderTarget("GBuffer", "Depth");
 	AddMultiRenderTarget("GBuffer", "Material");
 
+	//// Light Amb
+	//vPos.x = 100.0f;
+	//vPos.y = 0.0f;
+	//if (CreateRenderTarget("LightAccAmbient", DXGI_FORMAT_R32G32B32A32_FLOAT, vPos, Vector3(100.0f, 100.0f, 1.0f), true) == false)
+	//	return false;
+
 	// Light Dif
 	vPos.x = 100.0f;
 	vPos.y = 0.0f;
@@ -164,11 +175,11 @@ bool RenderManager::Init()
 		return false;
 
 	CreateMultiTarget("LightAcc");
+	//AddMultiRenderTarget("LightAcc", "LightAccAmbient");
 	AddMultiRenderTarget("LightAcc", "LightAccDiffuse");
 	AddMultiRenderTarget("LightAcc", "LightAccSpcular");
 
 	m_GBufferSampler = ResourceManager::Get()->FindSamplerNoneCount(POINT_SAMPLER);
-	m_LightAccDirShader = ShaderManager::Get()->FindShaderNoneCount(LIGHT_DIR_ACC_SHADER);
 
 	m_AddBlend = FindRenderState(ACC_BLEND);
 
@@ -181,14 +192,13 @@ bool RenderManager::Init()
 	m_FullScreenShader = ShaderManager::Get()->FindShaderNoneCount(FULLSCREEN_SHADER);
 
 	m_LightBlendTarget = FindRenderTarget("LightBlend");
-	m_LightBlendTarget->SetClearColor(Vector4::Pink);
+	m_LightBlendTarget->SetClearColor(Vector4::Black);
 
+	//m_LightAmbiemtTarget = FindRenderTarget("LightAccAmbient");
 	m_LightDiffuseTarget = FindRenderTarget("LightAccDiffuse");
 	m_LightSpcularTarget = FindRenderTarget("LightAccSpcular");
-	m_AlbedoTarget = FindRenderTarget("Albedo");
 
-	m_SphereVolum = ResourceManager::Get()->FindMeshNoneCount(SPHERE_VOLUM);
-	m_CornVolum = ResourceManager::Get()->FindMeshNoneCount(CORN_VOLUM);
+	m_AlbedoTarget = FindRenderTarget("Albedo");
 
 	return true;
 }
@@ -261,9 +271,29 @@ bool RenderManager::CreateBlendState(const string & KeyName, BOOL bAlphaCoverage
 	return true;
 }
 
+bool RenderManager::CreateResterizerState(const string & KeyName, D3D11_FILL_MODE eFill, D3D11_CULL_MODE eCull, BOOL bFrontCounterClockwise, int iDepthBias, float fDepthBiasClamp, float fSlopeScaledDepthBias, BOOL bDepthClipEnable, BOOL bScissorEnable, BOOL bMultisampleEnable, BOOL bAntialiasedLineEnable)
+{
+	ResterizerState* newState = (ResterizerState*)FindRenderState(KeyName);
+
+	if (newState != NULLPTR)
+		return false;
+
+	newState = new ResterizerState();
+
+	if (newState->CreateState(eFill, eCull,bFrontCounterClockwise, iDepthBias, fDepthBiasClamp, fSlopeScaledDepthBias,bDepthClipEnable, bScissorEnable, bMultisampleEnable, bAntialiasedLineEnable) == false)
+	{
+		SAFE_RELEASE(newState);
+		return false;
+	}
+
+	m_RenderStateMap.insert(make_pair(KeyName, newState));
+
+	return newState;
+}
+
 RenderState * RenderManager::FindRenderState(const string & KeyName)
 {
-	unordered_map<string, JEONG::RenderState*>::iterator FindIter = m_RenderStateMap.find(KeyName);
+	unordered_map<string, RenderState*>::iterator FindIter = m_RenderStateMap.find(KeyName);
 
 	if (FindIter == m_RenderStateMap.end())
 		return NULLPTR;
@@ -327,59 +357,13 @@ void RenderManager::AddRenderObject(GameObject * object)
 
 void RenderManager::Render(float DeltaTime)
 {
-	ShaderManager::Get()->UpdateCBuffer("PublicCBuffer", &m_CBuffer);
-	Render3D(DeltaTime);
-
 	m_CBuffer.DeltaTime = DeltaTime;
+	m_CBuffer.isDeferred = m_isDeferred;
 	m_CBuffer.PlusedDeltaTime += DeltaTime;
+	m_CBuffer.Far = 2.0f;  //TODO : Far값 임의로 10
+	ShaderManager::Get()->UpdateCBuffer("PublicCBuffer", &m_CBuffer);
 
-	//TODO : Far값 임의로 10
-	m_CBuffer.Far = 2.0f;
-}
-
-bool JEONG::RenderManager::CreateMultiTarget(const string & MultiKey)
-{
-	MultiRenderTarget* newTarget = FindMultiTarget(MultiKey);
-
-	if (newTarget != NULLPTR)
-		return false;
-
-	newTarget = new MultiRenderTarget();
-
-	m_MultiTargetMap.insert(make_pair(MultiKey, newTarget));
-	return true;
-}
-
-bool RenderManager::AddMultiRenderTarget(const string & MultiKey, const string & TargetKey)
-{
-	MultiRenderTarget* getMulti = FindMultiTarget(MultiKey);
-
-	if (getMulti == NULLPTR)
-		return false;
-
-	getMulti->AddRenderTargetView(TargetKey);
-	return true;
-}
-
-bool RenderManager::AddMultiRenderTargetDepthView(const string & MultiKey, const string & TargetKey)
-{
-	MultiRenderTarget* getMulti = FindMultiTarget(MultiKey);
-
-	if (getMulti == NULLPTR)
-		return false;
-
-	getMulti->AddDepthView(TargetKey);
-	return true;
-}
-
-MultiRenderTarget * RenderManager::FindMultiTarget(const string & MultiKey)
-{
-	unordered_map<string, MultiRenderTarget*>::iterator FindIter = m_MultiTargetMap.find(MultiKey);
-
-	if (FindIter == m_MultiTargetMap.end())
-		return NULLPTR;
-
-	return FindIter->second;
+	Render3D(DeltaTime);
 }
 
 void RenderManager::Render3D(float DeltaTime)
@@ -405,7 +389,7 @@ void RenderManager::DeferredRender(float DeltaTime)
 	RenderLightBlend(DeltaTime);
 	RenderFullScreen(DeltaTime);
 
-	//UI부터~출력
+	////UI부터~출력
 	for (int i = RG_UI; i < RG_END; ++i)
 	{
 		for (int j = 0; j < m_RenderGroup[i].Size; ++j)
@@ -423,7 +407,7 @@ void RenderManager::DeferredRender(float DeltaTime)
 void RenderManager::RenderGBuffer(float DeltaTime)
 {
 	// GBuffer MRT로 타겟을 교체한다.
-	float ClearColor[4] = {Vector4::RoyalBlue.r,Vector4::RoyalBlue.g ,Vector4::RoyalBlue.b ,Vector4::RoyalBlue.a};
+	float ClearColor[4] = { Vector4::RoyalBlue.r,Vector4::RoyalBlue.g ,Vector4::RoyalBlue.b ,Vector4::RoyalBlue.a };
 	m_GBufferMultiTarget->ClearRenderTarget(ClearColor);
 	m_GBufferMultiTarget->SetTarget();
 
@@ -450,42 +434,57 @@ void RenderManager::RenderLightAcc(float DeltaTime)
 	//Light타겟에선 뽑아져나온 데이터가 없고
 	//데이터쓰고있는데 갑자기 10번에 셋팅하겠다고
 	//했기때문에 읽기와 쓰기를 동시에 할 수 없도록 셋팅했으므로 경고발생.
+
 	m_GBufferMultiTarget->SetShaderResource(10);
 	{
 		for (size_t i = 0; i < m_LightGroup.Size; i++)
 		{
 			Light_Com* getLight = m_LightGroup.ObjectList[i]->FindComponentFromTypeNoneCount<Light_Com>(CT_LIGHT);
-			
+
 			switch (getLight->GetLightType())
 			{
-				case LT_DIRECTION:
-					RenderDirectionLight(DeltaTime, getLight);
-					break;
-				case LT_POINT:
-					RenderPointLight(DeltaTime, getLight);
-					break;
-				case LT_SPOT:
-					RenderSpotLight(DeltaTime, getLight);
-					break;
-				case LT_SPOT_BOMI:
-					RenderBomiSpotLight(DeltaTime, getLight);
-					break;
+			case LT_DIRECTION:
+				RenderDirectionLight(DeltaTime, getLight);
+				break;
+			case LT_POINT:
+				RenderPointLight(DeltaTime, getLight);
+				break;
+			case LT_SPOT:
+				RenderSpotLight(DeltaTime, getLight);
+				break;
+			case LT_SPOT_BOMI:
+				RenderBomiSpotLight(DeltaTime, getLight);
+				break;
 			}
+
+			//switch (getLight->GetLightType())
+			//{
+			//case LT_DIRECTION:
+			//	m_DepthDisable->SetState();
+
+			//	getLight->UpdateCBuffer();
+			//	RenderDirectionLight(DeltaTime, getLight);
+
+			//	m_DepthDisable->ResetState();
+			//	break;
+			//default:
+			//	getLight->UpdateCBuffer();
+			//	getLight->Render(DeltaTime);
+			//	break;
+			//}
 		}
 	}
 	m_GBufferMultiTarget->ResetShaderResource(10);
 	m_DepthDisable->ResetState();
-	m_LightMultiTarget->ResetTarget();
 	m_AddBlend->ResetState();
+	m_LightMultiTarget->ResetTarget();
 }
 
 void RenderManager::RenderDirectionLight(float DeltaTime, Light_Com * light)
 {
 	m_LightAccDirShader->SetShader();
-
 	// 조명 정보를 상수버퍼에 넘겨준다.
 	light->UpdateCBuffer();
-
 	// NULL Buffer로 전체 화면크기의 사각형을 출력한다.
 	Device::Get()->GetContext()->IASetInputLayout(NULLPTR);
 
@@ -500,16 +499,20 @@ void RenderManager::RenderPointLight(float DeltaTime, Light_Com * light)
 {
 	m_LightAccPointShader->SetShader();
 
+	//// NULL Buffer로 전체 화면크기의 사각형을 출력한다.
+	//Device::Get()->GetContext()->IASetInputLayout(NULLPTR);
+
+	//UINT iOffset = 0;
+	//Device::Get()->GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	//Device::Get()->GetContext()->IASetVertexBuffers(0, 0, NULLPTR, 0, &iOffset);
+	//Device::Get()->GetContext()->IASetIndexBuffer(0, DXGI_FORMAT_UNKNOWN, 0);
+	//Device::Get()->GetContext()->Draw(4, 0);
 }
 
 void RenderManager::RenderSpotLight(float DeltaTime, Light_Com * light)
 {
 	m_LightAccDirShader->SetShader();
-
-	// 조명 정보를 상수버퍼에 넘겨준다.
 	light->UpdateCBuffer();
-
-	// NULL Buffer로 전체 화면크기의 사각형을 출력한다.
 	Device::Get()->GetContext()->IASetInputLayout(NULLPTR);
 
 	UINT iOffset = 0;
@@ -562,6 +565,7 @@ void RenderManager::RenderLightBlend(float DeltaTime)
 	m_GBufferSampler->SetSamplerState(10);
 
 	m_AlbedoTarget->SetShader(10);
+	//m_LightAmbiemtTarget->SetShader(14);
 	m_LightDiffuseTarget->SetShader(14);
 	m_LightSpcularTarget->SetShader(15);
 
@@ -622,4 +626,49 @@ void RenderManager::ForwardRender(float DeltaTime)
 	}
 
 	m_LightGroup.Size = 0;
+}
+
+bool RenderManager::CreateMultiTarget(const string & MultiKey)
+{
+	MultiRenderTarget* newTarget = FindMultiTarget(MultiKey);
+
+	if (newTarget != NULLPTR)
+		return false;
+
+	newTarget = new MultiRenderTarget();
+
+	m_MultiTargetMap.insert(make_pair(MultiKey, newTarget));
+	return true;
+}
+
+bool RenderManager::AddMultiRenderTarget(const string & MultiKey, const string & TargetKey)
+{
+	MultiRenderTarget* getMulti = FindMultiTarget(MultiKey);
+
+	if (getMulti == NULLPTR)
+		return false;
+
+	getMulti->AddRenderTargetView(TargetKey);
+	return true;
+}
+
+bool RenderManager::AddMultiRenderTargetDepthView(const string & MultiKey, const string & TargetKey)
+{
+	MultiRenderTarget* getMulti = FindMultiTarget(MultiKey);
+
+	if (getMulti == NULLPTR)
+		return false;
+
+	getMulti->AddDepthView(TargetKey);
+	return true;
+}
+
+MultiRenderTarget * RenderManager::FindMultiTarget(const string & MultiKey)
+{
+	unordered_map<string, MultiRenderTarget*>::iterator FindIter = m_MultiTargetMap.find(MultiKey);
+
+	if (FindIter == m_MultiTargetMap.end())
+		return NULLPTR;
+
+	return FindIter->second;
 }

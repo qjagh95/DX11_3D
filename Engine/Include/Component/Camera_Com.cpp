@@ -64,7 +64,7 @@ int JEONG::Camera_Com::Update(float DeltaTime)
 	//카메라 축을 가져온다.
 	for (unsigned int i = 0; i < AXIS_MAX; i++)
 		memcpy(&m_View[i][0], &m_Transform->GetWorldAxis((AXIS)i), sizeof(Vector3));
-	
+
 	/*
 	Xx Yx Zx 0
 	Xy Yy Zy 0

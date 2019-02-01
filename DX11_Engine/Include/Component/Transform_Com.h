@@ -64,6 +64,7 @@ public:
 	void SetWorldRotX(float x);
 	void SetWorldRotY(float y);
 	void SetWorldRotZ(float z);
+	void SetWorldRot(const Vector3& Rot);
 	void SetWorldPos(const Vector3& vPos);
 	void SetWorldPos(float x, float y, float z);
 	void SetWorldPivot(const Vector3& vPos);

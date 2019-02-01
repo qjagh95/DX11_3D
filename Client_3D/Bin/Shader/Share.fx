@@ -177,11 +177,9 @@ cbuffer Material : register(b1)
     MaterialInfo g_Material;
 }
 
-cbuffer Componeent : register(b2)
+cbuffer Component : register(b2)
 {
     int g_Animation2DEnable;
-    int g_isDeferred;
-    float2 g_Empty;
 }
 
 cbuffer Public : register(b10)
@@ -189,11 +187,12 @@ cbuffer Public : register(b10)
     float g_DeltaTime;
     float g_PlusedDeltaTime;
     float g_ProjectionFar;
+    int g_isDeferred;
     float2 g_ViewPortSize;
-    float3 g_Empty123124522534;
+    float2 g_Empty123124522534;
 }
 
-cbuffer Light : register(b3)
+cbuffer Light : register(b4)
 {
     LightInfo g_Light;
 }

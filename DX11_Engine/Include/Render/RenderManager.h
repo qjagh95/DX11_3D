@@ -26,6 +26,7 @@ class RenderTarget;
 class GameObject;
 class Light_Com;
 class MultiRenderTarget;
+class Mesh;
 class JEONG_DLL RenderManager
 {
 public:
@@ -35,15 +36,17 @@ public:
 	bool CreateDepthStencilState(const string& KeyName, BOOL bDepthEnable, D3D11_DEPTH_WRITE_MASK eMask = D3D11_DEPTH_WRITE_MASK_ZERO, D3D11_COMPARISON_FUNC eDepthFunc = D3D11_COMPARISON_LESS, BOOL bStencilEnable = FALSE, UINT8 iStencilReadMask = 0, UINT8 iStencilWriteMask = 0, D3D11_DEPTH_STENCILOP_DESC tFrontFace = {}, D3D11_DEPTH_STENCILOP_DESC tBackFace = {});
 	bool CreateRenderTarget(const string& KeyName, DXGI_FORMAT TargetFormat, const Vector3& Pos, const Vector3& Scale, bool isDebugDraw = true, const Vector4& ClearColor = Vector4(0.0f, 0.0f, 0.0f, 1.0f), DXGI_FORMAT DepthFormat = DXGI_FORMAT_UNKNOWN);
 	bool CreateBlendState(const string& KeyName, BOOL bAlphaCoverage = FALSE, BOOL bIndependent = FALSE);
+	bool CreateResterizerState(const string& KeyName, D3D11_FILL_MODE eFill = D3D11_FILL_SOLID, D3D11_CULL_MODE eCull = D3D11_CULL_BACK, BOOL bFrontCounterClockwise = FALSE, int iDepthBias = 0, float fDepthBiasClamp = 0.0f, float fSlopeScaledDepthBias = 0.0f, BOOL bDepthClipEnable = TRUE, BOOL bScissorEnable = FALSE, BOOL bMultisampleEnable = FALSE, BOOL bAntialiasedLineEnable = FALSE);
+
 	void SetGameMode(GAME_MODE eMode) { m_GameMode = eMode; }
 	GAME_MODE GetGameMode() const { return m_GameMode; }
 
 	RenderState* FindRenderState(const string& KeyName);
-	JEONG::RenderTarget* FindRenderTarget(const string& KeyName);
+	RenderTarget* FindRenderTarget(const string& KeyName);
 
 	void EnableDeferredRender() { m_isDeferred = true; }
 	bool GetIsRenderMode() const { return m_isDeferred; }
-	void AddRenderObject(JEONG::GameObject* object);
+	void AddRenderObject(GameObject* object);
 	void Render(float DeltaTime);
 
 	bool CreateMultiTarget(const string& MultiKey);
@@ -88,13 +91,11 @@ private:
 	MultiRenderTarget* m_GBufferMultiTarget;
 	MultiRenderTarget* m_LightMultiTarget;
 	RenderTarget* m_LightBlendTarget;
+	RenderTarget* m_LightAmbiemtTarget;
 	RenderTarget* m_LightDiffuseTarget;
 	RenderTarget* m_LightSpcularTarget;
 	RenderTarget* m_AlbedoTarget;
 	RenderState* m_AddBlend;
-
-	Mesh* m_SphereVolum;
-	Mesh* m_CornVolum;
 
 	bool m_isDeferred;
 	PublicCBuffer m_CBuffer;
