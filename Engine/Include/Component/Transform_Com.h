@@ -57,6 +57,8 @@ public:
 	void SetLocalRotZ(float z);
 	void SetLocalPos(const Vector3& vPos);
 	void SetLocalPos(float x, float y, float z);
+	void SetLocalRot(const Vector3& vPos);
+	void SetLocalRot(float x, float y, float z);
 	void ComputeLocalAxis();
 
 	void SetWorldScale(const Vector3& vScale);
@@ -64,9 +66,11 @@ public:
 	void SetWorldRotX(float x);
 	void SetWorldRotY(float y);
 	void SetWorldRotZ(float z);
-	void SetWorldRot(const Vector3& Rot);
 	void SetWorldPos(const Vector3& vPos);
 	void SetWorldPos(float x, float y, float z);
+
+	void SetWorldRot(const Vector3& vPos);
+	void SetWorldRot(float x, float y, float z);
 	void SetWorldPivot(const Vector3& vPos);
 	void SetWorldPivot(float x, float y, float z);
 	void ComputeWorldAxis();

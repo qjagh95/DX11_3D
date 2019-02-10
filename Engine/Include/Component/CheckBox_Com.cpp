@@ -32,27 +32,27 @@ bool CheckBox_Com::Init()
 {
 	m_Transform->SetWorldScale(16.0f, 16.0f, 0.0f);
 
-	//Renderer_Com* RenderComponent = m_Object->AddComponent<Renderer_Com>("CheckBoxRender");
-	//RenderComponent->SetMesh("TextureRect");
-	//RenderComponent->SetRenderState(ALPHA_BLEND);
-	//RenderComponent->SetShader(CHECKBOX_SHADER);
-	//RenderComponent->CreateRendererCBuffer("CheckBoxCBuffer", sizeof(CheckBoxCBuffer));
-	//RenderComponent->SetScreenRender(true);
-	//SAFE_RELEASE(RenderComponent);
+	Renderer_Com* RenderComponent = m_Object->AddComponent<Renderer_Com>("CheckBoxRender");
+	RenderComponent->SetMesh("TextureRect");
+	RenderComponent->SetRenderState(ALPHA_BLEND);
+	RenderComponent->SetShader(CHECKBOX_SHADER);
+	RenderComponent->CreateRendererCBuffer("CheckBoxCBuffer", sizeof(CheckBoxCBuffer));
+	RenderComponent->SetScreenRender(true);
+	SAFE_RELEASE(RenderComponent);
 
-	//Material_Com* MaterialComponent = m_Object->FindComponentFromType<Material_Com>(CT_MATERIAL);
-	//MaterialComponent->SetDiffuseTexture(0, "CheckBox", TEXT("CheckBox.png"));
-	//SAFE_RELEASE(MaterialComponent);
+	Material_Com* MaterialComponent = m_Object->FindComponentFromType<Material_Com>(CT_MATERIAL);
+	MaterialComponent->SetDiffuseTexture(0, "CheckBox", TEXT("CheckBox.png"));
+	SAFE_RELEASE(MaterialComponent);
 
-	//ColliderRect_Com* RectColl = m_Object->AddComponent<ColliderRect_Com>("CheckBoxBody");
-	//RectColl->SetInfo(Vector3::Zero, Vector3(16.0f, 16.0f, 0.0f));
-	//RectColl->SetCollisionGroup("UI");
-	//RectColl->SetCollsionCallback(CCT_DOING, this, &CheckBox_Com::MouseHit);
-	//RectColl->SetCollsionCallback(CCT_END, this, &CheckBox_Com::MouseOut);
-	//SAFE_RELEASE(RectColl);
+	ColliderRect_Com* RectColl = m_Object->AddComponent<ColliderRect_Com>("CheckBoxBody");
+	RectColl->SetInfo(Vector3::Zero, Vector3(16.0f, 16.0f, 0.0f));
+	RectColl->SetCollisionGroup("UI");
+	RectColl->SetCollsionCallback(CCT_DOING, this, &CheckBox_Com::MouseHit);
+	RectColl->SetCollsionCallback(CCT_END, this, &CheckBox_Com::MouseOut);
+	SAFE_RELEASE(RectColl);
 
-	//m_CheckBoxCBuffer.CheckBoxColor = Vector4::White;
-	//m_CheckBoxCBuffer.isCheck = false;
+	m_CheckBoxCBuffer.CheckBoxColor = Vector4::White;
+	m_CheckBoxCBuffer.isCheck = false;
 
 	return true;
 }

@@ -22,67 +22,56 @@ Material_Com::Material_Com(const Material_Com& copyData)
 {
 	m_vecMaterial.clear();
 
-	for (size_t i = 0; i < copyData.m_vecMaterial.size(); i++)
+	for (size_t i = 0; i < copyData.m_vecMaterial.size(); ++i)
 	{
-		vector<SubsetMaterial*> TempVec;
-		m_vecMaterial.push_back(TempVec);
-
-		for (size_t j = 0; j < copyData.m_vecMaterial[i].size(); j++)
+		vector<SubsetMaterial*>	vec;
+		m_vecMaterial.push_back(vec);
+		for (size_t j = 0; j < copyData.m_vecMaterial[i].size(); ++j)
 		{
-			SubsetMaterial* newMaterial = new SubsetMaterial();
-			newMaterial->MatrialInfo = copyData.m_vecMaterial[i][j]->MatrialInfo;
-			
-			for (size_t a = 0; a < copyData.m_vecMaterial[i][j]->vecDiffuseSampler.size(); a++)
-				newMaterial->vecDiffuseSampler.push_back(copyData.m_vecMaterial[i][j]->vecDiffuseSampler[a]);
+			SubsetMaterial*	pMtrl = new SubsetMaterial();
 
-			for (size_t b = 0; b < copyData.m_vecMaterial[i][j]->vecDiffuseTexture.size(); b++)
+			pMtrl->MatrialInfo = copyData.m_vecMaterial[i][j]->MatrialInfo;
+
+			if (copyData.m_vecMaterial[i][j]->DiffuseTex != NULLPTR)
 			{
-				if (copyData.m_vecMaterial[i][j]->vecDiffuseTexture[b] == NULLPTR)
-					newMaterial->vecDiffuseTexture.push_back(NULLPTR);
-				else
-				{
-					Texture* newTex = new Texture();
-					*newTex = *copyData.m_vecMaterial[i][j]->vecDiffuseTexture[b];
-
-					newMaterial->vecDiffuseTexture.push_back(newTex);
-				}
+				pMtrl->DiffuseTex = new TextureSet;
+				*pMtrl->DiffuseTex = *copyData.m_vecMaterial[i][j]->DiffuseTex;
+				pMtrl->DiffuseTex->m_Tex->AddRefCount();
+				pMtrl->DiffuseTex->m_Sampler->AddRefCount();
 			}
 
-			for (size_t c = 0; c < copyData.m_vecMaterial[i][j]->vecNormalSampler.size(); c++)
-				newMaterial->vecDiffuseSampler.push_back(copyData.m_vecMaterial[i][j]->vecNormalSampler[c]);
-
-			for (size_t d = 0; d < copyData.m_vecMaterial[i][j]->vecNormalTexture.size(); d++)
+			if (copyData.m_vecMaterial[i][j]->NormalTex != NULLPTR)
 			{
-				if(copyData.m_vecMaterial[i][j]->vecNormalTexture[d] == NULLPTR)
-					newMaterial->vecNormalTexture.push_back(NULLPTR);
-				else
-				{
-					Texture* newTex = new Texture();
-					*newTex = *copyData.m_vecMaterial[i][j]->vecNormalTexture[d];
-
-					newMaterial->vecNormalTexture.push_back(newTex);
-				}
+				pMtrl->NormalTex = new TextureSet;
+				*pMtrl->NormalTex = *copyData.m_vecMaterial[i][j]->NormalTex;
+				pMtrl->NormalTex->m_Tex->AddRefCount();
+				pMtrl->NormalTex->m_Sampler->AddRefCount();
 			}
 
-			for (size_t e = 0; e < copyData.m_vecMaterial[i][j]->vecSpecularSampler.size(); e++)
-				newMaterial->vecDiffuseSampler.push_back(copyData.m_vecMaterial[i][j]->vecSpecularSampler[e]);
-
-			for (size_t f = 0; f < copyData.m_vecMaterial[i][j]->vecSpecularTexture.size(); f++)
+			if (copyData.m_vecMaterial[i][j]->SpecularTex)
 			{
-				if (copyData.m_vecMaterial[i][j]->vecSpecularTexture[f] == NULLPTR)
-					newMaterial->vecSpecularTexture.push_back(NULLPTR);
-				else
-				{
-					Texture* newTex = new Texture();
-					*newTex = *copyData.m_vecMaterial[i][j]->vecSpecularTexture[f];
-
-					newMaterial->vecSpecularTexture.push_back(newTex);
-				}
+				pMtrl->SpecularTex = new TextureSet;
+				*pMtrl->SpecularTex = *copyData.m_vecMaterial[i][j]->SpecularTex;
+				pMtrl->SpecularTex->m_Tex->AddRefCount();
+				pMtrl->SpecularTex->m_Sampler->AddRefCount();
 			}
 
-			m_vecMaterial[i].push_back(newMaterial);
+			pMtrl->vecMultiTexture = copyData.m_vecMaterial[i][j]->vecMultiTexture;
+
+			for (size_t k = 0; k < pMtrl->vecMultiTexture.size(); ++k)
+			{
+				if (pMtrl->vecMultiTexture[k].m_Tex)
+					pMtrl->vecMultiTexture[k].m_Tex->AddRefCount();
+
+				if (pMtrl->vecMultiTexture[k].m_Sampler)
+					pMtrl->vecMultiTexture[k].m_Sampler->AddRefCount();
+			}
+
+			m_vecMaterial[i].push_back(pMtrl);
 		}
 	}
+
+	ReferanceCount = 1;
 }
 
 Material_Com::~Material_Com()
@@ -91,16 +80,37 @@ Material_Com::~Material_Com()
 	{
 		for (size_t j = 0; j < m_vecMaterial[i].size(); ++j)
 		{
-			Safe_Release_VecList(m_vecMaterial[i][j]->vecDiffuseSampler);
-			Safe_Release_VecList(m_vecMaterial[i][j]->vecDiffuseTexture);
-			Safe_Release_VecList(m_vecMaterial[i][j]->vecNormalSampler);
-			Safe_Release_VecList(m_vecMaterial[i][j]->vecNormalTexture);
-			Safe_Release_VecList(m_vecMaterial[i][j]->vecSpecularSampler);
-			Safe_Release_VecList(m_vecMaterial[i][j]->vecSpecularTexture);
+			for (size_t k = 0; k < m_vecMaterial[i][j]->vecMultiTexture.size(); ++k)
+			{
+				SAFE_RELEASE(m_vecMaterial[i][j]->vecMultiTexture[k].m_Tex);
+				SAFE_RELEASE(m_vecMaterial[i][j]->vecMultiTexture[k].m_Sampler);
+			}
 
+			if (m_vecMaterial[i][j]->DiffuseTex)
+			{
+				SAFE_RELEASE(m_vecMaterial[i][j]->DiffuseTex->m_Tex);
+				SAFE_RELEASE(m_vecMaterial[i][j]->DiffuseTex->m_Sampler);
+			}
+
+			if (m_vecMaterial[i][j]->NormalTex)
+			{
+				SAFE_RELEASE(m_vecMaterial[i][j]->NormalTex->m_Tex);
+				SAFE_RELEASE(m_vecMaterial[i][j]->NormalTex->m_Sampler);
+			}
+
+			if (m_vecMaterial[i][j]->SpecularTex)
+			{
+				SAFE_RELEASE(m_vecMaterial[i][j]->SpecularTex->m_Tex);
+				SAFE_RELEASE(m_vecMaterial[i][j]->SpecularTex->m_Sampler);
+			}
+
+			SAFE_DELETE(m_vecMaterial[i][j]->DiffuseTex);
+			SAFE_DELETE(m_vecMaterial[i][j]->NormalTex);
+			SAFE_DELETE(m_vecMaterial[i][j]->SpecularTex);
 			SAFE_DELETE(m_vecMaterial[i][j]);
 		}
-		Safe_Delete_VecList(m_vecMaterial[i]);
+
+		m_vecMaterial[i].clear();
 	}
 
 	m_vecMaterial.clear();
@@ -167,265 +177,247 @@ void Material_Com::SetMaterial(const Vector4& Diffuse, const Vector4& Ambient, c
 
 void Material_Com::SetDiffuseTexture(int RegisterNumber, const string & KeyName, int Container, int Subset)
 {
-	//컨테이너가 없다면 하나 추가한다.
 	if (Container >= m_vecMaterial.size())
 	{
-		vector<SubsetMaterial*> newVec;
-		m_vecMaterial.push_back(newVec);
+		vector<SubsetMaterial*>	vec;
+		m_vecMaterial.push_back(vec);
 	}
-	//서브셋이 없다면 추가한다.
+
 	if (Subset >= m_vecMaterial[Container].size())
 		m_vecMaterial[Container].push_back(CreateSubSet());
 
-	//텍스쳐 셋팅준비
-	SubsetMaterial* getMaterial = m_vecMaterial[Container][Subset];
-	Safe_Release_VecList(getMaterial->vecDiffuseTexture);
+	SubsetMaterial*	pMaterial = m_vecMaterial[Container][Subset];
 
-	if (getMaterial->vecDiffuseTexture.capacity() <= RegisterNumber)
-		getMaterial->vecDiffuseTexture.resize(RegisterNumber + 1);
-		
-	getMaterial->vecDiffuseTexture[RegisterNumber] = ResourceManager::Get()->FindTexture(KeyName);
+	if (pMaterial->DiffuseTex == NULLPTR)
+		pMaterial->DiffuseTex = new TextureSet();
+
+	SAFE_RELEASE(pMaterial->DiffuseTex->m_Tex);
+	pMaterial->DiffuseTex->m_Tex = ResourceManager::Get()->FindTexture(KeyName);
+	pMaterial->DiffuseTex->m_Register = RegisterNumber;
 }
 
 void Material_Com::SetDiffuseTexture(int RegisterNumber, const string & KeyName, const TCHAR * FileName, const string & PathKey, int Container, int Subset)
 {
 	if (Container >= m_vecMaterial.size())
 	{
-		vector<SubsetMaterial*>	newVec;
-		m_vecMaterial.push_back(newVec);
+		vector<SubsetMaterial*>	vec;
+		m_vecMaterial.push_back(vec);
 	}
 
 	if (Subset >= m_vecMaterial[Container].size())
 		m_vecMaterial[Container].push_back(CreateSubSet());
 
-	SubsetMaterial* getMaterial = m_vecMaterial[Container][Subset];
+	SubsetMaterial* pMaterial = m_vecMaterial[Container][Subset];
 
-	if (getMaterial->vecDiffuseTexture.capacity() <= RegisterNumber)
-		getMaterial->vecDiffuseTexture.resize(RegisterNumber + 1);
+	if (pMaterial->DiffuseTex == NULLPTR)
+		pMaterial->DiffuseTex = new TextureSet();
 
-	SAFE_RELEASE(getMaterial->vecDiffuseTexture[0]);
-
-	if (RegisterNumber > 0)
-		SAFE_RELEASE(getMaterial->vecDiffuseTexture[RegisterNumber]);
-
-	//텍스쳐가 없다면 맵에 추가한 후
-	//가져다 쓴다.
+	SAFE_RELEASE(pMaterial->DiffuseTex->m_Tex);
 	ResourceManager::Get()->CreateTexture(KeyName, FileName, PathKey);
-	getMaterial->vecDiffuseTexture[RegisterNumber] = ResourceManager::Get()->FindTexture(KeyName);
+	pMaterial->DiffuseTex->m_Tex = ResourceManager::Get()->FindTexture(KeyName);
+	pMaterial->DiffuseTex->m_Register = RegisterNumber;
 }
 
 void Material_Com::SetDiffuseTexture(int RegisterNumber, Texture * pTexture, int Container, int Subset)
 {
 	if (Container >= m_vecMaterial.size())
 	{
-		vector<SubsetMaterial*> newVec;
-		m_vecMaterial.push_back(newVec);
+		vector<SubsetMaterial*>	vec;
+		m_vecMaterial.push_back(vec);
 	}
 
 	if (Subset >= m_vecMaterial[Container].size())
 		m_vecMaterial[Container].push_back(CreateSubSet());
 
-	SubsetMaterial* getMaterial = m_vecMaterial[Container][Subset];
+	SubsetMaterial*	pMaterial = m_vecMaterial[Container][Subset];
 
-	if (getMaterial->vecDiffuseTexture.capacity() <= RegisterNumber)
-		getMaterial->vecDiffuseTexture.resize(RegisterNumber + 1);
+	if (pMaterial->DiffuseTex == NULLPTR)
+		pMaterial->DiffuseTex = new TextureSet();
 
-	getMaterial->vecDiffuseTexture[RegisterNumber] = pTexture;
+	SAFE_RELEASE(pMaterial->DiffuseTex->m_Tex);
+	pTexture->AddRefCount();
+	
+	pMaterial->DiffuseTex->m_Tex = pTexture;
+	pMaterial->DiffuseTex->m_Register = RegisterNumber;
 }
 
 void Material_Com::SetDiffuseTextureFromFullPath(int RegisterNumber, const string & KeyName, const TCHAR * FullPath, int Container, int Subset)
 {
 	if (Container >= m_vecMaterial.size())
 	{
-		vector<SubsetMaterial*> newVec;
-		m_vecMaterial.push_back(newVec);
+		vector<SubsetMaterial*>	vec;
+		m_vecMaterial.push_back(vec);
 	}
 
 	if (Subset >= m_vecMaterial[Container].size())
-	{
-		SubsetMaterial* newMaterial = new SubsetMaterial();
-		m_vecMaterial[Container].push_back(newMaterial);
-	}
+		m_vecMaterial[Container].push_back(CreateSubSet());
 
-	SubsetMaterial* getMaterial = m_vecMaterial[Container][Subset];
+	SubsetMaterial*	pMaterial = m_vecMaterial[Container][Subset];
+
+	if (pMaterial->DiffuseTex == NULLPTR)
+		pMaterial->DiffuseTex = new TextureSet;
+
+	SAFE_RELEASE(pMaterial->DiffuseTex->m_Tex);
 	ResourceManager::Get()->CreateTextureFromFullPath(KeyName, FullPath);
-
-	if (getMaterial->vecDiffuseTexture.capacity() <= RegisterNumber)
-		getMaterial->vecDiffuseTexture.resize(RegisterNumber + 1);
-
-	getMaterial->vecDiffuseTexture[RegisterNumber] = ResourceManager::Get()->FindTexture(KeyName);
+	pMaterial->DiffuseTex->m_Tex = ResourceManager::Get()->FindTexture(KeyName);
+	pMaterial->DiffuseTex->m_Register = RegisterNumber;
 }
 
 void Material_Com::SetNormalTexture(int RegisterNumber, const string & KeyName, const TCHAR * FileName, const string & PathKey, int Container, int Subset)
 {
 	if (Container >= m_vecMaterial.size())
 	{
-		vector<SubsetMaterial*>	newVec;
-		m_vecMaterial.push_back(newVec);
+		vector<SubsetMaterial*>	vec;
+		m_vecMaterial.push_back(vec);
 	}
 
 	if (Subset >= m_vecMaterial[Container].size())
 		m_vecMaterial[Container].push_back(CreateSubSet());
 
-	SubsetMaterial* getMaterial = m_vecMaterial[Container][Subset];
+	SubsetMaterial*	pMaterial = m_vecMaterial[Container][Subset];
 
-	if (getMaterial->vecNormalTexture.capacity() <= RegisterNumber)
-		getMaterial->vecNormalTexture.resize(RegisterNumber + 1);
+	if (pMaterial->NormalTex == NULLPTR)
+		pMaterial->NormalTex = new TextureSet();
 
-	SAFE_RELEASE(getMaterial->vecNormalTexture[0]);
-
-	if (RegisterNumber > 0)
-		SAFE_RELEASE(getMaterial->vecNormalTexture[RegisterNumber]);
-
-	//텍스쳐가 없다면 맵에 추가한 후
-	//가져다 쓴다.
+	SAFE_RELEASE(pMaterial->NormalTex->m_Tex);
 	ResourceManager::Get()->CreateTexture(KeyName, FileName, PathKey);
-	getMaterial->vecNormalTexture[RegisterNumber] = ResourceManager::Get()->FindTexture(KeyName);
+	pMaterial->NormalTex->m_Tex = ResourceManager::Get()->FindTexture(KeyName);
+	pMaterial->NormalTex->m_Register = RegisterNumber;
 }
 
 void Material_Com::SetNormalTextureFromFullPath(int RegisterNumber, const string & KeyName, const TCHAR * FullPath, int Container, int Subset)
 {
 	if (Container >= m_vecMaterial.size())
 	{
-		vector<SubsetMaterial*> newVec;
-		m_vecMaterial.push_back(newVec);
+		vector<SubsetMaterial*>	vec;
+		m_vecMaterial.push_back(vec);
 	}
 
 	if (Subset >= m_vecMaterial[Container].size())
-	{
-		SubsetMaterial* newMaterial = new SubsetMaterial();
-		m_vecMaterial[Container].push_back(newMaterial);
-	}
+		m_vecMaterial[Container].push_back(CreateSubSet());
 
-	SubsetMaterial *getMaterial = m_vecMaterial[Container][Subset];
+	SubsetMaterial*	pMaterial = m_vecMaterial[Container][Subset];
+
+	if (pMaterial->NormalTex == NULLPTR)
+		pMaterial->NormalTex = new TextureSet;
+
+	SAFE_RELEASE(pMaterial->NormalTex->m_Tex);
 	ResourceManager::Get()->CreateTextureFromFullPath(KeyName, FullPath);
-
-	if (getMaterial->vecNormalTexture.capacity() <= RegisterNumber)
-		getMaterial->vecNormalTexture.resize(RegisterNumber + 1);
-
-	getMaterial->vecNormalTexture[RegisterNumber] = ResourceManager::Get()->FindTexture(KeyName);
+	pMaterial->NormalTex->m_Tex = ResourceManager::Get()->FindTexture(KeyName);
+	pMaterial->NormalTex->m_Register = RegisterNumber;
 }
 
 void Material_Com::SetNormalSampler(int RegisterNumber, const string & KeyName, int Container, int Subset)
 {
-	//Sampler를 셋팅한다.
 	if (Container >= m_vecMaterial.size())
 	{
-		vector<SubsetMaterial*> newVec;
-		m_vecMaterial.push_back(newVec);
+		vector<SubsetMaterial*>	vec;
+		m_vecMaterial.push_back(vec);
 	}
 
 	if (Subset >= m_vecMaterial[Container].size())
 	{
-		SubsetMaterial* newMaterial = new SubsetMaterial();
-		m_vecMaterial[Container].push_back(newMaterial);
+		m_vecMaterial[Container].push_back(CreateSubSet());
 	}
 
-	SubsetMaterial* getMaterial = m_vecMaterial[Container][Subset];
+	SubsetMaterial*	pMaterial = m_vecMaterial[Container][Subset];
 
-	if (getMaterial->vecNormalSampler.capacity() <= RegisterNumber)
-		getMaterial->vecNormalSampler.resize(RegisterNumber + 1);
+	if (pMaterial->NormalTex == NULLPTR)
+		pMaterial->NormalTex = new TextureSet;
 
-	//기본정보가 지정된 샘플러를 찾아온다.
-	getMaterial->vecNormalSampler[RegisterNumber] = ResourceManager::Get()->FindSampler(KeyName);
+	SAFE_RELEASE(pMaterial->NormalTex->m_Sampler);
+	pMaterial->NormalTex->m_Sampler = ResourceManager::Get()->FindSampler(KeyName);
+	pMaterial->NormalTex->m_SamplerRegister = RegisterNumber;
 }
 
 void Material_Com::SetSpecularTexture(int RegisterNumber, const string & KeyName, const TCHAR * FileName, const string & PathKey, int Container, int Subset)
 {
 	if (Container >= m_vecMaterial.size())
 	{
-		vector<SubsetMaterial*>	newVec;
-		m_vecMaterial.push_back(newVec);
+		vector<SubsetMaterial*>	vec;
+		m_vecMaterial.push_back(vec);
 	}
 
 	if (Subset >= m_vecMaterial[Container].size())
 		m_vecMaterial[Container].push_back(CreateSubSet());
 
-	SubsetMaterial* getMaterial = m_vecMaterial[Container][Subset];
+	SubsetMaterial*	pMaterial = m_vecMaterial[Container][Subset];
 
-	if (getMaterial->vecSpecularTexture.capacity() <= RegisterNumber)
-		getMaterial->vecSpecularTexture.resize(RegisterNumber + 1);
+	if (pMaterial->SpecularTex == NULLPTR)
+		pMaterial->SpecularTex = new TextureSet();
 
-	SAFE_RELEASE(getMaterial->vecSpecularTexture[0]);
-
-	if (RegisterNumber > 0)
-		SAFE_RELEASE(getMaterial->vecSpecularTexture[RegisterNumber]);
-
-	//텍스쳐가 없다면 맵에 추가한 후
-	//가져다 쓴다.
+	SAFE_RELEASE(pMaterial->SpecularTex->m_Tex);
 	ResourceManager::Get()->CreateTexture(KeyName, FileName, PathKey);
-	getMaterial->vecSpecularTexture[RegisterNumber] = ResourceManager::Get()->FindTexture(KeyName);
+	pMaterial->SpecularTex->m_Tex = ResourceManager::Get()->FindTexture(KeyName);
+	pMaterial->SpecularTex->m_Register = RegisterNumber;
 }
 
 void Material_Com::SetSpecularTextureFromFullPath(int RegisterNumber, const string & KeyName, const TCHAR * FullPath, int Container, int Subset)
 {
 	if (Container >= m_vecMaterial.size())
 	{
-		vector<SubsetMaterial*> newVec;
-		m_vecMaterial.push_back(newVec);
+		vector<SubsetMaterial*>	vec;
+		m_vecMaterial.push_back(vec);
 	}
 
 	if (Subset >= m_vecMaterial[Container].size())
-	{
-		SubsetMaterial* newMaterial = new SubsetMaterial();
-		m_vecMaterial[Container].push_back(newMaterial);
-	}
+		m_vecMaterial[Container].push_back(CreateSubSet());
 
-	SubsetMaterial *getMaterial = m_vecMaterial[Container][Subset];
+	SubsetMaterial*	pMaterial = m_vecMaterial[Container][Subset];
+
+	if (pMaterial->SpecularTex == NULLPTR)
+		pMaterial->SpecularTex = new TextureSet;
+
+	SAFE_RELEASE(pMaterial->SpecularTex->m_Tex);
 	ResourceManager::Get()->CreateTextureFromFullPath(KeyName, FullPath);
-
-	if (getMaterial->vecSpecularTexture.capacity() <= RegisterNumber)
-		getMaterial->vecSpecularTexture.resize(RegisterNumber + 1);
-
-	getMaterial->vecSpecularTexture[RegisterNumber] = ResourceManager::Get()->FindTexture(KeyName);
+	pMaterial->SpecularTex->m_Tex = ResourceManager::Get()->FindTexture(KeyName);
+	pMaterial->SpecularTex->m_Register = RegisterNumber;
 }
 
 void Material_Com::SetSpecularSampler(int RegisterNumber, const string & KeyName, int Container, int Subset)
 {
-	//Sampler를 셋팅한다.
 	if (Container >= m_vecMaterial.size())
 	{
-		vector<SubsetMaterial*> newVec;
-		m_vecMaterial.push_back(newVec);
+		vector<SubsetMaterial*>	vec;
+		m_vecMaterial.push_back(vec);
 	}
 
 	if (Subset >= m_vecMaterial[Container].size())
 	{
-		SubsetMaterial* newMaterial = new SubsetMaterial();
-		m_vecMaterial[Container].push_back(newMaterial);
+		m_vecMaterial[Container].push_back(CreateSubSet());
 	}
 
-	SubsetMaterial* getMaterial = m_vecMaterial[Container][Subset];
+	SubsetMaterial*	pMaterial = m_vecMaterial[Container][Subset];
 
-	if (getMaterial->vecSpecularSampler.capacity() <= RegisterNumber)
-		getMaterial->vecSpecularSampler.resize(RegisterNumber + 1);
+	if (pMaterial->SpecularTex == NULLPTR)
+		pMaterial->SpecularTex = new TextureSet();
 
-	//기본정보가 지정된 샘플러를 찾아온다.
-	getMaterial->vecSpecularSampler[RegisterNumber] = ResourceManager::Get()->FindSampler(KeyName);
+	SAFE_RELEASE(pMaterial->SpecularTex->m_Sampler);
+	pMaterial->SpecularTex->m_Sampler = ResourceManager::Get()->FindSampler(KeyName);
+	pMaterial->SpecularTex->m_SamplerRegister = RegisterNumber;
 }
 
 void Material_Com::SetDiffuseSampler(int RegisterNumber, const string & KeyName, int Container, int Subset)
 {
-	//Sampler를 셋팅한다.
 	if (Container >= m_vecMaterial.size())
 	{
-		vector<SubsetMaterial*> newVec;
-		m_vecMaterial.push_back(newVec);
+		vector<SubsetMaterial*>	vec;
+		m_vecMaterial.push_back(vec);
 	}
 
 	if (Subset >= m_vecMaterial[Container].size())
 	{
-		SubsetMaterial* newMaterial = new SubsetMaterial();
-		m_vecMaterial[Container].push_back(newMaterial);
+		m_vecMaterial[Container].push_back(CreateSubSet());
 	}
 
-	SubsetMaterial* getMaterial = m_vecMaterial[Container][Subset];
+	SubsetMaterial*	pMaterial = m_vecMaterial[Container][Subset];
 
-	if (getMaterial->vecDiffuseSampler.capacity() <= RegisterNumber)
-		getMaterial->vecDiffuseSampler.resize(RegisterNumber + 1);
+	if (pMaterial->DiffuseTex == NULLPTR)
+		pMaterial->DiffuseTex = new TextureSet();
 
-	//기본정보가 지정된 샘플러를 찾아온다.
-	getMaterial->vecDiffuseSampler[RegisterNumber] = ResourceManager::Get()->FindSampler(KeyName);
+	SAFE_RELEASE(pMaterial->DiffuseTex->m_Sampler);
+	pMaterial->DiffuseTex->m_Sampler = ResourceManager::Get()->FindSampler(KeyName);
+	pMaterial->DiffuseTex->m_SamplerRegister = RegisterNumber;
 }
 
 void Material_Com::ClearContainer()
@@ -434,17 +426,39 @@ void Material_Com::ClearContainer()
 	{
 		for (size_t j = 0; j < m_vecMaterial[i].size(); ++j)
 		{
-			Safe_Release_VecList(m_vecMaterial[i][j]->vecDiffuseSampler);
-			Safe_Release_VecList(m_vecMaterial[i][j]->vecDiffuseTexture);
-			Safe_Release_VecList(m_vecMaterial[i][j]->vecNormalSampler);
-			Safe_Release_VecList(m_vecMaterial[i][j]->vecNormalTexture);
-			Safe_Release_VecList(m_vecMaterial[i][j]->vecSpecularSampler);
-			Safe_Release_VecList(m_vecMaterial[i][j]->vecSpecularTexture);
+			for (size_t k = 0; k < m_vecMaterial[i][j]->vecMultiTexture.size(); ++k)
+			{
+				SAFE_RELEASE(m_vecMaterial[i][j]->vecMultiTexture[k].m_Tex);
+				SAFE_RELEASE(m_vecMaterial[i][j]->vecMultiTexture[k].m_Sampler);
+			}
 
+			if (m_vecMaterial[i][j]->DiffuseTex != NULLPTR)
+			{
+				SAFE_RELEASE(m_vecMaterial[i][j]->DiffuseTex->m_Tex);
+				SAFE_RELEASE(m_vecMaterial[i][j]->DiffuseTex->m_Sampler);
+			}
+
+			if (m_vecMaterial[i][j]->NormalTex != NULLPTR)
+			{
+				SAFE_RELEASE(m_vecMaterial[i][j]->NormalTex->m_Tex);
+				SAFE_RELEASE(m_vecMaterial[i][j]->NormalTex->m_Sampler);
+			}
+
+			if (m_vecMaterial[i][j]->SpecularTex != NULLPTR)
+			{
+				SAFE_RELEASE(m_vecMaterial[i][j]->SpecularTex->m_Tex);
+				SAFE_RELEASE(m_vecMaterial[i][j]->SpecularTex->m_Sampler);
+			}
+
+			SAFE_DELETE(m_vecMaterial[i][j]->DiffuseTex);
+			SAFE_DELETE(m_vecMaterial[i][j]->NormalTex);
+			SAFE_DELETE(m_vecMaterial[i][j]->SpecularTex);
 			SAFE_DELETE(m_vecMaterial[i][j]);
 		}
+
 		m_vecMaterial[i].clear();
 	}
+
 	m_vecMaterial.clear();
 }
 
@@ -458,43 +472,37 @@ SubsetMaterial* Material_Com::CreateSubSet()
 //쉐이더에 셋팅한다.
 void Material_Com::SetShader(int Container, int Subset)
 {
-	SubsetMaterial* getMaterial = m_vecMaterial[Container][Subset];
+	SubsetMaterial*	pMaterial = m_vecMaterial[Container][Subset];
 
-	ShaderManager::Get()->UpdateCBuffer("Material", &getMaterial->MatrialInfo);
-
-	for (size_t i = 0; i < getMaterial->vecDiffuseTexture.size(); i++)
+	if (pMaterial->DiffuseTex != NULLPTR)
 	{
-		if (getMaterial->vecDiffuseTexture[i] != NULLPTR)
-			getMaterial->vecDiffuseTexture[i]->SetShaderResource((int)i); //PSSetResourceView
+		pMaterial->DiffuseTex->m_Tex->SetShaderResource(pMaterial->DiffuseTex->m_Register);
+		pMaterial->DiffuseTex->m_Sampler->SetSamplerState(pMaterial->DiffuseTex->m_SamplerRegister);
 	}
 
-	for (size_t i = 0; i < getMaterial->vecDiffuseSampler.size(); i++)
+	if (pMaterial->NormalTex != NULLPTR)
 	{
-		if (getMaterial->vecDiffuseSampler[i] != NULLPTR)
-			getMaterial->vecDiffuseSampler[i]->SetSamplerState((int)i); //PSSetResourceView
+		pMaterial->NormalTex->m_Tex->SetShaderResource(pMaterial->NormalTex->m_Register);
+		pMaterial->NormalTex->m_Sampler->SetSamplerState(pMaterial->NormalTex->m_SamplerRegister);
+		pMaterial->MatrialInfo.Diffuse.w = 1.0f;
+	}
+	else
+		pMaterial->MatrialInfo.Diffuse.w = 0.0f;
+
+	if (pMaterial->SpecularTex != NULLPTR)
+	{
+		pMaterial->SpecularTex->m_Tex->SetShaderResource(pMaterial->SpecularTex->m_Register);
+		pMaterial->SpecularTex->m_Sampler->SetSamplerState(pMaterial->SpecularTex->m_SamplerRegister);
+		pMaterial->MatrialInfo.Ambient.w = 1.0f;
+	}
+	else
+		pMaterial->MatrialInfo.Ambient.w = 0.0f;
+
+	for (size_t i = 0; i < pMaterial->vecMultiTexture.size(); ++i)
+	{
+		pMaterial->vecMultiTexture[i].m_Tex->SetShaderResource(pMaterial->vecMultiTexture[i].m_Register);
+		pMaterial->vecMultiTexture[i].m_Sampler->SetSamplerState(pMaterial->vecMultiTexture[i].m_SamplerRegister);
 	}
 
-	for (size_t i = 0; i < getMaterial->vecNormalTexture.size(); i++)
-	{
-		if (getMaterial->vecNormalTexture[i] != NULLPTR)
-			getMaterial->vecNormalTexture[i]->SetShaderResource((int)i); //PSSetResourceView
-	}
-
-	for (size_t i = 0; i < getMaterial->vecNormalSampler.size(); i++)
-	{
-		if (getMaterial->vecNormalSampler[i] != NULLPTR)
-			getMaterial->vecNormalSampler[i]->SetSamplerState((int)i); //PSSetResourceView
-	}
-
-	for (size_t i = 0; i < getMaterial->vecSpecularTexture.size(); i++)
-	{
-		if (getMaterial->vecSpecularTexture[i] != NULLPTR)
-			getMaterial->vecSpecularTexture[i]->SetShaderResource((int)i); //PSSetResourceView
-	}
-
-	for (size_t i = 0; i < getMaterial->vecSpecularSampler.size(); i++)
-	{
-		if (getMaterial->vecSpecularSampler[i] != NULLPTR)
-			getMaterial->vecSpecularSampler[i]->SetSamplerState((int)i); //PSSetResourceView
-	}
+	ShaderManager::Get()->UpdateCBuffer("Material", &pMaterial->MatrialInfo);
 }

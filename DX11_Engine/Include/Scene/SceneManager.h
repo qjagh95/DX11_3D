@@ -16,6 +16,7 @@ public:
 	void Render(float DeltaTime);
 
 	Scene* GetCurScene() const;
+	Scene* GetCurSceneNoneCount() const;
 	Scene* GetNextScene() const;
 	void CreateNextScene(bool isChange = true);
 	void SetIsChange(bool isChange);

@@ -178,6 +178,14 @@ bool ShaderManager::Init()
 		return false;
 	}
 
+	Entry[ST_VERTEX] = "LightPointVS";
+	Entry[ST_PIXEL] = "LightAccPS";
+	if (LoadShader(LIGHT_SPOT_SHADER, TEXT("LightDir.fx"), Entry) == false)
+	{
+		TrueAssert(true);
+		return false;
+	}
+
 	AddInputElement("POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 12);
 	AddInputElement("NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 12);
 	AddInputElement("TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 8);
@@ -202,7 +210,7 @@ bool ShaderManager::Init()
 	CreateCBuffer("BarCBuffer", sizeof(BarCBuffer), 9, CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("CheckBoxCBuffer", sizeof(CheckBoxCBuffer), 9, CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("PublicCBuffer", sizeof(PublicCBuffer), 10, CST_VERTEX | CST_PIXEL);
-	CreateCBuffer("LightCBuffer", sizeof(LightCBuffer), 4, CST_VERTEX | CST_PIXEL);
+	CreateCBuffer("LightCBuffer", sizeof(LightCBuffer), 3, CST_VERTEX | CST_PIXEL);
 
 	return true;
 }

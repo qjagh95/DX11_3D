@@ -1,6 +1,6 @@
 #pragma once
 #include "Component_Base.h"
-JEONG_BEGIN
+JEONG_BEGIN 
 
 class Mesh;
 class Shader;
@@ -35,7 +35,6 @@ public:
 	void CheckComponent();
 	void DeleteComponentCBuffer(Component_Base* DeleteCom);
 	void InitMaterial();
-	Mesh* GetMesh() const { return m_Mesh; }
 
 private:
 	void UpdateTransform();
@@ -53,6 +52,7 @@ private:
 	bool m_isScreenRender;
 
 	unordered_map<string, RendererCBuffer*> m_CBufferMap;
+	//vector<vector<TextureSet*>> m_vecMeshTexture;
 
 private:
 	Renderer_Com();

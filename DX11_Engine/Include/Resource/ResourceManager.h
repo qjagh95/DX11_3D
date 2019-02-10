@@ -21,11 +21,6 @@ public:
 	void CreateCornVolum(const string& KeyName, float Radius, float Height, int StackSlice, int SliceCount);
 	void CreateCylinderVolum(const string& KeyName, float Radius, int Height, int SliceCount);
 
-	void CreatePureSphereVolum(const string& KeyName, float Radius, int StackSlice, int SliceCount);
-	void CreatePureCapsulVolum(const string& KeyName, float Radius, float Height, int StackSlice, int SliceCount);
-	void CreatePureCornVolum(const string& KeyName, float Radius, float Height, int StackSlice, int SliceCount);
-	void CreatePureCylinderVolum(const string& KeyName, float Radius, int Height, int SliceCount);
-
 	Mesh* FindMesh(const string& KeyName);
 	Mesh* FindMeshNoneCount(const string& KeyName);
 	Texture* FindTexture(const string& KeyName);

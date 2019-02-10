@@ -1,20 +1,14 @@
 #include "stdafx.h"
 #include "Light_Com.h"
 #include "Transform_Com.h"
-#include "Renderer_Com.h"
-#include "Camera_Com.h"
-
 #include "../Render/ShaderManager.h"
+#include "../Render/RenderManager.h"
 #include "../Render/DepthStancilState.h"
 #include "../Render/ResterizerState.h"
-#include "../Render/RenderManager.h"
-#include "../Render/BlendState.h"
 #include "../Render/Shader.h"
 
-#include "../Resource/Mesh.h"
 #include "../Resource/ResourceManager.h"
-#include "../Scene/SceneManager.h"
-#include "../Scene/Scene.h"
+#include "../Resource/Mesh.h"
 
 JEONG_USING
 
@@ -32,18 +26,15 @@ Light_Com::Light_Com()
 	m_tLightInfo.FallOff = 0.0f;
 	m_tLightInfo.Pos = Vector3::Zero;
 
-	//m_SphereVolum = NULLPTR;
-	//m_CornVolum = NULLPTR;
-	//m_VolumeObject = NULLPTR;
-	//m_LightDir = NULLPTR;
-	//m_LightPointDir = NULLPTR;
-	//m_WireFrameState = NULLPTR;
-
-	//m_FrontCullState = NULLPTR;
-	//m_DepthGreater = NULLPTR;
-
 	m_ComType = CT_LIGHT;
 
+	m_WireFrame = NULLPTR;
+	m_Sphere = NULLPTR;
+	m_Corn = NULLPTR;
+	m_DepthNone = NULLPTR;
+	m_PointShader = NULLPTR;
+	m_CullNone = NULLPTR;
+	m_SpotShader = NULLPTR;
 }
 
 Light_Com::Light_Com(const Light_Com & CopyData)
@@ -54,30 +45,18 @@ Light_Com::Light_Com(const Light_Com & CopyData)
 
 Light_Com::~Light_Com()
 {
-	//SAFE_RELEASE(m_VolumeObject);
-	//SAFE_RELEASE(m_DepthGreater);
-	//SAFE_RELEASE(m_FrontCullState);
-	//SAFE_RELEASE(m_WireFrameState);
 }
 
 bool Light_Com::Init()
 {
-	//m_Transform->SetWorldScale(Vector3(3.0f, 3.0f, 3.0f));
+	//m_WireFrame = RenderManager::Get()->FindRenderStateNoneCount(WIRE_FRAME);
+	//m_Sphere = ResourceManager::Get()->FindMeshNoneCount(SPHERE_VOLUM);
+	//m_Corn = ResourceManager::Get()->FindMeshNoneCount(CORN_VOLUM);
+	//m_DepthNone = RenderManager::Get()->FindRenderStateNoneCount(DEPTH_DISABLE);
+	//m_PointShader = ShaderManager::Get()->FindShaderNoneCount(LIGHT_POINT_ACC_SHADER);
+	//m_SpotShader = ShaderManager::Get()->FindShaderNoneCount(LIGHT_SPOT_SHADER);
+	//m_CullNone = RenderManager::Get()->FindRenderStateNoneCount(CULL_NONE);
 
-	//m_SphereVolum = ResourceManager::Get()->FindMeshNoneCount(SPHERE_VOLUM);
-	//m_CornVolum = ResourceManager::Get()->FindMeshNoneCount(CORN_VOLUM);
-
-	//m_VolumeObject = GameObject::CreateObject("VolumeMesh");
-	//m_VolumeObject->GetTransform()->SetWorldScale(Vector3(1.0f, 1.0f, 1.0f));
-	//m_VolumeObject->SetScene(m_Scene);
-
-	//m_FrontCullState = (ResterizerState*)RenderManager::Get()->FindRenderState(FRONT_CULL);
-	//m_DepthGreater = (DepthStancilState*)RenderManager::Get()->FindRenderState(DEPTH_GRATER);
-	//m_WireFrameState = (ResterizerState*)RenderManager::Get()->FindRenderState(WIRE_FRAME);
-
-	//m_LightDir = ShaderManager::Get()->FindShaderNoneCount(LIGHT_DIR_ACC_SHADER);
-	//m_LightPointDir = ShaderManager::Get()->FindShaderNoneCount(LIGHT_POINT_ACC_SHADER);
-	//
 	return true;
 }
 
@@ -97,19 +76,13 @@ int Light_Com::LateUpdate(float DeltaTime)
 	//	m_tLightInfo.Direction = m_Transform->GetWorldAxis(AXIS_Z);
 
 	if (m_tLightInfo.LightType != LT_DIRECTION)
+	{
 		m_Transform->SetWorldPos(m_tLightInfo.Pos);
 
-	//if (m_tLightInfo.LightType != LT_DIRECTION)
-	//{
-	//	m_Transform->SetWorldPos(m_tLightInfo.Pos);
-	//	m_VolumeObject->GetTransform()->SetWorldPos(m_tLightInfo.Pos);
-	//}
-
-	//if(m_tLightInfo.LightType != LT_POINT)
-	//	m_VolumeObject->GetTransform()->LookAt(m_tLightInfo.Direction);
-
-	//m_VolumeObject->GetTransform()->SetWorldScale(m_Transform->GetWorldScale());
-	//m_VolumeObject->Update(DeltaTime);
+		//if (m_tLightInfo.LightType == LT_SPOT || m_tLightInfo.LightType == LT_SPOT_BOMI)
+		//{
+		//}
+	}
 
 	return 0;
 }
@@ -124,24 +97,6 @@ void Light_Com::CollisionLateUpdate(float DeltaTime)
 
 void Light_Com::Render(float DeltaTime)
 {
-	//m_FrontCullState->SetState();
-	//m_DepthGreater->SetState();
-
-	//switch (m_tLightInfo.LightType)
-	//{
-	//case LT_POINT:
-	//	m_LightPointDir->SetShader();
-	//	m_SphereVolum->Render();
-	//	break;
-
-	//case LT_SPOT:
-	//case LT_SPOT_BOMI:
-	//	m_LightPointDir->SetShader();
-	//	m_CornVolum->Render();
-	//	break;
-	//}
-	//m_DepthGreater->ResetState();
-	//m_FrontCullState->ResetState();
 }
 
 Light_Com * Light_Com::Clone()
@@ -155,25 +110,6 @@ void Light_Com::AfterClone()
 
 void Light_Com::UpdateCBuffer()
 {
-	//TransformCBuffer cBuffer = {};
-	//Camera_Com* getCamera = NULLPTR;
-
-	//getCamera = m_Scene->GetMainCamera();
-
-	//cBuffer.World = m_VolumeObject->GetTransform()->GetWorldMatrix();
-	//cBuffer.View = getCamera->GetViewMatrix();
-	//cBuffer.Projection = getCamera->GetProjection();
-
-	//cBuffer.WV = cBuffer.World * cBuffer.View;
-	//cBuffer.WVP = cBuffer.WV * cBuffer.Projection;
-
-	//cBuffer.World.Transpose();
-	//cBuffer.View.Transpose();
-	//cBuffer.Projection.Transpose();
-	//cBuffer.WV.Transpose();
-	//cBuffer.WVP.Transpose();
-
-	//ShaderManager::Get()->UpdateCBuffer("Transform", &cBuffer);
 	ShaderManager::Get()->UpdateCBuffer("LightCBuffer", &m_tLightInfo);
 }
 

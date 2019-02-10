@@ -3,12 +3,9 @@
 
 JEONG_BEGIN
 
+class RenderState;
 class Mesh;
-class Renderer_Com;
-class ResterizerState;
-class DepthStancilState;
 class Shader;
-class BlendState;
 class JEONG_DLL Light_Com : public Component_Base
 {
 public:
@@ -38,19 +35,14 @@ public:
 
 private:
 	LightCBuffer m_tLightInfo;
+	RenderState* m_WireFrame;
+	RenderState* m_DepthNone;
+	RenderState* m_CullNone;
+	Shader* m_PointShader;
+	Shader* m_SpotShader;
 
-	//Mesh* m_RenderMesh;
-	//Mesh* m_SphereVolum;
-	//Mesh* m_CornVolum;
-	//
-	//Shader* m_LightDir;
-	//Shader* m_LightPointDir;
-
-	//GameObject* m_VolumeObject;
-	//
-	//ResterizerState* m_FrontCullState;
-	//ResterizerState* m_WireFrameState;
-	//DepthStancilState* m_DepthGreater;
+	Mesh* m_Sphere;
+	Mesh* m_Corn;
 
 protected:
 	Light_Com();

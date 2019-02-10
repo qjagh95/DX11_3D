@@ -177,9 +177,10 @@ cbuffer Material : register(b1)
     MaterialInfo g_Material;
 }
 
-cbuffer Component : register(b2)
+cbuffer Componeent : register(b2)
 {
     int g_Animation2DEnable;
+    float3 g_Empty;
 }
 
 cbuffer Public : register(b10)
@@ -192,7 +193,7 @@ cbuffer Public : register(b10)
     float2 g_Empty123124522534;
 }
 
-cbuffer Light : register(b4)
+cbuffer Light : register(b3)
 {
     LightInfo g_Light;
 }
@@ -252,12 +253,16 @@ void ComputePointLight(float4 vNormal, float3 vPos, float3 vToCamera, out float4
     float3 vHalfWay = normalize(vToLight + vToCamera);
     float LightStrong;
 
+    float4 matAmbient = Ambient;
+    float4 matDiffuse = Diffuse;
+    float4 matSpecular = Specular;
+
     //거리에따른 감쇠량
     LightStrong = 1.0f / dot(g_Light.Attenuation, float3(1.0f, Distance, Distance * Distance));
 
-    Ambient = g_Material.Ambient * g_Light.LightAmbient;
-    Diffuse = g_Material.Diffuse * g_Light.LightDiffuse * max(dot(vToLight, vNormal.xyz), 0.0f) * LightStrong;
-    Specular = g_Material.Specular * g_Light.LightSpecular * pow(max(0.0f, dot(vHalfWay, vNormal.xyz)), vNormal.w) * LightStrong;
+    Ambient = matAmbient * g_Light.LightAmbient;
+    Diffuse = matDiffuse * g_Light.LightDiffuse * max(dot(vToLight, vNormal.xyz), 0.0f) * LightStrong;
+    Specular = matSpecular * g_Light.LightSpecular * pow(max(0.0f, dot(vHalfWay, vNormal.xyz)), vNormal.w) * LightStrong;
 }
 
 void ComputeSpotLight(float4 vNormal, float3 vPos, float3 vToCamera, out float4 Ambient, out float4 Diffuse, out float4 Specular)

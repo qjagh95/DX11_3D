@@ -14,6 +14,8 @@
 #include "../Render/RenderState.h"
 #include "../Render/ShaderManager.h"
 #include "../Render/RenderManager.h"
+#include "../Resource/Texture.h"
+#include "../Resource/Sampler.h"
 
 JEONG_USING
 
@@ -136,8 +138,6 @@ void Renderer_Com::Render(float DeltaTime)
 		ShaderManager::Get()->UpdateCBuffer(StartIter->first, StartIter->second->pBuffer);
 
 	////////////////////////////////////////////////////////////////////////////////////////////
-	ShaderManager::Get()->UpdateCBuffer("Component", &m_ComponentCBuffer);
-
 	//버텍스 데이터 덩어리를 쉐이더에 셋팅해주는 역할.
 	Device::Get()->GetContext()->IASetInputLayout(m_LayOut);
 	m_Shader->SetShader();
@@ -146,8 +146,8 @@ void Renderer_Com::Render(float DeltaTime)
 	{
 		for (size_t j = 0; j < m_Mesh->GetSubsetCount((int)i); j++)
 		{
-			m_Material->SetShader((int)i, (int)j);			
-			m_Mesh->Render((int)i, (int)j);
+			m_Material->SetShader((int)i, (int)j);
+ 			m_Mesh->Render((int)i, (int)j);
 		}
 	}
 

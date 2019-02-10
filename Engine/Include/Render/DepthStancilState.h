@@ -12,6 +12,7 @@ public:
 
 	void SetState() override;
 	void ResetState() override;
+	void SetStencilRef(UINT Value) { m_StencilRef = Value; }
 
 private:
 	UINT m_StencilRef;

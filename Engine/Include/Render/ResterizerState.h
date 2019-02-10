@@ -5,7 +5,6 @@ JEONG_BEGIN
 
 class JEONG_DLL ResterizerState : public RenderState
 {
-public:
 	bool CreateState(D3D11_FILL_MODE eFill = D3D11_FILL_SOLID, D3D11_CULL_MODE eCull = D3D11_CULL_BACK,
 		BOOL bFrontCounterClockwise = FALSE, int iDepthBias = 0,
 		float fDepthBiasClamp = 0.f, float fSlopeScaledDepthBias = 0.f,

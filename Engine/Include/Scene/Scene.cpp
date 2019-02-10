@@ -8,8 +8,6 @@
 #include "../CollsionManager.h"
 #include "../KeyInput.h"
 
-#include "../Render/RenderManager.h"
-
 #include "../Component/Camera_Com.h"
 #include "../Component/Transform_Com.h"
 
@@ -19,13 +17,11 @@ JEONG_USING
 
 Scene::Scene()
 {
-	m_LightObject = NULLPTR;
-	m_Light = NULLPTR;
 }
 
 Scene::~Scene()
 {
-	GameObject::DestroyProtoType(this);
+	JEONG::GameObject::DestroyProtoType(this);
 
 	Safe_Release_Map(m_CameraMap);
 	Safe_Release_VecList(m_LayerList);
@@ -35,9 +31,6 @@ Scene::~Scene()
 	SAFE_RELEASE(m_MainCameraObject);
 	SAFE_RELEASE(m_UICamera);
 	SAFE_RELEASE(m_UICameraObject);
-
-	SAFE_RELEASE(m_Light);
-	SAFE_RELEASE(m_LightObject);
 }
 
 bool Scene::Init()
@@ -47,7 +40,7 @@ bool Scene::Init()
 	AddLayer("Default", 2);
 	AddLayer("UI", INT_MAX);
 	 
-	m_MainCameraObject = CreateCamera("MainCamera", Vector3(1.0f, -1.0f, -5.0f), CT_PERSPECTIVE, (float)Device::Get()->GetWinSize().Width, (float)Device::Get()->GetWinSize().Height, 60.0f, 0.3f, 1000.0f);
+	m_MainCameraObject = CreateCamera("MainCamera", Vector3(1.0f, -1.0f, -5.0f), CT_PERSPECTIVE, (float)Device::Get()->GetWinSize().Width, (float)Device::Get()->GetWinSize().Height, 45.0f, 0.3f, 1000.0f);
 	m_MainCameraTransform = m_MainCameraObject->GetTransform();
 	m_MainCamera = m_MainCameraObject->FindComponentFromType<JEONG::Camera_Com>(CT_CAMERA);
 
@@ -58,15 +51,16 @@ bool Scene::Init()
 	SortLayer();
 
 	Layer* Default = FindLayerNoneCount("Default");
+	GameObject*	newLightObject = GameObject::CreateObject("GlobalLight", Default);
+	newLightObject->GetTransform()->SetWorldPos(1.0f, 1.0f, 1.0f);
 
-	m_LightObject = GameObject::CreateObject("GlobalLight", Default);
-	m_LightObject->GetTransform()->SetWorldPos(1.0f, 1.0f, 1.0f);
+	Light_Com* newLight = newLightObject->AddComponent<Light_Com>("GlobalLight");
+	newLight->SetLightType(LT_DIRECTION);
+	newLight->SetLightRange(5.0f);
+	newLight->SetLightAttenuation(Vector3(0.2f, 0.2f, 0.2f));
 
-	m_Light = m_LightObject->AddComponent<Light_Com>("GlobalLight");
-	m_Light->SetLightType(LT_DIRECTION);
-	m_Light->SetLightRange(5.0f);
-	m_Light->SetLightAttenuation(Vector3(0.2f, 0.2f, 0.2f));
-
+	SAFE_RELEASE(newLight);
+	SAFE_RELEASE(newLightObject);	
 	return true;
 }
 
@@ -528,23 +522,26 @@ void Scene::LightDebug(float DeltaTime)
 
 	static int GlobalLightType = 0;
 
+	GameObject* getObject = FindObjectNoneCount("GlobalLight");
+	Light_Com* getLight = getObject->FindComponentFromTypeNoneCount<Light_Com>(CT_LIGHT);
+
 	const char* Items[4] = { "Direction", "Point", "Spot", "BomiSpot" };
 	ImGui::Text("LightType");
-	ImGui::Combo("", &m_Light->m_tLightInfo.LightType, Items, 4);
+	ImGui::Combo("", &getLight->m_tLightInfo.LightType, Items, 4);
 
 	ImGui::Text("LightInfo");
 
-	ImGui::SliderFloat4("Ambient", (float*)&m_Light->m_tLightInfo.Ambient, -1.0f, 1.0f);
-	ImGui::SliderFloat4("Diffuse", (float*)&m_Light->m_tLightInfo.Diffuse, -1.0f, 1.0f);
-	ImGui::SliderFloat3("Specular", (float*)&m_Light->m_tLightInfo.Spcular, -1.0f, 1.0f);
-	ImGui::SliderFloat3("Direction", (float*)&m_Light->m_tLightInfo.Direction, -1.0f, 1.0f);
-	ImGui::SliderFloat3("Attenuation", (float*)&m_Light->m_tLightInfo.Attenuation, -1.0f, 1.0f);
-	ImGui::SliderFloat("Range", (float*)&m_Light->m_tLightInfo.Range, 0.0f, 20.0f);
-	ImGui::SliderFloat("FallOff", (float*)&m_Light->m_tLightInfo.FallOff, -1.0f, 10.0f);
+	ImGui::SliderFloat4("Ambient", (float*)&getLight->m_tLightInfo.Ambient, -1.0f, 1.0f);
+	ImGui::SliderFloat4("Diffuse", (float*)&getLight->m_tLightInfo.Diffuse, -1.0f, 1.0f);
+	ImGui::SliderFloat3("Specular", (float*)&getLight->m_tLightInfo.Spcular, -1.0f, 1.0f);
+	ImGui::SliderFloat3("Direction", (float*)&getLight->m_tLightInfo.Direction, -1.0f, 1.0f);
+	ImGui::SliderFloat3("Attenuation", (float*)&getLight->m_tLightInfo.Attenuation, -1.0f, 1.0f);
+	ImGui::SliderFloat("Range", (float*)&getLight->m_tLightInfo.Range, 0.0f, 20.0f);
+	ImGui::SliderFloat("FallOff", (float*)&getLight->m_tLightInfo.FallOff, -1.0f, 10.0f);
 
 	ImGui::Text("LightPos");
 
-	ImGui::SliderFloat3("Pos", (float*)&m_Light->m_tLightInfo.Pos, -20.0f, 20.0f);
+	ImGui::SliderFloat3("Pos", (float*)&getLight->m_tLightInfo.Pos, -1.0f, 20.0f);
 
 	ImGui::BeginTabBar("BB");
 	ImGui::EndTabBar();

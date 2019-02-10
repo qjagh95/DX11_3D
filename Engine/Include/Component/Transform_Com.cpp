@@ -455,11 +455,39 @@ void Transform_Com::LookAt(const Vector3 & Vec, AXIS eAxis)
 	vRotAxis.Normalize();
 
 	//가상 축에 대한 회전행렬 생성.
-	if (vRotAxis != Vector3::Zero)
-	{
-		m_MatWorldRotation.RotationAxis(Angle, vRotAxis);
-		ComputeWorldAxis();
-	}
+	m_MatWorldRotation.RotationAxis(Angle, vRotAxis);
+	ComputeWorldAxis();
+
+	m_isUpdate = true;
+}
+
+void Transform_Com::SetWorldRot(const Vector3& vPos)
+{
+	m_WorldRotation = vPos;
+	m_MatWorldRotation.Rotation(m_WorldRotation);
+
+	m_isUpdate = true;
+}
+
+void Transform_Com::SetWorldRot(float x, float y, float z)
+{
+	m_WorldRotation = Vector3(x, y, z);
+	m_MatWorldRotation.Rotation(m_WorldRotation);
+
+	m_isUpdate = true;
+}
+void Transform_Com::SetLocalRot(const Vector3& vPos)
+{
+	m_LocalRotation = vPos;
+	m_MatLocalRotation.Rotation(m_LocalRotation);
+
+	m_isUpdate = true;
+}
+
+void Transform_Com::SetLocalRot(float x, float y, float z)
+{
+	m_LocalRotation = Vector3(x, y, z);
+	m_MatLocalRotation.Rotation(m_LocalRotation);
 
 	m_isUpdate = true;
 }
@@ -522,11 +550,4 @@ Matrix Transform_Com::GetParentRot() const
 Matrix Transform_Com::GetParentScale() const
 {
 	return m_ParentScale;
-}
-
-void Transform_Com::SetWorldRot(const Vector3& Rot)
-{
-	m_WorldRotation = Rot;
-
-	m_isUpdate = true;
 }

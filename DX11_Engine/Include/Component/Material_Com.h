@@ -3,11 +3,20 @@
 
 JEONG_BEGIN
 
-struct TextureSet
+struct JEONG_DLL TextureSet
 {
-	int m_RegisterNumber;
-	class Texture* m_Texture;
+	class Texture* m_Tex;
+	int	m_Register;
 	class Sampler* m_Sampler;
+	int	m_SamplerRegister;
+
+	TextureSet() :
+		m_Tex(NULLPTR),
+		m_Register(-1),
+		m_Sampler(NULLPTR),
+		m_SamplerRegister(0)
+	{
+	}
 };
 
 class Texture;
@@ -16,16 +25,19 @@ struct JEONG_DLL SubsetMaterial
 {
 	MaterialCbuffer MatrialInfo;
 
-	vector<Texture*> vecDiffuseTexture;
-	vector<Sampler*> vecDiffuseSampler;
+	TextureSet*	DiffuseTex;
+	TextureSet*	NormalTex;
+	TextureSet*	SpecularTex;
 
-	vector<Texture*> vecNormalTexture;
-	vector<Sampler*> vecNormalSampler;
+	vector<TextureSet>	vecMultiTexture;
 
-	vector<Texture*> vecSpecularTexture;
-	vector<Sampler*> vecSpecularSampler;
-
-	SubsetMaterial() { MatrialInfo.Specular.w = 3.2f; }
+	SubsetMaterial() :
+		DiffuseTex(NULLPTR),
+		NormalTex(NULLPTR),
+		SpecularTex(NULLPTR)
+	{
+		MatrialInfo.Specular.w = 3.2f;
+	}
 	~SubsetMaterial() {}
 };
 
@@ -47,15 +59,16 @@ public:
 	void SetDiffuseTexture(int RegisterNumber, const string& KeyName, const TCHAR* FileName, const string& PathKey = TEXTURE_PATH, int Container = 0, int Subset = 0);
 	void SetDiffuseTexture(int RegisterNumber, Texture* pTexture, int Container = 0, int Subset = 0);
 	void SetDiffuseTextureFromFullPath(int RegisterNumber, const string& KeyName, const TCHAR* FullPath, int Container = 0, int Subset = 0);
+	void SetDiffuseSampler(int RegisterNumber, const string& KeyName, int Container = 0, int Subset = 0);
+
 	void SetNormalTexture(int RegisterNumber, const string& KeyName, const TCHAR* FileName, const string& PathKey = TEXTURE_PATH,int Container = 0, int Subset = 0);
 	void SetNormalTextureFromFullPath(int RegisterNumber, const string& strKey,	const TCHAR* FullPath, int Container = 0, int Subset = 0);
-	void SetNormalSampler(int RegisterNumber, const string& KeyName,int Container = 0, int Subset = 0);
+	void SetNormalSampler(int RegisterNumber, const string& KeyName, int Container = 0, int Subset = 0);
 
 	void SetSpecularTexture(int iRegister, const string& strKey, const TCHAR* pFileName,const string& strPathKey = TEXTURE_PATH, int Container = 0, int Subset = 0);
 	void SetSpecularTextureFromFullPath(int iRegister, const string& strKey,const TCHAR* pFullPath, int Container = 0, int Subset = 0);
-	void SetSpecularSampler(int iRegister, const string& strKey,int iContainer = 0, int iSubset = 0);
+	void SetSpecularSampler(int RegisterNumber, const string& KeyName, int Container = 0, int Subset = 0);
 
-	void SetDiffuseSampler(int RegisterNumber, const string& KeyName, int Container = 0, int Subset = 0);
 	void SetShader(int Container = 0, int Subset = 0);
 	MaterialCbuffer GetMaterialInfo() const { return m_vecMaterial[0][0]->MatrialInfo; }
 	void ClearContainer();

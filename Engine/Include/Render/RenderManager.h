@@ -7,16 +7,16 @@ struct RenderGroup
 	int	Size;
 	int	Capacity;
 
-	RenderGroup() 
+	RenderGroup()
 	{
 		Size = 0;
 		Capacity = 100;
 		ObjectList = new GameObject*[Capacity];
-	} 
+	}
 
-	~RenderGroup() 
-	{ 
-		SAFE_DELETE_ARRARY(ObjectList); 
+	~RenderGroup()
+	{
+		SAFE_DELETE_ARRARY(ObjectList);
 	}
 };
 
@@ -42,6 +42,7 @@ public:
 	GAME_MODE GetGameMode() const { return m_GameMode; }
 
 	RenderState* FindRenderState(const string& KeyName);
+	RenderState* FindRenderStateNoneCount(const string& KeyName);
 	RenderTarget* FindRenderTarget(const string& KeyName);
 
 	void EnableDeferredRender() { m_isDeferred = true; }
@@ -54,7 +55,7 @@ public:
 	bool AddMultiRenderTargetDepthView(const string& MultiKey, const string& TargetKey);
 
 	MultiRenderTarget* FindMultiTarget(const string& MultiKey);
-	
+
 private:
 	void Render3D(float DeltaTime);
 	void RenderGBuffer(float DeltaTime);
@@ -76,11 +77,10 @@ private:
 	unordered_map<string, RenderState*> m_RenderStateMap;
 	unordered_map<string, RenderTarget*> m_RenderTargetMap;
 	unordered_map<string, MultiRenderTarget*> m_MultiTargetMap;
-	  
+
 	BlendState* m_CreateState;
 	RenderGroup m_RenderGroup[RG_END];
 	RenderGroup m_LightGroup;
-	RenderState* m_DepthDisable;
 	Sampler* m_GBufferSampler;
 	Shader* m_LightAccDirShader;
 	Shader* m_LightAccPointShader;
@@ -96,13 +96,24 @@ private:
 	RenderTarget* m_LightSpcularTarget;
 	RenderTarget* m_AlbedoTarget;
 	RenderState* m_AddBlend;
+	RenderState* m_DepthDisable;
+	RenderState* m_DepthGrator;
+	RenderState* m_DepthLess;
+	RenderState* m_FrontCull;
+	RenderState* m_BackCull;
+	RenderState* m_WireFrame;
+	RenderState* m_CullNone;
+	RenderState* m_ZeroBlend;
+	RenderState* m_AllBlend;
 
 	bool m_isDeferred;
 	PublicCBuffer m_CBuffer;
+
+	Mesh* m_SphereVolum;
+	Mesh* m_CornVolum;
 
 public:
 	CLASS_IN_SINGLE(RenderManager)
 };
 
 JEONG_END
-
