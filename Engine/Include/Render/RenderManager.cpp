@@ -151,7 +151,7 @@ bool RenderManager::Init()
 	AddBlendTargetDesc(TRUE, D3D11_BLEND_ONE, D3D11_BLEND_ONE, D3D11_BLEND_OP_ADD, D3D11_BLEND_ONE, D3D11_BLEND_ONE);
 	CreateBlendState(ACC_BLEND);
 
-	AddBlendTargetDesc(TRUE, D3D11_BLEND_ONE, D3D11_BLEND_ONE, D3D11_BLEND_OP_ADD, D3D11_BLEND_ONE, D3D11_BLEND_ONE, D3D11_BLEND_OP_ADD, 0);
+	AddBlendTargetDesc(TRUE, D3D11_BLEND_ONE, D3D11_BLEND_ONE, D3D11_BLEND_OP_ADD, D3D11_BLEND_ZERO, D3D11_BLEND_ONE, D3D11_BLEND_OP_ADD, 0);
 	CreateBlendState(ZERO_BLEND);
 
 	AddBlendTargetDesc(TRUE, D3D11_BLEND_ONE, D3D11_BLEND_ONE, D3D11_BLEND_OP_ADD, D3D11_BLEND_ONE, D3D11_BLEND_ONE, D3D11_BLEND_OP_ADD, D3D11_COLOR_WRITE_ENABLE_ALL);
@@ -650,7 +650,7 @@ void RenderManager::RenderPointLight(float DeltaTime, Light_Com * light)
 	
 	m_BackCull->SetState();
 	{
-		m_AllBlend->SetState();
+		m_ZeroBlend->SetState();
 		{
 			m_DepthLess->SetState();
 			{
@@ -658,28 +658,35 @@ void RenderManager::RenderPointLight(float DeltaTime, Light_Com * light)
 			}
 			m_DepthLess->ResetState();
 		}
-		m_AllBlend->ResetState();
+		m_ZeroBlend->ResetState();
 	}
 	m_BackCull->ResetState();
+
+	m_WireFrame->SetState();
+	{
+		m_SphereVolum->Render();
+	}
+	m_WireFrame->ResetState();
 }
 
 void RenderManager::RenderSpotLight(float DeltaTime, Light_Com * light)
 {
+	//¿Ö¾ÈµÊ?
 	m_LightAccSpotShader->SetShader();
-	light->UpdateCBuffer();
 
 	Scene* pScene = SceneManager::Get()->GetCurSceneNoneCount();
 	Camera_Com* getCamera = NULLPTR;
 
-	Matrix	matScale, matPos, matRot;
+	Matrix matScale, matPos, matRot, matLocal;
 	matScale.Scaling(light->GetLightInfo().Range, light->GetLightInfo().Range, light->GetLightInfo().Range);
 	matPos.Translation(light->GetLightInfo().Pos);
 	matRot.Rotation(light->GetTransform()->GetWorldRotation());
+	matLocal = light->GetTransform()->GetLocalMatrix();
 
 	getCamera = pScene->GetMainCamera();
 
 	TransformCBuffer cBuffer = {};
-	cBuffer.World = matScale * matRot * matPos;
+	cBuffer.World = matLocal * matScale * matRot * matPos;
 	cBuffer.View = getCamera->GetViewMatrix();
 	cBuffer.Projection = getCamera->GetProjection();
 
@@ -710,7 +717,7 @@ void RenderManager::RenderSpotLight(float DeltaTime, Light_Com * light)
 
 	m_BackCull->SetState();
 	{
-		m_AllBlend->SetState();
+		m_ZeroBlend->SetState();
 		{
 			m_DepthLess->SetState();
 			{
@@ -718,9 +725,17 @@ void RenderManager::RenderSpotLight(float DeltaTime, Light_Com * light)
 			}
 			m_DepthLess->ResetState();
 		}
-		m_AllBlend->ResetState();
+		m_ZeroBlend->ResetState();
 	}
 	m_BackCull->ResetState();
+
+	light->UpdateCBuffer();
+
+	m_WireFrame->SetState();
+	{
+		m_CornVolum->Render();
+	}
+	m_WireFrame->ResetState();
 }
 
 void RenderManager::RenderBomiSpotLight(float DeltaTime, Light_Com * light)

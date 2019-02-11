@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "Light_Com.h"
 #include "Transform_Com.h"
+#include "Camera_Com.h"
+
 #include "../Render/ShaderManager.h"
 #include "../Render/RenderManager.h"
 #include "../Render/DepthStancilState.h"
@@ -9,6 +11,8 @@
 
 #include "../Resource/ResourceManager.h"
 #include "../Resource/Mesh.h"
+
+#include "../Scene/Scene.h"
 
 JEONG_USING
 
@@ -27,14 +31,6 @@ Light_Com::Light_Com()
 	m_tLightInfo.Pos = Vector3::Zero;
 
 	m_ComType = CT_LIGHT;
-
-	m_WireFrame = NULLPTR;
-	m_Sphere = NULLPTR;
-	m_Corn = NULLPTR;
-	m_DepthNone = NULLPTR;
-	m_PointShader = NULLPTR;
-	m_CullNone = NULLPTR;
-	m_SpotShader = NULLPTR;
 }
 
 Light_Com::Light_Com(const Light_Com & CopyData)
@@ -49,13 +45,7 @@ Light_Com::~Light_Com()
 
 bool Light_Com::Init()
 {
-	//m_WireFrame = RenderManager::Get()->FindRenderStateNoneCount(WIRE_FRAME);
-	//m_Sphere = ResourceManager::Get()->FindMeshNoneCount(SPHERE_VOLUM);
-	//m_Corn = ResourceManager::Get()->FindMeshNoneCount(CORN_VOLUM);
-	//m_DepthNone = RenderManager::Get()->FindRenderStateNoneCount(DEPTH_DISABLE);
-	//m_PointShader = ShaderManager::Get()->FindShaderNoneCount(LIGHT_POINT_ACC_SHADER);
-	//m_SpotShader = ShaderManager::Get()->FindShaderNoneCount(LIGHT_SPOT_SHADER);
-	//m_CullNone = RenderManager::Get()->FindRenderStateNoneCount(CULL_NONE);
+	m_Transform->SetLocalRotX(90.0f);
 
 	return true;
 }
@@ -76,13 +66,10 @@ int Light_Com::LateUpdate(float DeltaTime)
 	//	m_tLightInfo.Direction = m_Transform->GetWorldAxis(AXIS_Z);
 
 	if (m_tLightInfo.LightType != LT_DIRECTION)
-	{
 		m_Transform->SetWorldPos(m_tLightInfo.Pos);
 
-		//if (m_tLightInfo.LightType == LT_SPOT || m_tLightInfo.LightType == LT_SPOT_BOMI)
-		//{
-		//}
-	}
+	if (m_tLightInfo.LightType == LT_SPOT || m_tLightInfo.LightType == LT_SPOT_BOMI)
+		m_Transform->SetWorldRot(RadianToDegree(m_tLightInfo.Direction.y), RadianToDegree(m_tLightInfo.Direction.x), 0.0f);
 
 	return 0;
 }

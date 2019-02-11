@@ -13,6 +13,8 @@ Transform_Com::Transform_Com()
 	m_DeltaScale.Identity();
 	m_DeltaRot.Identity();
 	m_DeltaPos.Identity();
+
+	m_ParentFlag = 0;
 }
 
 Transform_Com::Transform_Com(const Transform_Com& copyObject)
@@ -78,7 +80,6 @@ int Transform_Com::Update(float DeltaTime)
 		Parent *= m_ParentPos;
 	}
 
-	// WORLD = 자기꺼 * 부모꺼다.
 	m_MatWorld = m_MatWorldScale * m_MatWorldRotation * m_MatWorldPos;
 	m_MatWorld *= Parent;	//최종적으로 위 부모행렬과 곱한다. 만약 자식이 없거나 내가 부모, 플래그가 없다면
 							//Identity 단위행렬로 들어가서 곱해봤자 자기자신이다.
@@ -121,10 +122,8 @@ int Transform_Com::LateUpdate(float DeltaTime)
 		Parent *= m_ParentPos;
 	}
 
-	// WORLD = 자기꺼 * 부모꺼다.
 	m_MatWorld = m_MatWorldScale * m_MatWorldRotation * m_MatWorldPos;
 	m_MatWorld *= Parent;
-	//World = S R T결합.
 
 	return 0;
 }
@@ -455,8 +454,11 @@ void Transform_Com::LookAt(const Vector3 & Vec, AXIS eAxis)
 	vRotAxis.Normalize();
 
 	//가상 축에 대한 회전행렬 생성.
-	m_MatWorldRotation.RotationAxis(Angle, vRotAxis);
-	ComputeWorldAxis();
+	if (vRotAxis != Vector3::Zero)
+	{
+		m_MatWorldRotation.RotationAxis(Angle, vRotAxis);
+		ComputeWorldAxis();
+	}
 
 	m_isUpdate = true;
 }

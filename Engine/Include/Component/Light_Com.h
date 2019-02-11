@@ -35,14 +35,6 @@ public:
 
 private:
 	LightCBuffer m_tLightInfo;
-	RenderState* m_WireFrame;
-	RenderState* m_DepthNone;
-	RenderState* m_CullNone;
-	Shader* m_PointShader;
-	Shader* m_SpotShader;
-
-	Mesh* m_Sphere;
-	Mesh* m_Corn;
 
 protected:
 	Light_Com();

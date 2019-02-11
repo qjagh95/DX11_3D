@@ -219,11 +219,13 @@ Texture2D TargetDiffuse : register(t10);
 //out -> 넣어주면 값채워서 반환해줌
 void ComputeDirectionLight(float4 vNormal, float3 vToCamera, out float4 Ambient, out float4 Diffuse, out float4 Specular)
 {
+
+    float3 LightDir = normalize(g_Light.LightDirection);
     //공식.
     Ambient = g_Material.Ambient * g_Light.LightAmbient;
 
     //Light를 바라보는 방향, LightDir은 World좌표 기준이라서 View로 변환해준다
-    float3 vToLight = mul(float4(g_Light.LightDirection, 1.0f), g_View).xyz;
+    float3 vToLight = mul(float4(LightDir, 1.0f), g_View).xyz;
     vToLight = -normalize(vToLight);
 
     //cos == 내적값 렘버트 자동적용. 
@@ -262,13 +264,12 @@ void ComputePointLight(float4 vNormal, float3 vPos, float3 vToCamera, out float4
 
     Ambient = matAmbient * g_Light.LightAmbient;
     Diffuse = matDiffuse * g_Light.LightDiffuse * max(dot(vToLight, vNormal.xyz), 0.0f) * LightStrong;
-    Specular = matSpecular * g_Light.LightSpecular * pow(max(0.0f, dot(vHalfWay, vNormal.xyz)), vNormal.w) * LightStrong;
+    Specular = float4(matSpecular.xyz, 1.0f) * g_Light.LightSpecular * pow(max(0.0f, dot(vHalfWay, vNormal.xyz)), matSpecular.w) * LightStrong;
 }
 
 void ComputeSpotLight(float4 vNormal, float3 vPos, float3 vToCamera, out float4 Ambient, out float4 Diffuse, out float4 Specular)
 {
     float3 LightPos = mul(float4(g_Light.LightPos, 1.0f), g_View).xyz;
-    float3 ViewLightDir = mul(float4(g_Light.LightDirection, 0.0f), g_View).xyz;
     float Distance = distance(LightPos, vPos);
 
     if (g_Light.LightRange < Distance)
@@ -285,12 +286,14 @@ void ComputeSpotLight(float4 vNormal, float3 vPos, float3 vToCamera, out float4 
 
     float3 vToLight = normalize(LightPos - vPos);
     float3 vHalfWay = normalize(vToLight + vToCamera);
+    float LightStrong;
     float SpotStrong;
-    SpotStrong = pow(max(dot(-vToLight, ViewLightDir), 0.0f), g_Light.FallOff);
+    SpotStrong = pow(dot(-vToLight, normalize(g_Light.LightDirection)), g_Light.FallOff);
+    LightStrong = 1.0f / dot(g_Light.Attenuation, float3(1.0f, Distance, Distance * Distance));
 
     Ambient = matAmbient * g_Light.LightAmbient;
-    Diffuse = matDiffuse * g_Light.LightDiffuse * max(dot(vToLight, vNormal.xyz), 0.0f) * SpotStrong;
-    Specular = matSpecular * g_Light.LightSpecular * pow(max(0.0f, dot(vHalfWay, vNormal.xyz)), g_Material.Specular.w) * SpotStrong;
+    Diffuse = matDiffuse * g_Light.LightDiffuse * max(dot(vToLight, vNormal.xyz), 0.0f) * SpotStrong * LightStrong;
+    Specular = float4(matSpecular.xyz, 1.0f) * g_Light.LightSpecular * pow(max(0.0f, dot(vHalfWay, vNormal.xyz)), g_Material.Specular.w) * SpotStrong * LightStrong;
 }
 
 void ComputeSpotBomiLight(float4 vNormal, float3 vPos, float3 vToCamera, out float4 Ambient, out float4 Diffuse, out float4 Specular)
@@ -314,12 +317,12 @@ void ComputeSpotBomiLight(float4 vNormal, float3 vPos, float3 vToCamera, out flo
     float3 vHalfWay = normalize(vToLight + vToCamera);
     float LightStrong;
     float SpotStrong;
-    SpotStrong = pow(dot(-vToLight, g_Light.LightDirection), g_Light.FallOff);
+    SpotStrong = pow(dot(-vToLight, normalize(g_Light.LightDirection)), g_Light.FallOff);
     LightStrong = 1.0f / dot(g_Light.Attenuation, float3(1.0f, Distance, Distance * Distance));
 
     Ambient = matAmbient * g_Light.LightAmbient;
     Diffuse = matDiffuse * g_Light.LightDiffuse * max(dot(vToLight, vNormal.xyz), 0.0f) * SpotStrong * LightStrong;
-    Specular = matSpecular * g_Light.LightSpecular * pow(max(0.0f, dot(vHalfWay, vNormal.xyz)), g_Material.Specular.w) * SpotStrong * LightStrong;
+    Specular = float4(matSpecular.xyz, 1.0f) * g_Light.LightSpecular * pow(max(0.0f, dot(vHalfWay, vNormal.xyz)), g_Material.Specular.w) * SpotStrong * LightStrong;
 }
 
 //픽셀압축

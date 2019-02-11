@@ -47,9 +47,6 @@ PS_OUTPUT_LIGHTACC LightAccPS(VS_OUTPUT_UV input)
 
     float4 vDepth = g_GBufferDepthTex.Sample(g_GBufferSampler, UV);
 
-    if (vDepth.w == 0.0f)
-        clip(-1); //Clip함수 : 연산안한다.
-
     float4 vNormal = g_GBufferNormalTex.Sample(g_GBufferSampler, UV);
     float4 vMaterial = g_GBufferMaterialTex.Sample(g_GBufferSampler, UV);
 
@@ -91,16 +88,14 @@ PS_OUTPUT_LIGHTACC LightAccPS(VS_OUTPUT_UV input)
 PS_OUTPUT_SINGLE LightBlendPS(VS_OUTPUT_UV input)
 {
     PS_OUTPUT_SINGLE output = (PS_OUTPUT_SINGLE) 0;
+    float2 UV = input.vPos.xy / g_ViewPortSize.xy;
 
-    float4 vAlbedo = g_GBufferAlbedoTex.Sample(g_GBufferSampler, input.vUV);
+    float4 vAlbedo = g_GBufferAlbedoTex.Sample(g_GBufferSampler, UV);
 
-    if (vAlbedo.a == 0.f)
-        clip(-1);
+    float4 vDiffuse = g_LightDiffuseTex.Sample(g_GBufferSampler, UV);
+    float4 vSpcular = g_LightSpcularTex.Sample(g_GBufferSampler, UV);
 
-    float4 vDif = g_LightDiffuseTex.Sample(g_GBufferSampler, input.vUV);
-    float4 vSpc = g_LightSpcularTex.Sample(g_GBufferSampler, input.vUV);
-
-    output.vTarget0 = vAlbedo * vDif + vSpc;
+    output.vTarget0 = vAlbedo * vDiffuse + vSpcular;
 
     return output;
 }

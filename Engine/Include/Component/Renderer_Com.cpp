@@ -294,7 +294,7 @@ void Renderer_Com::UpdateTransform()
 	else
 		getCamera = m_Scene->GetMainCamera();
 	
-	cBuffer.World = m_Transform->GetWorldMatrix();
+	cBuffer.World = m_Transform->GetLocalMatrix() * m_Transform->GetWorldMatrix();
 	cBuffer.View = getCamera->GetViewMatrix();
 	cBuffer.Projection = getCamera->GetProjection();
 
