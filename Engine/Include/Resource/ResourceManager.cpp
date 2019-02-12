@@ -164,10 +164,11 @@ bool ResourceManager::Init()
 	//{8, 6, 5}
 	//{7, 6, 8}
 	CreateMesh("Pyramid", STANDARD_NORMAL_COLOR_SHADER, POS_NORMAL_COLOR_LAYOUT, Pyramid, 9, sizeof(VertexNormalColor), D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, PyramidIdx, 18, 4, D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
-	CreateSphereVolum(SPHERE_VOLUM, 0.5f, 16, 32);
+
+	CreateSphereVolum(SPHERE_VOLUM, 0.5f, 64, 128);
 	CreateCylinderVolum(CYLINDER_VOLUM, 0.5f, 3, 32);
-	CreateCapsulVolum(CAPSUL_VOLUM, 0.5f, 3, 16, 32);
-	CreateCornVolum(CORN_VOLUM, 0.5f, 0.5f, 16, 32);
+	CreateCapsulVolum(CAPSUL_VOLUM, 0.5f, 3, 64, 128);
+	CreateCornVolum(CORN_VOLUM, 0.5f, 0.5f, 64, 128);
 
 	CreateSampler(LINER_SAMPLER);
 	//디퍼드에 최적화된 샘플러 = 포인트(픽셀값을 1:1매칭시켜서 가져온다)

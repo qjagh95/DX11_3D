@@ -118,8 +118,6 @@ PS_OUTPUT_GBUFFER StandardNormalColorPS(VS_OUTPUT_NORMAL_COLOR input)
             ComputePointLight(float4(input.vNormalV, g_Light.LightSpecular.w), input.vPosV, toCamera, Ambient, Diffuse, Specular);
         else if (g_Light.LightType == LIGHT_SPOT)
             ComputeSpotLight(float4(input.vNormalV, g_Light.LightSpecular.w), input.vPosV, toCamera, Ambient, Diffuse, Specular);
-        else if (g_Light.LightType == LIGHT_SPOT_BOMI)
-            ComputeSpotBomiLight(float4(input.vNormalV, g_Light.LightSpecular.w), input.vPosV, toCamera, Ambient, Diffuse, Specular);
 
         output.vAlbedo = input.vColor * (Ambient + Diffuse) + Specular;
     }
@@ -133,9 +131,7 @@ PS_OUTPUT_GBUFFER StandardNormalColorPS(VS_OUTPUT_NORMAL_COLOR input)
         //vPos.z = WVP공간변환 후 Z값.
         //vPos.w = WV공간변환 후 Z값. (Perspective 공식 적용으로 WV의 Z값이 그대로 들어옴 _34 = 1)
         //두개를나누게되면 0 ~ 1 사이의 값이 나옴.
-        output.vDepth.r = input.vPos.z / input.vPos.w;
-        output.vDepth.g = output.vDepth.r;
-        output.vDepth.b = output.vDepth.r;
+        output.vDepth.rgb = input.vPos.z / input.vPos.w;
         output.vDepth.a = input.vPos.w;
         output.vMaterial.r = CompressColor(g_Material.Ambient);
         output.vMaterial.g = CompressColor(g_Material.Diffuse);
@@ -179,10 +175,10 @@ VS_OUTPUT_3D StandardBumpVS(VS_INPUT_3D input)
 
     float3 vPos = input.vPos - g_Pivot * g_Length;
 
-    output.vViewPos = mul(float4(vPos, 1.f), g_WV);
-    output.vProjPos = mul(float4(vPos, 1.f), g_WVP);
+    output.vViewPos = mul(float4(vPos, 1.0f), g_WV);
+    output.vProjPos = mul(float4(vPos, 1.0f), g_WVP);
 	//output.vPos = output.vProjPos;
-    output.vPos = mul(float4(vPos, 1.f), g_WVP);
+    output.vPos = mul(float4(vPos, 1.0f), g_WVP);
     output.vUV = input.vUV;
 
 	// Normal을 View로 변환한다.
@@ -212,21 +208,14 @@ PS_OUTPUT_GBUFFER StandardBumpPS(VS_OUTPUT_3D input)
             ComputePointLight(float4(input.vNormalV, g_Light.LightSpecular.w), input.vViewPos, toCamera, Ambient, Diffuse, Specular);
         else if (g_Light.LightType == LIGHT_SPOT)
             ComputeSpotLight(float4(input.vNormalV, g_Light.LightSpecular.w), input.vViewPos, toCamera, Ambient, Diffuse, Specular);
-        else if (g_Light.LightType == LIGHT_SPOT_BOMI)
-            ComputeSpotBomiLight(float4(input.vNormalV, g_Light.LightSpecular.w), input.vViewPos, toCamera, Ambient, Diffuse, Specular);
 
         output.vAlbedo = DiffuseTexture.Sample(DiffuseSampler, input.vUV) * (Diffuse + Ambient) + Specular;
     }
     else
     {
-        //조명연산 또는 각종 연산을 전부 하게되면 연산이 너무 많이지기때문에 각각   나눠서 Texture의 rgb값에 저장해놓는다.
-        //이게 디퍼드를 사용하는 이유.
         output.vAlbedo = DiffuseTexture.Sample(DiffuseSampler, input.vUV);
         output.vNormal.xyz = input.vNormalV;
         output.vNormal.w = g_Material.Specular.w;
-        //vPos.z = WVP공간변환 후 Z값.
-        //vPos.w = WV공간변환 후 Z값. (Perspective 공식 적용으로 WV의 Z값이 그대로 들어옴 _34)
-        //두개를나누게되면 0 ~ 1 사이의 값이 나옴. (xy = -1 ~ 1, z = 0 ~ 1)
         output.vDepth.r = input.vPos.z / input.vPos.w;
         output.vDepth.g = output.vDepth.r;
         output.vDepth.b = output.vDepth.r;

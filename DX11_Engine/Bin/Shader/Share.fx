@@ -189,8 +189,9 @@ cbuffer Public : register(b10)
     float g_PlusedDeltaTime;
     float g_ProjectionFar;
     int g_isDeferred;
+    int g_isWireMode;
     float2 g_ViewPortSize;
-    float2 g_Empty123124522534;
+    float g_Empty123124522534;
 }
 
 cbuffer Light : register(b3)
@@ -219,11 +220,9 @@ Texture2D TargetDiffuse : register(t10);
 //out -> 넣어주면 값채워서 반환해줌
 void ComputeDirectionLight(float4 vNormal, float3 vToCamera, out float4 Ambient, out float4 Diffuse, out float4 Specular)
 {
-
     float3 LightDir = normalize(g_Light.LightDirection);
     //공식.
     Ambient = g_Material.Ambient * g_Light.LightAmbient;
-
     //Light를 바라보는 방향, LightDir은 World좌표 기준이라서 View로 변환해준다
     float3 vToLight = mul(float4(LightDir, 1.0f), g_View).xyz;
     vToLight = -normalize(vToLight);
@@ -242,6 +241,7 @@ void ComputePointLight(float4 vNormal, float3 vPos, float3 vToCamera, out float4
     float3 LightPos = mul(float4(g_Light.LightPos, 1.0f), g_View).xyz;
     float Distance = distance(LightPos, vPos);
 
+    //이놈때문에 뚫려보임.
     if (g_Light.LightRange < Distance)
     {
         Ambient = float4(0.2f, 0.2f, 0.2f, 1.0f);
@@ -276,7 +276,7 @@ void ComputeSpotLight(float4 vNormal, float3 vPos, float3 vToCamera, out float4 
     {
         Ambient = float4(0.2f, 0.2f, 0.2f, 1.0f);
         Diffuse = float4(0.2f, 0.2f, 0.2f, 1.0f);
-        Specular = float4(0.2f, 0.2f, 0.2f, 1.0f);
+        Specular = float4(1.2f, 1.2f, 1.2f, 1.0f);
         return;
     }
 
@@ -290,6 +290,8 @@ void ComputeSpotLight(float4 vNormal, float3 vPos, float3 vToCamera, out float4 
     float SpotStrong;
     SpotStrong = pow(dot(-vToLight, normalize(g_Light.LightDirection)), g_Light.FallOff);
     LightStrong = 1.0f / dot(g_Light.Attenuation, float3(1.0f, Distance, Distance * Distance));
+
+    float4 a = float4(1.0f, 1.0f, 1.0f, 1.0f);
 
     Ambient = matAmbient * g_Light.LightAmbient;
     Diffuse = matDiffuse * g_Light.LightDiffuse * max(dot(vToLight, vNormal.xyz), 0.0f) * SpotStrong * LightStrong;

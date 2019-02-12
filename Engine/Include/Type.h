@@ -2,7 +2,6 @@
 
 namespace JEONG
 {
-
 	struct JEONG_DLL WinSize
 	{
 		unsigned int Width;
@@ -189,9 +188,9 @@ namespace JEONG
 		Matrix WV;
 		Matrix WVP;
 		Matrix InvProjection;
-		Vector3 Pivot; //12
+		Vector3 Pivot;  //12
 		float Empty1;	//4바이트
-		Vector3 Lenth; //12
+		Vector3 Lenth;  //12
 		float Empty2;   //4바이트 (16바이트패딩으로 바이트 맞춰주기위함)
 	};
 
@@ -241,7 +240,8 @@ namespace JEONG
 		float PlusedDeltaTime;
 		float Far;
 		int isDeferred;
+		int isWireMode;
 		Vector2 ViewPortSize;
-		Vector2 Empty;
+		float Empty;
 	};
 }

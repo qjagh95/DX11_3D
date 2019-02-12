@@ -46,7 +46,6 @@ PS_OUTPUT_LIGHTACC LightAccPS(VS_OUTPUT_UV input)
     float2 UV = input.vPos.xy / g_ViewPortSize.xy;
 
     float4 vDepth = g_GBufferDepthTex.Sample(g_GBufferSampler, UV);
-
     float4 vNormal = g_GBufferNormalTex.Sample(g_GBufferSampler, UV);
     float4 vMaterial = g_GBufferMaterialTex.Sample(g_GBufferSampler, UV);
 
@@ -71,15 +70,18 @@ PS_OUTPUT_LIGHTACC LightAccPS(VS_OUTPUT_UV input)
     float4 Specluar = DecompressColor(vMaterial.b);
 
     if (g_Light.LightType == LIGHT_DIRECTION)
+    {
+        if (vDepth.w == 1.0f)
+            clip(-1);
+
         ComputeDirectionLight(vNormal, ToCamera, Ambient, Diffuse, Specluar);
+    }
     else if (g_Light.LightType == LIGHT_POINT)
         ComputePointLight(vNormal, ViewPosition, ToCamera, Ambient, Diffuse, Specluar);
     else if (g_Light.LightType == LIGHT_SPOT)
         ComputeSpotLight(vNormal, ViewPosition, ToCamera, Ambient, Diffuse, Specluar);
-    else if (g_Light.LightType == LIGHT_SPOT_BOMI)
-        ComputeSpotBomiLight(vNormal, ViewPosition, ToCamera, Ambient, Diffuse, Specluar);
 
-    output.vDiffuse = Diffuse;
+    output.vDiffuse = Diffuse + Ambient;
     output.vSpecluar = Specluar;
 
     return output;
@@ -95,7 +97,7 @@ PS_OUTPUT_SINGLE LightBlendPS(VS_OUTPUT_UV input)
     float4 vDiffuse = g_LightDiffuseTex.Sample(g_GBufferSampler, UV);
     float4 vSpcular = g_LightSpcularTex.Sample(g_GBufferSampler, UV);
 
-    output.vTarget0 = vAlbedo * vDiffuse + vSpcular;
+    output.vTarget0 = vAlbedo * (vDiffuse + vSpcular);
 
     return output;
 }

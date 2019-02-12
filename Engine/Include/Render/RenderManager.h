@@ -67,9 +67,9 @@ private:
 	void RenderDirectionLight(float DeltaTime, Light_Com* light);
 	void RenderPointLight(float DeltaTime, Light_Com* light);
 	void RenderSpotLight(float DeltaTime, Light_Com* light);
-	void RenderBomiSpotLight(float DeltaTime, Light_Com* light);
 	void RenderFullScreen(float DeltaTime);
 	void RenderLightBlend(float DeltaTime);
+	void SetIsWireFrame(bool Value) { m_isWireFrame = Value; }
 
 private:
 	GAME_MODE m_GameMode;
@@ -91,9 +91,9 @@ private:
 	MultiRenderTarget* m_GBufferMultiTarget;
 	MultiRenderTarget* m_LightMultiTarget;
 	RenderTarget* m_LightBlendTarget;
-	RenderTarget* m_LightAmbiemtTarget;
 	RenderTarget* m_LightDiffuseTarget;
 	RenderTarget* m_LightSpcularTarget;
+
 	RenderTarget* m_AlbedoTarget;
 	RenderState* m_AddBlend;
 	RenderState* m_DepthDisable;
@@ -107,6 +107,7 @@ private:
 	RenderState* m_AllBlend;
 
 	bool m_isDeferred;
+	bool m_isWireFrame;
 	PublicCBuffer m_CBuffer;
 
 	Mesh* m_SphereVolum;

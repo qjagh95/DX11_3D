@@ -6,6 +6,9 @@
 #include "DepthStancilState.h"
 #include "ResterizerState.h"
 
+#include "Render/Shader.h"
+#include "Resource/ResourceManager.h"
+
 #include "../GameObject.h"
 #include "../Device.h"
 #include "../Render/ShaderManager.h"
@@ -17,9 +20,6 @@
 #include "../Scene/SceneManager.h"
 #include "../Scene/Scene.h"
 
-#include "Render/Shader.h"
-
-#include "Resource/ResourceManager.h"
 
 JEONG_USING
 SINGLETON_VAR_INIT(JEONG::RenderManager)
@@ -28,6 +28,7 @@ RenderManager::RenderManager()
 {
 	m_GameMode = GM_3D;
 	m_isDeferred = true;
+	m_isWireFrame = true;
 	m_CreateState = NULLPTR;
 	m_DepthDisable = NULLPTR;
 	m_GBufferSampler = NULLPTR;
@@ -138,12 +139,12 @@ bool RenderManager::Init()
 	Second.StencilFunc = D3D11_COMPARISON_NEVER; //통과 X
 
 	//앞면만 통과시키겠다.
-	CreateDepthStencilState(DEPTH_LESS, TRUE, D3D11_DEPTH_WRITE_MASK_ZERO, D3D11_COMPARISON_GREATER, TRUE, D3D11_DEFAULT_STENCIL_READ_MASK, D3D11_DEFAULT_STENCIL_READ_MASK, First, Second);	CreateDepthStencilState(DEPTH_DISABLE, FALSE);
-
+	CreateDepthStencilState(DEPTH_LESS, TRUE, D3D11_DEPTH_WRITE_MASK_ZERO, D3D11_COMPARISON_LESS, TRUE, D3D11_DEFAULT_STENCIL_READ_MASK, D3D11_DEFAULT_STENCIL_READ_MASK, First, Second);	CreateDepthStencilState(DEPTH_DISABLE, FALSE);
 	CreateDepthStencilState(DEPTH_DISABLE, FALSE);
 
 	m_CBuffer.ViewPortSize = Vector2((float)Device::Get()->GetWinSize().Width, (float)Device::Get()->GetWinSize().Height);
 	m_CBuffer.isDeferred = m_isDeferred;
+	m_CBuffer.isWireMode = m_isWireFrame;
 
 	AddBlendTargetDesc(TRUE);
 	CreateBlendState(ALPHA_BLEND);
@@ -240,7 +241,7 @@ bool RenderManager::Init()
 	m_DepthGrator = FindRenderStateNoneCount(DEPTH_GRATOR);
 	m_DepthLess = FindRenderStateNoneCount(DEPTH_LESS);
 	m_FrontCull = FindRenderStateNoneCount(FRONT_CULL);
-	((DepthStancilState*)m_FrontCull)->SetStencilRef(1); //스텐실값을 1로 채운다.
+	((DepthStancilState*)m_DepthGrator)->SetStencilRef(1); //스텐실값을 1로 채운다.
 	m_BackCull = FindRenderStateNoneCount(BACK_CULL);
 	m_WireFrame = FindRenderStateNoneCount(WIRE_FRAME);
 	m_CullNone = FindRenderStateNoneCount(CULL_NONE);
@@ -257,12 +258,10 @@ bool RenderManager::Init()
 	m_LightAccSpotShader = ShaderManager::Get()->FindShaderNoneCount(LIGHT_SPOT_SHADER);
 	m_FullScreenShader = ShaderManager::Get()->FindShaderNoneCount(FULLSCREEN_SHADER);
 
-	m_LightBlendTarget = FindRenderTarget("LightBlend");
-	m_LightBlendTarget->SetClearColor(Vector4::Pink);
-
 	m_LightDiffuseTarget = FindRenderTarget("LightAccDiffuse");
 	m_LightSpcularTarget = FindRenderTarget("LightAccSpcular");
 	m_AlbedoTarget = FindRenderTarget("Albedo");
+	m_LightBlendTarget = FindRenderTarget("LightBlend");
 
 	m_SphereVolum = ResourceManager::Get()->FindMeshNoneCount(SPHERE_VOLUM);
 	m_CornVolum = ResourceManager::Get()->FindMeshNoneCount(CORN_VOLUM);
@@ -434,6 +433,7 @@ void RenderManager::AddRenderObject(GameObject * object)
 
 void RenderManager::Render(float DeltaTime)
 {
+	m_CBuffer.isWireMode = m_isWireFrame;
 	ShaderManager::Get()->UpdateCBuffer("PublicCBuffer", &m_CBuffer);
 	Render3D(DeltaTime);
 
@@ -491,6 +491,8 @@ MultiRenderTarget * RenderManager::FindMultiTarget(const string & MultiKey)
 
 void RenderManager::Render3D(float DeltaTime)
 {
+	ImGui::Checkbox("WireFrame", &m_isWireFrame);
+
 	if (m_isDeferred == false)
 		ForwardRender(DeltaTime);
 	else
@@ -574,15 +576,12 @@ void RenderManager::RenderLightAcc(float DeltaTime)
 				case LT_SPOT:
 					RenderSpotLight(DeltaTime, getLight);
 					break;
-				case LT_SPOT_BOMI:
-					RenderBomiSpotLight(DeltaTime, getLight);
-					break;
 			}
 		}
 	}
 	m_GBufferMultiTarget->ResetShaderResource(10);
-	m_DepthDisable->ResetState();
 	m_LightMultiTarget->ResetTarget();
+	m_DepthDisable->ResetState();
 	m_AddBlend->ResetState();
 }
 
@@ -662,16 +661,24 @@ void RenderManager::RenderPointLight(float DeltaTime, Light_Com * light)
 	}
 	m_BackCull->ResetState();
 
-	m_WireFrame->SetState();
+	if (m_isWireFrame == false)
+		return;
+
+	m_CullNone->SetState();
 	{
-		m_SphereVolum->Render();
+		m_WireFrame->SetState();
+		{
+			m_SphereVolum->Render();
+		}
+		m_WireFrame->ResetState();
 	}
-	m_WireFrame->ResetState();
+	m_CullNone->ResetState();
 }
 
 void RenderManager::RenderSpotLight(float DeltaTime, Light_Com * light)
 {
-	//왜안됨?
+	light->UpdateCBuffer();
+
 	m_LightAccSpotShader->SetShader();
 
 	Scene* pScene = SceneManager::Get()->GetCurSceneNoneCount();
@@ -729,30 +736,18 @@ void RenderManager::RenderSpotLight(float DeltaTime, Light_Com * light)
 	}
 	m_BackCull->ResetState();
 
-	light->UpdateCBuffer();
+	if (m_isWireFrame == false)
+		return;
 
-	m_WireFrame->SetState();
+	m_CullNone->SetState();
 	{
-		m_CornVolum->Render();
+		m_WireFrame->SetState();
+		{
+			m_CornVolum->Render();
+		}
+		m_WireFrame->ResetState();
 	}
-	m_WireFrame->ResetState();
-}
-
-void RenderManager::RenderBomiSpotLight(float DeltaTime, Light_Com * light)
-{
-	m_LightAccDirShader->SetShader();
-
-	// 조명 정보를 상수버퍼에 넘겨준다.
-	light->UpdateCBuffer();
-
-	// NULL Buffer로 전체 화면크기의 사각형을 출력한다.
-	Device::Get()->GetContext()->IASetInputLayout(NULLPTR);
-
-	UINT iOffset = 0;
-	Device::Get()->GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-	Device::Get()->GetContext()->IASetVertexBuffers(0, 0, NULLPTR, 0, &iOffset);
-	Device::Get()->GetContext()->IASetIndexBuffer(0, DXGI_FORMAT_UNKNOWN, 0);
-	Device::Get()->GetContext()->Draw(4, 0);
+	m_CullNone->ResetState();
 }
 
 void RenderManager::RenderFullScreen(float DeltaTime)
@@ -777,6 +772,9 @@ void RenderManager::RenderFullScreen(float DeltaTime)
 
 void RenderManager::RenderLightBlend(float DeltaTime)
 {
+	m_LightBlendTarget->ClearTarget();
+	m_LightBlendTarget->SetTarget();
+
 	m_DepthDisable->SetState();
 	m_GBufferSampler->SetSamplerState(10);
 
@@ -786,8 +784,6 @@ void RenderManager::RenderLightBlend(float DeltaTime)
 
 	m_LightAccBlendShader->SetShader();
 
-	m_LightBlendTarget->ClearTarget();
-	m_LightBlendTarget->SetTarget();
 	// NULL Buffer로 전체 화면크기의 사각형을 출력한다.
 	Device::Get()->GetContext()->IASetInputLayout(NULLPTR);
 

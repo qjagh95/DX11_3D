@@ -62,9 +62,6 @@ int Light_Com::Update(float DeltaTime)
 
 int Light_Com::LateUpdate(float DeltaTime)
 {
-	//if (m_tLightInfo.LightType != LT_POINT)
-	//	m_tLightInfo.Direction = m_Transform->GetWorldAxis(AXIS_Z);
-
 	if (m_tLightInfo.LightType != LT_DIRECTION)
 		m_Transform->SetWorldPos(m_tLightInfo.Pos);
 
