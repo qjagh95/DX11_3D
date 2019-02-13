@@ -1,19 +1,21 @@
 #pragma once
 #include "fbxsdk.h"
+
 JEONG_BEGIN
 
+//재질정보를 FBXLib에 맞춰서 쉽게 빼기 위한 구조체
 struct JEONG_DLL FbxMaterial
 {
-	Vector4	Diffuse;
-	Vector4	Ambient;
-	Vector4	Spcular;
-	Vector4	Emissive;
-	float SpecularPower;
-	float TransparencyFactor;
-	float Shininess;
-	string strDifTex;
-	string strBumpTex;
-	string strSpcTex;
+	Vector4		Diffuse;
+	Vector4		Ambient;
+	Vector4		Spcular;
+	Vector4		Emissive;
+	float		SpecularPower;
+	float		TransparencyFactor;
+	float		Shininess;
+	string		DiffuseTexName;
+	string		BumpTexName;
+	string		SpcTexName;
 };
 
 struct JEONG_DLL FBXMeshContainer
@@ -23,27 +25,28 @@ struct JEONG_DLL FBXMeshContainer
 	vector<Vector2>	vecUV;
 	vector<Vector3>	vecTangent;
 	vector<Vector3>	vecBinormal;
-	vector<Vector4> vecBlendWeight;
-	vector<Vector4> vecBlendIndex;
-	vector<vector<UINT>> vecIndices;
+	//vector<Vector4>	vecBlendWeight;
+	//vector<Vector4>	vecBlendIndex;
+	vector<vector<UINT>>	vecIndices;
 	//unordered_map<int, vector<FBXWEIGHT>>	mapWeights;
-	bool isBump;
-	bool isAnimation;
+	bool				isBump;
+	//bool				isAnimation;
 
 	FBXMeshContainer()
 	{
 		isBump = false;
-		isAnimation = false;
+		//isAnimation = false;
 	}
 };
+
 
 class JEONG_DLL FBXLoader
 {
 public:
-	const vector<FBXMeshContainer*>* GetMeshContainers() const { return &m_vecMeshContainer; }
-	const vector<vector<FbxMaterial*>>* GetMaterials() const { return &m_vecMaterials; }
-
 	bool LoadFbx(const char* pFullPath);
+
+	const vector<FBXMeshContainer*>* GetMeshContainers() const { return &m_vecMeshContainer; }
+	const vector<vector<FbxMaterial*>>* GetMaterials()	const { return &m_vecMaterials; }
 
 private:
 	void Triangulate(FbxNode* pNode);
@@ -55,14 +58,14 @@ private:
 	void LoadMesh(FbxNode* pNode);
 	void LoadMesh(FbxMesh* pMesh);
 
-	void LoadNormal(FbxMesh * pMesh, FBXMeshContainer* pContainer, int iVtxID,	int iControlIndex);
-	void LoadUV(FbxMesh * pMesh, FBXMeshContainer* pContainer,	int iUVID, int iControlIndex);
+	void LoadNormal(FbxMesh * pMesh, FBXMeshContainer* pContainer, int iVtxID,int iControlIndex);
+	void LoadUV(FbxMesh * pMesh, FBXMeshContainer* pContainer,int iUVID, int iControlIndex);
 	void LoadTangent(FbxMesh * pMesh, FBXMeshContainer* pContainer, int iVtxID, int iControlIndex);
-	void LoadBinormal(FbxMesh * pMesh, FBXMeshContainer* pContainer, int iVtxID, int iControlIndex);
+	void LoadBinormal(FbxMesh * pMesh, FBXMeshContainer* pContainer,int iVtxID, int iControlIndex);
 
 private:
 	FbxManager*	m_Manager;
-	FbxScene* m_FBXScene;
+	FbxScene* m_Scene;
 
 	vector<vector<FbxMaterial*>> m_vecMaterials;
 	vector<FBXMeshContainer*> m_vecMeshContainer;

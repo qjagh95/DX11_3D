@@ -212,7 +212,7 @@ void Vector4::operator=(float ValArr[4])
 	x = (float)ValArr[0];
 	y = (float)ValArr[1];
 	z = (float)ValArr[2];
-	w = (float)ValArr[4];
+	w = (float)ValArr[3];
 }
 
 void Vector4::operator=(int ValArr[4])
@@ -220,7 +220,7 @@ void Vector4::operator=(int ValArr[4])
 	x = (float)ValArr[0];
 	y = (float)ValArr[1];
 	z = (float)ValArr[2];
-	w = (float)ValArr[4];
+	w = (float)ValArr[3];
 }
 
 Vector4 Vector4::operator+(const Vector4 & vec) const

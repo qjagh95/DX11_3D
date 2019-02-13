@@ -46,7 +46,7 @@ private:
 
 protected:
 	Camera_Com();
-	Camera_Com(const Camera_Com& camera);
+	Camera_Com(const Camera_Com& CopyData);
 	~Camera_Com();
 
 public:

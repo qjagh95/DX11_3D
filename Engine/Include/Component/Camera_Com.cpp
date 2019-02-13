@@ -4,38 +4,38 @@
 #include "Transform_Com.h"
 JEONG_USING
 
-JEONG::Camera_Com::Camera_Com()
+Camera_Com::Camera_Com()
 {
 	m_ComType = CT_CAMERA;
 	m_CameraType = CT_PERSPECTIVE;
 	m_Target = NULLPTR;
 }
 
-JEONG::Camera_Com::~Camera_Com()
+Camera_Com::~Camera_Com()
 {
 }
 
-JEONG::Camera_Com::Camera_Com(const Camera_Com & camera)
-	:Component_Base(camera)
+Camera_Com::Camera_Com(const Camera_Com & CopyData)
+	:Component_Base(CopyData)
 {
-	m_CameraType = camera.m_CameraType;
-	m_View = camera.m_View;
-	m_Projection = camera.m_Projection;
+	m_CameraType = CopyData.m_CameraType;
+	m_View = CopyData.m_View;
+	m_Projection = CopyData.m_Projection;
 	m_Target = NULLPTR;
 }
 
-bool JEONG::Camera_Com::Init()
+bool Camera_Com::Init()
 {
 
 	return true;
 }
 
-int JEONG::Camera_Com::Input(float DeltaTime)
+int Camera_Com::Input(float DeltaTime)
 {
 	return 0;
 }
 
-int JEONG::Camera_Com::Update(float DeltaTime)
+int Camera_Com::Update(float DeltaTime)
 {
 	//카메라 뷰 변환은 사실 모든 오브젝트를 원점기준으로 
 	//오브젝트를 옮겨주는 역할이다.
@@ -86,29 +86,29 @@ int JEONG::Camera_Com::Update(float DeltaTime)
 	return 0;
 }
 
-int JEONG::Camera_Com::LateUpdate(float DeltaTime)
+int Camera_Com::LateUpdate(float DeltaTime)
 {
 	return 0;
 }
 
-void JEONG::Camera_Com::Collision(float DeltaTime)
+void Camera_Com::Collision(float DeltaTime)
 {
 }
 
-void JEONG::Camera_Com::CollisionLateUpdate(float DeltaTime)
+void Camera_Com::CollisionLateUpdate(float DeltaTime)
 {
 }
 
-void JEONG::Camera_Com::Render(float DeltaTime)
+void Camera_Com::Render(float DeltaTime)
 {
 }
 
-JEONG::Camera_Com * JEONG::Camera_Com::Clone()
+Camera_Com * Camera_Com::Clone()
 {
 	return new Camera_Com(*this);
 }
 
-void JEONG::Camera_Com::SetCameraType(CAMERA_TYPE eType)
+void Camera_Com::SetCameraType(CAMERA_TYPE eType)
 {
 	m_CameraType = eType;
 
@@ -147,7 +147,7 @@ void JEONG::Camera_Com::SetCameraType(CAMERA_TYPE eType)
 	}
 }
 
-void JEONG::Camera_Com::SetCameraInfo(CAMERA_TYPE eType, float Width, float Height, float ViewAngle, float Near, float Far)
+void Camera_Com::SetCameraInfo(CAMERA_TYPE eType, float Width, float Height, float ViewAngle, float Near, float Far)
 {
 	m_Width = Width;
 	m_Height = Height;
@@ -158,52 +158,52 @@ void JEONG::Camera_Com::SetCameraInfo(CAMERA_TYPE eType, float Width, float Heig
 	SetCameraType(eType);
 }
 
-void JEONG::Camera_Com::SetWidth(float Width)
+void Camera_Com::SetWidth(float Width)
 {
 	m_Width = Width;
 	SetCameraType(m_CameraType);
 }
 
-void JEONG::Camera_Com::SetHeight(float Height)
+void Camera_Com::SetHeight(float Height)
 {
 	m_Height = Height;
 	SetCameraType(m_CameraType);
 }
 
-void JEONG::Camera_Com::SetViewAngle(float Angle)
+void Camera_Com::SetViewAngle(float Angle)
 {
 	m_ViewAngle = Angle;
 	SetCameraType(m_CameraType);
 }
 
-void JEONG::Camera_Com::SetNear(float Near)
+void Camera_Com::SetNear(float Near)
 {
 	m_Near = Near;
 	SetCameraType(m_CameraType);
 }
 
-void JEONG::Camera_Com::SetFar(float Far)
+void Camera_Com::SetFar(float Far)
 {
 	m_Far = Far;
 	SetCameraType(m_CameraType);
 }
 
-Matrix JEONG::Camera_Com::GetViewMatrix() const
+Matrix Camera_Com::GetViewMatrix() const
 {
 	return m_View;
 }
 
-Matrix JEONG::Camera_Com::GetProjection() const
+Matrix Camera_Com::GetProjection() const
 {
 	return m_Projection;
 }
 
-void JEONG::Camera_Com::SetTarget(JEONG::GameObject* pTarget)
+void Camera_Com::SetTarget(GameObject* pTarget)
 {
 	m_Target = pTarget->GetTransform();
 }
 
-void JEONG::Camera_Com::SetTarget(JEONG::Component_Base* pTarget)
+void Camera_Com::SetTarget(Component_Base* pTarget)
 {
 	m_Target = pTarget->GetTransform();
 }

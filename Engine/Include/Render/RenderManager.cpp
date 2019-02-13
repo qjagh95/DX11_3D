@@ -724,15 +724,15 @@ void RenderManager::RenderSpotLight(float DeltaTime, Light_Com * light)
 
 	m_BackCull->SetState();
 	{
-		m_ZeroBlend->SetState();
+		m_DepthLess->SetState();
 		{
-			m_DepthLess->SetState();
+			m_ZeroBlend->SetState();
 			{
 				m_CornVolum->Render();
 			}
-			m_DepthLess->ResetState();
+			m_ZeroBlend->ResetState();
 		}
-		m_ZeroBlend->ResetState();
+		m_DepthLess->ResetState();
 	}
 	m_BackCull->ResetState();
 

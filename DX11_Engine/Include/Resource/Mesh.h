@@ -50,8 +50,8 @@ public:
 	string GetShaderKey() const { return m_ShaderKeyName; }
 	string GetLayOutKey() const { return m_LayOutKeyName; }
 	void* GetVertexInfo(int Index) const { return m_vecMeshContainer[Index]->vertexBuffer.vInfo; }
-	bool LoadMesh(const string& KeyName, const TCHAR* pFileName,const string& strPathKey = FBX_PATH);
-	bool LoadMeshFromFullPath(const string& KeyName, const TCHAR* pFullPath);
+	//bool LoadMesh(const string& KeyName, const TCHAR* pFileName,const string& strPathKey = FBX_PATH);
+	//bool LoadMeshFromFullPath(const string& KeyName, const TCHAR* pFullPath);
 	Material_Com* CloneMaterial();
 
 	void UpdateVertexBuffer(void* vertexInfo, int ContainerIndex = 0);
@@ -66,7 +66,7 @@ public:
 	float GetRadius() const { return m_Radius; }
 
 private:
-	bool ConvertFbx(FBXLoader* pLoader);
+	//bool ConvertFbx(FBXLoader* pLoader);
 
 private:
 	vector<MeshContainer*> m_vecMeshContainer;

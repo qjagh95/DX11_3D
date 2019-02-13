@@ -13,7 +13,6 @@ FreeCamera_Com::FreeCamera_Com(const FreeCamera_Com & CopyData)
 {
 }
 
-
 FreeCamera_Com::~FreeCamera_Com()
 {
 }
@@ -31,16 +30,6 @@ int FreeCamera_Com::Input(float DeltaTime)
 
 int FreeCamera_Com::Update(float DeltaTime)
 {
-	//if (KeyInput::Get()->KeyPress("CameraUp"))
-	//	m_Transform->Move(AXIS_Y, m_Speed, DeltaTime);
-	//else if (KeyInput::Get()->KeyPress("CameraDown"))
-	//	m_Transform->Move(AXIS_Y, -m_Speed, DeltaTime);
-
-	//if (KeyInput::Get()->KeyPress("CameraLeft"))
-	//	m_Transform->Move(AXIS_X, -m_Speed, DeltaTime);
-	//else if (KeyInput::Get()->KeyPress("CameraRight"))
-	//	m_Transform->Move(AXIS_X, m_Speed, DeltaTime);
-
 	return 0;
 }
 
