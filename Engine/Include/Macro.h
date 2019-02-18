@@ -19,6 +19,7 @@
 #define SOUND_PATH "SoundPath"
 #define DATA_PATH "DataPath"
 #define FBX_PATH "FBXPath"
+#define FBX_DATA_PATH "FBXDataPath"
 
 //Shader
 #define STANDARD_COLOR_SHADER "StandardColorShader"

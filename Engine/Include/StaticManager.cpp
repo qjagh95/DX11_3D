@@ -6,24 +6,24 @@
 JEONG_USING
 SINGLETON_VAR_INIT(JEONG::StaticManager)
 
-JEONG::StaticManager::StaticManager()
+StaticManager::StaticManager()
 {
 }
 
-JEONG::StaticManager::~StaticManager()
+StaticManager::~StaticManager()
 {
 	Safe_Release_VecList(m_staticObjectList);
 }
 
-bool JEONG::StaticManager::Init()
+bool StaticManager::Init()
 {
 	return true;
 }
 
-void JEONG::StaticManager::AddStaticObject(GameObject * object)
+void StaticManager::AddStaticObject(GameObject * object)
 {
-	list<GameObject*>::iterator	StartIter = m_staticObjectList.begin();
-	list<GameObject*>::iterator	EndIter = m_staticObjectList.end();
+	vector<GameObject*>::iterator	StartIter = m_staticObjectList.begin();
+	vector<GameObject*>::iterator	EndIter = m_staticObjectList.end();
 
 	for (; StartIter != EndIter; ++StartIter)
 	{
@@ -35,10 +35,10 @@ void JEONG::StaticManager::AddStaticObject(GameObject * object)
 	m_staticObjectList.push_back(object);
 }
 
-void JEONG::StaticManager::ChangeScene(Scene * scene)
+void StaticManager::ChangeScene(Scene * scene)
 {
-	list<GameObject*>::iterator	StartIter = m_staticObjectList.begin();
-	list<GameObject*>::iterator	EndIter = m_staticObjectList.end();
+	vector<GameObject*>::iterator  StartIter = m_staticObjectList.begin();
+	vector<GameObject*>::iterator EndIter = m_staticObjectList.end();
 
 	for (; StartIter != EndIter; ++StartIter)
 	{
@@ -55,10 +55,10 @@ void JEONG::StaticManager::ChangeScene(Scene * scene)
 	}
 }
 
-bool JEONG::StaticManager::CheckStaticObject(const string & TagName)
+bool StaticManager::CheckStaticObject(const string & TagName)
 {
-	list<GameObject*>::iterator	StartIter = m_staticObjectList.begin();
-	list<GameObject*>::iterator	EndIter = m_staticObjectList.end();
+	vector<GameObject*>::iterator StartIter = m_staticObjectList.begin();
+	vector<GameObject*>::iterator EndIter = m_staticObjectList.end();
 
 	for (; StartIter != EndIter; ++StartIter)
 	{
@@ -69,10 +69,10 @@ bool JEONG::StaticManager::CheckStaticObject(const string & TagName)
 	return false;
 }
 
-GameObject * JEONG::StaticManager::FindStaticObject(const string & TagName)
+GameObject * StaticManager::FindStaticObject(const string & TagName)
 {
-	list<GameObject*>::iterator	StartIter = m_staticObjectList.begin();
-	list<GameObject*>::iterator	EndIter = m_staticObjectList.end();
+	vector<GameObject*>::iterator StartIter = m_staticObjectList.begin();
+	vector<GameObject*>::iterator EndIter = m_staticObjectList.end();
 
 	for (; StartIter != EndIter; ++StartIter)
 	{

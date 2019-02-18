@@ -262,6 +262,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TimeManager.h" />
     <ClInclude Include="Timer.h" />
+    <ClInclude Include="tinyxml2.h" />
     <ClInclude Include="Type.h" />
     <ClInclude Include="Flag.h" />
     <ClInclude Include="UserComponent\UserComponent_Base.h" />
@@ -333,6 +334,7 @@
     </ClCompile>
     <ClCompile Include="TimeManager.cpp" />
     <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="tinyxml2.cpp" />
     <ClCompile Include="UserComponent\UserComponent_Base.cpp" />
   </ItemGroup>
   <ItemGroup>

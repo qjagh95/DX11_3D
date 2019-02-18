@@ -38,11 +38,14 @@
 #include <wrl/client.h>
 ///Excel
 
+#include "tinyxml2.h"
+
 #include "MathHeader.h"
 #include "Vector2.h"
 #include "Vector3.h"
 #include "Vector4.h"
 #include "Matrix.h"
+
 
 #include <Audio.h>
 
@@ -62,9 +65,9 @@
 #pragma comment(lib, "libxl")
 #pragma comment(lib, "ImGui")
 
-//#pragma comment(lib, "libfbxsdk-md_Debug")
-//#pragma comment(lib, "libfbxsdk-md")
-//#pragma comment(lib, "libfbxsdk-md64")
+#pragma comment(lib, "libfbxsdk-md_Debug")
+#pragma comment(lib, "libfbxsdk-md")
+#pragma comment(lib, "libfbxsdk-md64")
 #pragma comment(lib, "libfbxsdk-md64_Debug")
 
 ///Math

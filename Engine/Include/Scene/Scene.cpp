@@ -411,7 +411,7 @@ void Scene::SetLayerDie(const string & TagName, bool isActive)
 	}
 }
 
-Layer * Scene::FindLayer(const string & TagName)
+Layer* Scene::FindLayer(const string & TagName)
 {
 	list<Layer*>::iterator StartIter = m_LayerList.begin();
 	list<Layer*>::iterator EndIter = m_LayerList.end();
@@ -427,7 +427,7 @@ Layer * Scene::FindLayer(const string & TagName)
 	return NULLPTR;
 }
 
-Layer * Scene::FindLayerNoneCount(const string & TagName)
+Layer* Scene::FindLayerNoneCount(const string & TagName)
 {
 	list<Layer*>::iterator StartIter = m_LayerList.begin();
 	list<Layer*>::iterator EndIter = m_LayerList.end();
@@ -435,9 +435,7 @@ Layer * Scene::FindLayerNoneCount(const string & TagName)
 	for (; StartIter != EndIter; StartIter++)
 	{
 		if ((*StartIter)->GetTag() == TagName)
-		{
 			return (*StartIter);
-		}
 	}
 	return NULLPTR;
 }

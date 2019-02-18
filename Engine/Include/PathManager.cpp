@@ -27,6 +27,7 @@ PathManager::PathManager()
 	AddPath(SOUND_PATH, TEXT("Sound\\"));
 	AddPath(DATA_PATH, TEXT("Data\\"));
 	AddPath(FBX_PATH, TEXT("FBX\\"));
+	AddPath(FBX_DATA_PATH, TEXT("FBXData\\"));
 }
 
 PathManager::~PathManager()

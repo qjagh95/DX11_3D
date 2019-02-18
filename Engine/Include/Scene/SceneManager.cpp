@@ -20,7 +20,7 @@ SceneManager::~SceneManager()
 
 bool SceneManager::Init()
 {
-	m_CurScene = new JEONG::Scene();
+	m_CurScene = new Scene();
 
 	if (m_CurScene->Init() == false)
 		return false;
@@ -124,7 +124,7 @@ void SceneManager::CreateNextScene(bool isChange)
 {
 	SAFE_RELEASE(m_NextScene);
 
-	m_NextScene = new JEONG::Scene();
+	m_NextScene = new Scene();
 	m_NextScene->Init();
 	m_isChange = isChange;
 }

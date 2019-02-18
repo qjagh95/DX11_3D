@@ -7,25 +7,25 @@
 
 JEONG_USING
 
-JEONG::Layer::Layer()
+Layer::Layer()
 	:m_ZOrder(-1)
 {
 }
 
-JEONG::Layer::~Layer()
+Layer::~Layer()
 {
 	Safe_Release_VecList(m_ObjectList);
 }
 
-bool JEONG::Layer::Init()
+bool Layer::Init()
 {
 	return true;
 }
 
-int JEONG::Layer::Input(float DeltaTime)
+int Layer::Input(float DeltaTime)
 {
-	list<JEONG::GameObject*>::iterator StartIter = m_ObjectList.begin();
-	list<JEONG::GameObject*>::iterator EndIter = m_ObjectList.end();
+	list<GameObject*>::iterator StartIter = m_ObjectList.begin();
+	list<GameObject*>::iterator EndIter = m_ObjectList.end();
 
 	for (; StartIter != EndIter; )
 	{
@@ -48,10 +48,10 @@ int JEONG::Layer::Input(float DeltaTime)
 	return 0;
 }
 
-int JEONG::Layer::Update(float DeltaTime)
+int Layer::Update(float DeltaTime)
 {
-	list<JEONG::GameObject*>::iterator StartIter = m_ObjectList.begin();
-	list<JEONG::GameObject*>::iterator EndIter = m_ObjectList.end();
+	list<GameObject*>::iterator StartIter = m_ObjectList.begin();
+	list<GameObject*>::iterator EndIter = m_ObjectList.end();
 
 	for (; StartIter != EndIter; )
 	{
@@ -73,10 +73,10 @@ int JEONG::Layer::Update(float DeltaTime)
 	return 0;
 }
 
-int JEONG::Layer::LateUpdate(float DeltaTime)
+int Layer::LateUpdate(float DeltaTime)
 {
-	list<JEONG::GameObject*>::iterator StartIter = m_ObjectList.begin();
-	list<JEONG::GameObject*>::iterator EndIter = m_ObjectList.end();
+	list<GameObject*>::iterator StartIter = m_ObjectList.begin();
+	list<GameObject*>::iterator EndIter = m_ObjectList.end();
 
 	for (; StartIter != EndIter; )
 	{
@@ -98,10 +98,10 @@ int JEONG::Layer::LateUpdate(float DeltaTime)
 	return 0;
 }
 
-void JEONG::Layer::Collision(float DeltaTime)
+void Layer::Collision(float DeltaTime)
 {
-	list<JEONG::GameObject*>::iterator StartIter = m_ObjectList.begin();
-	list<JEONG::GameObject*>::iterator EndIter = m_ObjectList.end();
+	list<GameObject*>::iterator StartIter = m_ObjectList.begin();
+	list<GameObject*>::iterator EndIter = m_ObjectList.end();
 
 	for (; StartIter != EndIter; )
 	{
@@ -122,10 +122,10 @@ void JEONG::Layer::Collision(float DeltaTime)
 	}
 }
 
-void JEONG::Layer::CollisionLateUpdate(float DeltaTime)
+void Layer::CollisionLateUpdate(float DeltaTime)
 {
-	list<JEONG::GameObject*>::iterator StartIter = m_ObjectList.begin();
-	list<JEONG::GameObject*>::iterator EndIter = m_ObjectList.end();
+	list<GameObject*>::iterator StartIter = m_ObjectList.begin();
+	list<GameObject*>::iterator EndIter = m_ObjectList.end();
 
 	for (; StartIter != EndIter; )
 	{
@@ -146,10 +146,10 @@ void JEONG::Layer::CollisionLateUpdate(float DeltaTime)
 	}
 }
 
-void JEONG::Layer::Render(float DeltaTime)
+void Layer::Render(float DeltaTime)
 {
-	list<JEONG::GameObject*>::iterator StartIter = m_ObjectList.begin();
-	list<JEONG::GameObject*>::iterator EndIter = m_ObjectList.end();
+	list<GameObject*>::iterator StartIter = m_ObjectList.begin();
+	list<GameObject*>::iterator EndIter = m_ObjectList.end();
 
 	for (; StartIter != EndIter; )
 	{
@@ -170,13 +170,13 @@ void JEONG::Layer::Render(float DeltaTime)
 	}
 }
 
-void JEONG::Layer::SetZOrder(int zorder)
+void Layer::SetZOrder(int zorder)
 {
 	m_ZOrder = zorder;
 	m_Scene->SortLayer();
 }
 
-void JEONG::Layer::AddObject(JEONG::GameObject * object)
+void Layer::AddObject(JEONG::GameObject * object)
 {
 	object->SetScene(m_Scene);
 	object->SetLayer(this);
@@ -185,10 +185,10 @@ void JEONG::Layer::AddObject(JEONG::GameObject * object)
 	m_ObjectList.push_back(object);
 }
 
-JEONG::GameObject * JEONG::Layer::FindObject(const string & TagName)
+GameObject * Layer::FindObject(const string & TagName)
 {
-	list<JEONG::GameObject*>::iterator StartIter = m_ObjectList.begin();
-	list<JEONG::GameObject*>::iterator EndIter = m_ObjectList.end();
+	list<GameObject*>::iterator StartIter = m_ObjectList.begin();
+	list<GameObject*>::iterator EndIter = m_ObjectList.end();
 
 	for (; StartIter != EndIter; StartIter++)
 	{

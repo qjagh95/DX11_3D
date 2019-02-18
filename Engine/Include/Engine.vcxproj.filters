@@ -226,6 +226,9 @@
     <Filter Include="Core\08. Object\Component\BaseComponent\13. Animation3D">
       <UniqueIdentifier>{8fd1eeb0-b04f-4b90-8463-86590cd4c601}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\17. TinyXML">
+      <UniqueIdentifier>{31bfd374-2942-476f-a0fe-0f1d9d1c54b3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -426,6 +429,9 @@
     <ClInclude Include="Component\Animation3D_Com.h">
       <Filter>Core\08. Object\Component\BaseComponent\13. Animation3D</Filter>
     </ClInclude>
+    <ClInclude Include="tinyxml2.h">
+      <Filter>Core\17. TinyXML</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Copy.bat">
@@ -618,6 +624,9 @@
     </ClCompile>
     <ClCompile Include="Component\Animation3D_Com.cpp">
       <Filter>Core\08. Object\Component\BaseComponent\13. Animation3D</Filter>
+    </ClCompile>
+    <ClCompile Include="tinyxml2.cpp">
+      <Filter>Core\17. TinyXML</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

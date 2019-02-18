@@ -351,7 +351,7 @@ void GameObject::SetLayer(Layer * layer)
 		(*StartIter)->m_Layer = layer;
 }
 
-JEONG::GameObject * JEONG::GameObject::CreateObject(const string & TagName, JEONG::Layer * layer, bool isStaticObject)
+GameObject * GameObject::CreateObject(const string & TagName, JEONG::Layer * layer, bool isStaticObject)
 {
 	GameObject* newObject = StaticManager::Get()->FindStaticObject(TagName);
 
@@ -375,7 +375,6 @@ JEONG::GameObject * JEONG::GameObject::CreateObject(const string & TagName, JEON
 	{
 		if(isStaticObject == false)
 			layer->AddObject(newObject);
-
 		else
 		{
 			Scene* pScene = layer->GetScene();
@@ -538,7 +537,7 @@ void GameObject::DestroyProtoType(Scene * scene, const string & TagName)
 	FindIter->second.erase(FindIter2);
 }
 
-void JEONG::GameObject::DestroyProtoType()
+void GameObject::DestroyProtoType()
 {
 	unordered_map<Scene*, unordered_map<string, GameObject*>>::iterator StartIter = m_ProtoTypeMap.begin();
 	unordered_map<Scene*, unordered_map<string, GameObject*>>::iterator EndIter = m_ProtoTypeMap.end();
@@ -569,12 +568,12 @@ void GameObject::DeleteComponent(COMPONENT_TYPE Type)
 
 GameObject * GameObject::FindProtoType(Scene * scene, const string & TagName)
 {
-	unordered_map<JEONG::Scene*, unordered_map<string, JEONG::GameObject*>>::iterator FindIter = m_ProtoTypeMap.find(scene);
+	unordered_map<Scene*, unordered_map<string, GameObject*>>::iterator FindIter = m_ProtoTypeMap.find(scene);
 	
 	if (FindIter == m_ProtoTypeMap.end())
 		return NULLPTR;
 
-	unordered_map<string, JEONG::GameObject*>::iterator FindIter2 = FindIter->second.find(TagName);
+	unordered_map<string, GameObject*>::iterator FindIter2 = FindIter->second.find(TagName);
 
 	if (FindIter2 == FindIter->second.end())
 		return NULLPTR;
@@ -598,7 +597,7 @@ void GameObject::AddChild(GameObject * Child)
 	m_Layer->AddObject(Child);
 }
 
-void JEONG::GameObject::AddStaticObject()
+void GameObject::AddStaticObject()
 {
 	StaticManager::Get()->AddStaticObject(this);
 }
@@ -611,7 +610,7 @@ void GameObject::Load(BineryRead & Reader)
 {
 }
 
-const list<JEONG::Component_Base*>* JEONG::GameObject::FindComponentFromTag(const string& TagName)
+const list<Component_Base*>* GameObject::FindComponentFromTag(const string& TagName)
 {
 	Safe_Release_VecList(m_FindComList);
 	m_FindComList.clear();

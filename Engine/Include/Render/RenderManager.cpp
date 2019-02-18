@@ -664,15 +664,11 @@ void RenderManager::RenderPointLight(float DeltaTime, Light_Com * light)
 	if (m_isWireFrame == false)
 		return;
 
-	m_CullNone->SetState();
+	m_WireFrame->SetState();
 	{
-		m_WireFrame->SetState();
-		{
-			m_SphereVolum->Render();
-		}
-		m_WireFrame->ResetState();
+		m_SphereVolum->Render();
 	}
-	m_CullNone->ResetState();
+	m_WireFrame->ResetState();
 }
 
 void RenderManager::RenderSpotLight(float DeltaTime, Light_Com * light)
@@ -739,15 +735,11 @@ void RenderManager::RenderSpotLight(float DeltaTime, Light_Com * light)
 	if (m_isWireFrame == false)
 		return;
 
-	m_CullNone->SetState();
+	m_WireFrame->SetState();
 	{
-		m_WireFrame->SetState();
-		{
-			m_CornVolum->Render();
-		}
-		m_WireFrame->ResetState();
+		m_CornVolum->Render();
 	}
-	m_CullNone->ResetState();
+	m_WireFrame->ResetState();
 }
 
 void RenderManager::RenderFullScreen(float DeltaTime)
