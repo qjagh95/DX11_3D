@@ -3,7 +3,7 @@
 
 JEONG_USING
 
-JEONG::BineryRead::BineryRead(const string& FileName)
+BineryRead::BineryRead(const string& FileName)
 {
 	wstring Temp;
 	Temp = PathManager::Get()->FindPath(DATA_PATH);
@@ -17,7 +17,7 @@ JEONG::BineryRead::BineryRead(const string& FileName)
 	m_ReadFile.open(Temp2.c_str(), ios::binary);
 }
 
-JEONG::BineryRead::BineryRead(const wstring& FileName)
+BineryRead::BineryRead(const wstring& FileName)
 {
 	wstring Temp;
 	Temp = PathManager::Get()->FindPath(DATA_PATH);
@@ -29,12 +29,12 @@ JEONG::BineryRead::BineryRead(const wstring& FileName)
 	m_ReadFile.open(Temp.c_str());
 }
 
-JEONG::BineryRead::~BineryRead()
+BineryRead::~BineryRead()
 {
 	m_ReadFile.close();
 }
 
-bool JEONG::BineryRead::ReadBool()
+bool BineryRead::ReadBool()
 {
 	int Temp = -1;
 
@@ -46,7 +46,7 @@ bool JEONG::BineryRead::ReadBool()
 	return (bool)Temp;
 }
 
-int JEONG::BineryRead::ReadInt()
+int BineryRead::ReadInt()
 {
 	int Temp = INT_MIN;
 
@@ -58,7 +58,7 @@ int JEONG::BineryRead::ReadInt()
 	return Temp;
 }
 
-float JEONG::BineryRead::ReadFloat()
+float BineryRead::ReadFloat()
 {
 	float Temp = (float)INT_MIN;
 
@@ -70,7 +70,7 @@ float JEONG::BineryRead::ReadFloat()
 	return Temp;
 }
 
-double JEONG::BineryRead::ReadDouble()
+double BineryRead::ReadDouble()
 {
 	double Temp = (double)INT_MIN;
 
@@ -82,7 +82,7 @@ double JEONG::BineryRead::ReadDouble()
 	return Temp;
 }
 
-Vector2 JEONG::BineryRead::ReadVector2()
+Vector2 BineryRead::ReadVector2()
 {
 	Vector2 Temp = Vector2((float)INT_MIN, (float)INT_MIN);
 
@@ -94,7 +94,7 @@ Vector2 JEONG::BineryRead::ReadVector2()
 	return Temp;
 }
 
-Vector3 JEONG::BineryRead::ReadVector3()
+Vector3 BineryRead::ReadVector3()
 {
 	Vector3 Temp = Vector3((float)INT_MIN, (float)INT_MIN, (float)INT_MIN);
 
@@ -106,7 +106,7 @@ Vector3 JEONG::BineryRead::ReadVector3()
 	return Temp;
 }
 
-Vector4 JEONG::BineryRead::ReadVector4()
+Vector4 BineryRead::ReadVector4()
 {
 	Vector4 Temp = Vector4((float)INT_MIN, (float)INT_MIN, (float)INT_MIN, (float)INT_MIN);
 
@@ -118,7 +118,7 @@ Vector4 JEONG::BineryRead::ReadVector4()
 	return Temp;
 }
 
-string JEONG::BineryRead::ReadString()
+string BineryRead::ReadString()
 {
 	char getString[255] = {};
 	size_t Datalen;
@@ -137,7 +137,7 @@ size_t BineryRead::ReadSizeT()
 	return Data;
 }
 
-wstring JEONG::BineryRead::ReadWString()
+wstring BineryRead::ReadWString()
 {
 	char getString[255];
 	size_t Datalen;
@@ -150,42 +150,42 @@ wstring JEONG::BineryRead::ReadWString()
 	return ReturnString;
 }
 
-void JEONG::BineryRead::ReadData(bool & Data)
+void BineryRead::ReadData(bool & Data)
 {
 	m_ReadFile.read((char*)&Data, sizeof(bool));
 }
 
-void JEONG::BineryRead::ReadData(int & Data)
+void BineryRead::ReadData(int & Data)
 {
 	m_ReadFile.read((char*)&Data, sizeof(int));
 }
 
-void JEONG::BineryRead::ReadData(float & Data)
+void BineryRead::ReadData(float & Data)
 {
 	m_ReadFile.read((char*)&Data, sizeof(float));
 }
 
-void JEONG::BineryRead::ReadData(double & Data)
+void BineryRead::ReadData(double & Data)
 {
 	m_ReadFile.read((char*)&Data, sizeof(double));
 }
 
-void JEONG::BineryRead::ReadData(Vector2 & Data)
+void BineryRead::ReadData(Vector2 & Data)
 {
 	m_ReadFile.read((char*)&Data, sizeof(Vector2));
 }
 
-void JEONG::BineryRead::ReadData(Vector3 & Data)
+void BineryRead::ReadData(Vector3 & Data)
 {
 	m_ReadFile.read((char*)&Data, sizeof(Vector3));
 }
 
-void JEONG::BineryRead::ReadData(Vector4 & Data)
+void BineryRead::ReadData(Vector4 & Data)
 {
 	m_ReadFile.read((char*)&Data, sizeof(Vector4));
 }
 
-void JEONG::BineryRead::ReadData(string & Data)
+void BineryRead::ReadData(string & Data)
 {
 	size_t DataLen;
 	char getData[255] = {};
@@ -196,7 +196,7 @@ void JEONG::BineryRead::ReadData(string & Data)
 	Data = getData;
 }
 
-void JEONG::BineryRead::ReadData(wstring & Data)
+void BineryRead::ReadData(wstring & Data)
 {
 	size_t DataLen;
 	char getData[255] = {};
@@ -207,17 +207,17 @@ void JEONG::BineryRead::ReadData(wstring & Data)
 	Data = CA2W(getData);
 }
 
-void JEONG::BineryRead::ReadData(size_t & Data)
+void BineryRead::ReadData(size_t & Data)
 {
 	m_ReadFile.read((char*)&Data, sizeof(Data));
 }
 
-void JEONG::BineryRead::ReadData(Matrix & Data)
+void BineryRead::ReadData(Matrix & Data)
 {
 	m_ReadFile.read((char*)&Data, sizeof(float) * 16);
 }
 
-void JEONG::BineryRead::ReadData(char* Data)
+void BineryRead::ReadData(char* Data)
 {
 	size_t Lenth = -1;
 
@@ -225,7 +225,7 @@ void JEONG::BineryRead::ReadData(char* Data)
 	m_ReadFile.read(Data, Lenth);
 }
 
-void JEONG::BineryRead::ReadData(wchar_t* Data)
+void BineryRead::ReadData(wchar_t* Data)
 {
 	size_t Lenth = -1;
 
@@ -233,7 +233,7 @@ void JEONG::BineryRead::ReadData(wchar_t* Data)
 	m_ReadFile.read((char*)Data, Lenth);
 }
 
-void JEONG::BineryRead::ReadData(void * Data, size_t Size)
+void BineryRead::ReadData(void * Data, size_t Size)
 {
 	m_ReadFile.read((char*)&Data, Size);
 }

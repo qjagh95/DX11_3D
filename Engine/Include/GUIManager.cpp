@@ -6,7 +6,6 @@
 #include "Component/Transform_Com.h"
 #include "Component/Material_Com.h"
 
-
 JEONG_USING
 SINGLETON_VAR_INIT(GUIManager)
 using namespace ImGui;
@@ -26,17 +25,15 @@ GUIManager::~GUIManager()
 
 void GUIManager::CreateImGui(HWND hWnd, ID3D11Device * Device, ID3D11DeviceContext * DeviceConstext)
 {
-#ifdef _DEBUG
 	IMGUI_CHECKVERSION();
 	CreateContext();
 	StyleColorsClassic();
 
 	ImGui_ImplWin32_Init(hWnd);
 	ImGui_ImplDX11_Init(Device, DeviceConstext);
-#endif
 }
 
-void JEONG::GUIManager::ImGuiBegin(const char * TitleName)
+void GUIManager::ImGuiBegin(const char * TitleName)
 {
 	if (m_isShow == false)
 		return;

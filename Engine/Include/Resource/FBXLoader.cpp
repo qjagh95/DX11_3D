@@ -57,16 +57,14 @@ bool FBXLoader::LoadFbx(const char* FullPath)
 	// 위에서 만들어낸 정보를 FbxScene에 노드를 구성한다.
 	pImporter->Import(m_Scene);
 
-	//Max의 Axis시스템은 Y와 Z가 바뀌어있다. 밑의 코드는 딱히 의미 없다.
-	//무조건 Max Axis축으로 튀어 나옴
+	//Max의 Axis시스템은 Y와 Z가 바뀌어있다.
 	if (m_Scene->GetGlobalSettings().GetAxisSystem() != FbxAxisSystem::Max)
 		m_Scene->GetGlobalSettings().SetAxisSystem(FbxAxisSystem::Max);
-
-	pImporter->Destroy();
 
 	ReadMaterial(m_Scene);
 	//WriteMaterialXML();
 
+	pImporter->Destroy();
 	return true;
 }
 
@@ -76,7 +74,7 @@ void FBXLoader::ReadMaterial(FbxScene* scene)
 	FbxProperty
 	자세한 내용은 너무 방대하다.
 	간단히 생각해서 내가 가져올 데이터들은 무조건 Property에 있다고 생각하면 된다.
-
+	
 	Factor는 독립된 놈이다. 연관이 있을뿐
 
 	이 함수에서의 최종 목표는 Material데이터를 XML로 뽑아낸다.
@@ -245,7 +243,7 @@ void FBXLoader::ReadJoint(FbxScene* Scene, FbxNode* Node, int Index, int ParentI
 	}
 
 	for (int i = 0; i < Node->GetChildCount(); ++i)
-		ReadJoint(Scene, Node->GetChild(i), m_vecJoints.size(), Index);
+		ReadJoint(Scene, Node->GetChild(i), (int)m_vecJoints.size(), Index);
 }
 
 void FBXLoader::ReadMesh(FbxScene* Scene, FbxNode* Node, int JointIndex)
@@ -254,7 +252,7 @@ void FBXLoader::ReadMesh(FbxScene* Scene, FbxNode* Node, int JointIndex)
 	vector<FBXVertex*> vertices;
 
 	//삼각형갯수
-	for (size_t i = 0; i < getMesh->GetPolygonCount(); ++i)
+	for (int i = 0; i < getMesh->GetPolygonCount(); ++i)
 	{
 		int polygon_size = getMesh->GetPolygonSize(i);
 		
@@ -264,19 +262,19 @@ void FBXLoader::ReadMesh(FbxScene* Scene, FbxNode* Node, int JointIndex)
 
 		//삼각형 안에 정점으로 들어왔다.
 		//GL좌표계기준이라서 인덱스를 거꾸로 돌려서 우리좌표계로 맞췄다
-		for (size_t j = polygon_size - 1; j >= 0; --j) // Winding Order CCW(RH) -> CW(LH)
+		for (int j = polygon_size - 1; j >= 0; --j) // Winding Order CCW(RH) -> CW(LH)
 		{
 			//최적화문제때문에 전부 데이터들을 인덱스로 떡칠 해놨다
 			FBXVertex* newVertex = new FBXVertex();
 
 			//Vertex의 Index (0 1 2 3 .. 라는 인덱스가 VertexData를 가르킨다.)
-			auto ControlPointIndex = getMesh->GetPolygonVertex(i, j);
+			int ControlPointIndex = getMesh->GetPolygonVertex(i, j);
 			newVertex->ControlPointIndex = ControlPointIndex;
 
 			//polygon_vertex_idx = 인덱스의 인덱스
 			//0 1 2 / 2 1 3 <- 인덱스
 			//0 1 2 3 4 5 <- 인덱스의 인덱스
-			auto PolygonVertexIndex = 3 * i + j;
+			int PolygonVertexIndex = 3 * i + j;
 			newVertex->MaterialName = GetMaterialName(getMesh, i, PolygonVertexIndex, ControlPointIndex);
 
 			Vector3 temp;
@@ -330,7 +328,7 @@ void FBXLoader::ReadMesh(FbxScene* Scene, FbxNode* Node, int JointIndex)
 		for (size_t i = 0; i < gather.size(); i++)
 		{
 			newMeshPart->Vertices.push_back(gather[i].Vertex3D);
-			newMeshPart->Indices.push_back(newMeshPart->Indices.size()); // 일단은 인덱스 최적화 안함
+			newMeshPart->Indices.push_back((int)newMeshPart->Indices.size()); // 일단은 인덱스 최적화 안함
 		}
 		newMeshData->MeshPart.push_back(newMeshPart);
 	}

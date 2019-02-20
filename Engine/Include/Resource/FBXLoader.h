@@ -77,6 +77,14 @@ struct JEONG_DLL FBXVertex
 	Vertex3D Vertex3D; //정점데이터
 };
 
+struct JEONG_DLL FBXMeshPart
+{
+	string MaterialName;
+
+	vector<Vertex3D> Vertices;
+	vector<uint32_t> Indices;
+};
+
 struct JEONG_DLL FBXMesh
 {
 	string Name;
@@ -86,14 +94,6 @@ struct JEONG_DLL FBXMesh
 
 	vector<FBXVertex*> Vertices;
 	vector<FBXMeshPart*> MeshPart;
-};
-
-struct JEONG_DLL FBXMeshPart
-{
-	string MaterialName;
-
-	vector<Vertex3D> Vertices;
-	vector<uint32_t> Indices;
 };
 
 class JEONG_DLL FBXLoader
@@ -124,6 +124,8 @@ private:
 	void WriteMaterialXML(const string& FileName, const string& PathKey = FBX_DATA_PATH);
 	void ReadJoint(FbxScene* Scene, FbxNode* Node, int Index, int ParentIndex);
 	void ReadMesh(FbxScene* Scene, FbxNode* Node, int JointIndex);
+	void ReadBinormal();
+	void ReadTangent();
 
 	//void Triangulate(FbxNode* pNode);
 	//void LoadMaterial(FbxSurfaceMaterial * pMtrl);
@@ -150,7 +152,7 @@ private:
 	vector<FBXJoint*> m_vecJoints;
 	vector<FBXMesh*> m_vecMeshs;
 
-private:
+public:
 	FBXLoader();
 	~FBXLoader();
 

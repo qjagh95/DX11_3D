@@ -12,6 +12,7 @@
 #include <Component/Renderer_Com.h>
 #include <Component/Camera_Com.h>
 #include <Component/Transform_Com.h>
+#include <Resource/FBXLoader.h>
 
 MainScene::MainScene()
 {
@@ -38,6 +39,11 @@ bool MainScene::Init()
 	//RenderComponent->SetMesh("Player", TEXT("Monster4.fbx"));
 	RenderComponent->SetMesh("Pyramid");
 	RenderComponent->InitMaterial();
+
+	//FBXLoader bb;
+	//string cc = PathManager::Get()->FindPathMultiByte(FBX_PATH);
+	//cc += "Monster4.fbx";
+	//bb.LoadFbx(cc.c_str());
 
 	GameObject* newObject2 = GameObject::CreateObject("Player", Default);
 	Player_Com* newPlayer = newObject2->AddComponent<Player_Com>("Player");

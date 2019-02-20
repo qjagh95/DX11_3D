@@ -1,6 +1,7 @@
 #pragma once
 JEONG_BEGIN
 
+class Timer;
 class JEONG_DLL Core
 {
 public:
@@ -35,6 +36,7 @@ private:
 	float ClearColor[4];
 	GAME_MODE m_GameMode;
 	static WPARAM m_wParam;
+	Timer* m_Timer;
 
 public:
 	CLASS_IN_SINGLE(Core);

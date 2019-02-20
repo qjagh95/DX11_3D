@@ -40,6 +40,7 @@ Core::Core()
 	//_CrtSetBreakAlloc(265199);
 	ZeroMemory(ClearColor, sizeof(float) * 4);
 	PathManager::Get();
+	m_Timer = NULLPTR;
 }
 
 Core::~Core()
@@ -55,8 +56,11 @@ Core::~Core()
 	SoundManager::Delete();
 	StaticManager::Delete();
 	RenderManager::Delete();
+
+#ifdef GUI_USING
 	ExcelManager::Delete();
 	GUIManager::Delete();
+#endif
 	ResourceManager::Delete();
 
 	CoUninitialize();
@@ -82,7 +86,9 @@ bool Core::Init(HINSTANCE hInst, HWND hWnd, unsigned int Width, unsigned int Hei
 	m_WinSize.Height = Height;
 
 	//컴객체 초기화.
+#ifdef GUI_USING
 	CoInitializeEx(NULLPTR, COINIT_MULTITHREADED);
+#endif
 
 	//DirectX11 Device초기화
 	if (Device::Get()->Init(hWnd, Width, Height, bWindowMode) == false)
@@ -139,11 +145,13 @@ bool Core::Init(HINSTANCE hInst, HWND hWnd, unsigned int Width, unsigned int Hei
 		return false;
 	}
 
+#ifdef GUI_USING
 	if (ExcelManager::Get()->Init() == false)
 	{
 		TrueAssert(true);
 		return false;
 	}
+#endif
 
 	if (KeyInput::Get()->Init() == false)
 	{
@@ -157,9 +165,13 @@ bool Core::Init(HINSTANCE hInst, HWND hWnd, unsigned int Width, unsigned int Hei
 		return false;
 	}
 
+#ifdef GUI_USING
 	GUIManager::Get()->CreateImGui(m_hWnd, Device::Get()->GetDevice(), Device::Get()->GetContext());
+#endif
 
 	SetClearColor(0, 150, 255, 0);
+
+	m_Timer = TimeManager::Get()->FindTimer("MainTimer");
 
 	return true;
 }
@@ -167,7 +179,6 @@ bool Core::Init(HINSTANCE hInst, HWND hWnd, unsigned int Width, unsigned int Hei
 int Core::Run()
 {
 	MSG msg;
-
 
 	while (m_isLoop)
 	{
@@ -186,14 +197,13 @@ int Core::Run()
 
 void Core::Logic()
 {
-	Timer* getTimer = TimeManager::Get()->FindTimer("MainTimer");
-	getTimer->Update();
+	m_Timer->Update();
+	float Time = m_Timer->GetDeltaTime();
 
-	float Time = getTimer->GetDeltaTime();
-
-#ifdef _DEBUG
+#ifdef GUI_USING
 	GUIManager::Get()->ImGuiBegin("MaJaSinInNa");
 #endif
+
 	Input(Time);
 	Update(Time);
 	LateUpdate(Time);
@@ -249,11 +259,9 @@ void Core::CreateWnd(const TCHAR * TitleName, const TCHAR * ClassName)
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 LRESULT Core::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {  
-#ifdef _DEBUG
-
+#ifdef GUI_USING
 	if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam))
 		return true;
-
 #endif
 
 	switch (message)
@@ -311,8 +319,7 @@ void Core::Render(float DeltaTime)
 		SceneManager::Get()->Render(DeltaTime);
 		RenderManager::Get()->Render(DeltaTime);
 		KeyInput::Get()->RenderMouse(DeltaTime);
-
-#ifdef _DEBUG
+#ifdef GUI_USING
 		GUIManager::Get()->ImGuiEnd();
 #endif
 	}

@@ -27,6 +27,8 @@
 #include <dxgidebug.h>
 #include <dinput.h>
 
+#ifdef GUI_USING
+
 ///Excel
 #include "enum.h"
 #include "IBookT.h"
@@ -35,8 +37,16 @@
 #include "ISheetT.h"
 #include "setup.h"
 #include "libxl.h"
+#pragma comment(lib, "libxl")
+
+#include "imgui.h"
+#include "imgui_impl_dx11.h"
+#include "imgui_impl_win32.h"
+
+#endif
+
 #include <wrl/client.h>
-///Excel
+#include "tinyxml2.h"
 
 #include "MathHeader.h"
 #include "Vector2.h"
@@ -58,15 +68,6 @@
 
 #pragma warning(disable:4099)
 
-///Excel
-#pragma comment(lib, "libxl")
-#pragma comment(lib, "ImGui")
-
-//#pragma comment(lib, "libfbxsdk-md_Debug")
-//#pragma comment(lib, "libfbxsdk-md")
-//#pragma comment(lib, "libfbxsdk-md64")
-#pragma comment(lib, "libfbxsdk-md64_Debug")
-
 ///Math
 #include "Macro.h"
 #include "Flag.h"
@@ -83,9 +84,6 @@ using namespace libxl;
 //#define new new(_CLIENT_BLOCK,__FILE__,__LINE__)
 //#endif // DEBUG
 
-#include "imgui.h"
-#include "imgui_impl_dx11.h"
-#include "imgui_impl_win32.h"
 
 #include "FontManager.h"
 #include "Device.h"

@@ -66,9 +66,7 @@ bool Scene::Init()
 
 int Scene::Input(float DeltaTime)
 {
-#ifdef _DEBUG
 	LightDebug(DeltaTime);
-#endif
 
 	list<SceneComponent*>::iterator StartIter = m_SceneComponentList.begin();
 	list<SceneComponent*>::iterator EndIter = m_SceneComponentList.end();

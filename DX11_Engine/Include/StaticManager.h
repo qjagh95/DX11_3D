@@ -16,7 +16,7 @@ public:
 	GameObject* FindStaticObject(const string& TagName);
 
 private:
-	list<GameObject*> m_staticObjectList;
+	vector<GameObject*> m_staticObjectList;
 
 public:
 	CLASS_IN_SINGLE(StaticManager)
