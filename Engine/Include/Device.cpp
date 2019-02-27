@@ -97,6 +97,7 @@ bool JEONG::Device::Init(HWND hWnd, unsigned int Width, unsigned int Height, boo
 
 	ID3D11Texture2D* pBuffer = NULLPTR;										///com객체를 얻어오면 래퍼런스카운트가 +1 증가한다.
 	//스왑체인에서 백버퍼를 뽑아온다.
+
 	m_SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&pBuffer);	///__uuidof 클래스의 고유 식별번호를 알아오는 키워드
 	//랜더타겟뷰에 어떤 버퍼를 지정해놓으면 이 뷰에 묶여있는 버퍼에다 출력을해준다.
 	m_Device->CreateRenderTargetView(pBuffer, NULLPTR, &m_TargerView);
@@ -107,7 +108,7 @@ bool JEONG::Device::Init(HWND hWnd, unsigned int Width, unsigned int Height, boo
 	//픽셀정보는 보통 텍스쳐에 저장한다.
 
 	//깊이 정보를 설정한다. (백버퍼의 크기와 동일하다) 깊이정보는 텍스쳐2D로 설정한다.
-	D3D11_TEXTURE2D_DESC DepthDesc = {}; 
+	D3D11_TEXTURE2D_DESC DepthDesc = {};
 	DepthDesc.Width = Width;
 	DepthDesc.Height = Height;
 	DepthDesc.ArraySize = 1;
@@ -134,7 +135,11 @@ bool JEONG::Device::Init(HWND hWnd, unsigned int Width, unsigned int Height, boo
 	}
 	    
 	//해당 버퍼에 깊이-스탠실 뷰를 만든다.
-	m_Device->CreateDepthStencilView(pBuffer, NULLPTR, &m_DepthView);
+	if(FAILED(m_Device->CreateDepthStencilView(pBuffer, NULLPTR, &m_DepthView)))
+	{
+		TrueAssert(true);
+		return false;
+	}
 
 	SAFE_RELEASE(pBuffer);
 

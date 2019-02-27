@@ -52,7 +52,6 @@ private:
 	bool m_isScreenRender;
 
 	unordered_map<string, RendererCBuffer*> m_CBufferMap;
-	//vector<vector<TextureSet*>> m_vecMeshTexture;
 
 private:
 	Renderer_Com();

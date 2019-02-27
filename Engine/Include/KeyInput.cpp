@@ -16,50 +16,43 @@
 #include "Scene/SceneManager.h"
 
 JEONG_USING
-SINGLETON_VAR_INIT(KeyInput)
+SINGLETON_VAR_INIT(JEONG::KeyInput)
 bool KeyInput::m_isMosueShow = false;
 
 KeyInput::KeyInput()
-	:m_MouseObject(NULLPTR), m_MouseWorldPoint(NULLPTR), m_ShowCursor(false)
 {
-
+	m_NewKey = NULLPTR;
+	m_MouseScreenPos = Vector2::Zero;
+	m_MouseWorldPos = Vector2::Zero;
+	m_MouseGap = Vector2::Zero;
+	m_MouseObject = NULLPTR;
+	m_MouseWorldPoint = NULLPTR;
+	m_MouseWindowPoint = NULLPTR;
+	m_ShowCursor = false;
+	m_EquipObject = NULLPTR;
+	m_isEquip = false;
+	m_CameraPos = Vector3::Zero;
 }
 
-JEONG::KeyInput::~KeyInput()
+KeyInput::~KeyInput()
 {
 	SAFE_RELEASE(m_MouseWindowPoint);
 	SAFE_RELEASE(m_MouseWorldPoint);
 	SAFE_RELEASE(m_MouseObject);
-
-	Safe_Delete_Map(m_KeyAxisMap);
-	Safe_Delete_Map(m_KeyActionMap);
-
-	if (m_Keyboard)
-	{
-		m_Keyboard->Unacquire();
-		SAFE_RELEASE(m_Keyboard);
-	}
-
-	SAFE_RELEASE(m_Input);
+	SAFE_RELEASE(m_EquipObject);
+	Safe_Delete_Map(m_KeyMap);
 }
 
-bool KeyInput::Init()
+bool JEONG::KeyInput::Init()
 {
-	if (FAILED(DirectInput8Create(Core::Get()->GetHinstance(), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&m_Input, NULLPTR)))
-		return false;
-
-	if (FAILED(m_Input->CreateDevice(GUID_SysKeyboard, &m_Keyboard, NULLPTR)))
-		return false;
-
-	if (FAILED(m_Keyboard->SetDataFormat(&c_dfDIKeyboard)))
-		return false;
-
-	//창이 활성화 됬을대만 키 옵션을 받는 옵션. (안되넹)
-	//if (FAILED(m_Keyboard->SetCooperativeLevel(Core::Get()->GetHwnd(), DISCL_EXCLUSIVE)))
-	//	return false;
-
-	if (FAILED(m_Keyboard->Acquire()))
-		return false;
+	AddKey("MoveLeft", VK_LEFT);
+	AddKey("MoveRight", VK_RIGHT);
+	AddKey("MoveUp", VK_UP);
+	AddKey("MoveDown", VK_DOWN);
+	AddKey("SystemPause", VK_F12);
+	AddKey("LButton", VK_LBUTTON);
+	AddKey("RButton", VK_RBUTTON);
+	AddKey("MButton", VK_MBUTTON);
 
 	m_MouseObject = JEONG::GameObject::CreateObject("MouseObject");
 	m_MouseObject->GetTransform()->SetWorldScale(Vector3(31.0f, 32.0f, 0.0f));
@@ -85,135 +78,54 @@ bool KeyInput::Init()
 	m_MouseWorldPoint = m_MouseObject->AddComponent<ColliderPoint_Com>("MouseWorld");
 	m_MouseWorldPoint->SetMyTypeName("MouseWorld");
 
-	ShowCursor(TRUE);
+	ShowCursor(FALSE);
+	m_ShowCursor = true;
+
 	return true;
 }
 
 void KeyInput::Update(float DeltaTime)
 {
-	ReadKeyBoard();
-
-	for (size_t i = 0; i < m_KeyList.size(); ++i)
-	{
-		unsigned char CurKey = m_KeyList[i];
-
-		if (m_Key[CurKey] & 0x80)
-		{
-			if (!m_KeyPress[CurKey] && !m_KeyDown[CurKey])
-				m_KeyPress[CurKey] = true;
-			else
-			{
-				m_KeyPress[CurKey] = false;
-				m_KeyDown[CurKey] = true;
-			}
-		}
-
-		else if (m_KeyPress[CurKey] || m_KeyDown[CurKey])
-		{
-			m_KeyPress[CurKey] = false;
-			m_KeyDown[CurKey] = false;
-			m_KeyUp[CurKey] = true;
-		}
-
-		else if (m_KeyUp[CurKey])
-			m_KeyUp[CurKey] = false;
-	}
-
-	auto iter = m_KeyAxisMap.begin();
-	auto iterEnd = m_KeyAxisMap.end();
-
-	for (; iter != iterEnd; ++iter)
-	{
-		for (size_t i = 0; i < iter->second->KeyList.size(); ++i)
-		{
-			KeyScale* CurKeyScale = iter->second->KeyList[i];
-
-			float fScale = 0.0f;
-			if (m_Key[CurKeyScale->Key] & 0x80 && iter->second->isFunctionBind)
-			{
-				fScale = CurKeyScale->Scale;
-				iter->second->Func(fScale, DeltaTime);
-			}
-		}
-	}
-
-	unsigned char cSKey[SKT_MAX] = { DIK_LSHIFT, DIK_LCONTROL, DIK_LALT };
-	bool bSKeyState[SKT_MAX] = {};
-
-	for (int i = 0; i < SKT_MAX; ++i)
-	{
-		if (m_Key[cSKey[i]] & 0x80)
-			bSKeyState[i] = true;
-		else
-			bSKeyState[i] = false;
-	}
-
-	auto iter2 = m_KeyActionMap.begin();
-	auto iter2End = m_KeyActionMap.end();
-
-	for (; iter2 != iter2End; ++iter2)
-	{
-		for (size_t i = 0; i < iter2->second->KeyList.size(); ++i)
-		{
-			bool bSKeyEnable[SKT_MAX] = { false, false, false };
-			ActionKey* CurActionKey = iter2->second->KeyList[i];
-
-			for (int i = 0; i < SKT_MAX; ++i)
-			{
-				if (CurActionKey->isSKey[i])
-				{
-					if (bSKeyState[i])
-						bSKeyEnable[i] = true;
-					else
-						bSKeyEnable[i] = false;
-				}
-				else
-				{
-					if (bSKeyState[i])
-						bSKeyEnable[i] = false;
-					else
-						bSKeyEnable[i] = true;
-				}
-			}
-
-			if (m_KeyDown[CurActionKey->Key] && bSKeyEnable[SKT_CONTROL] && bSKeyEnable[SKT_SHIFT] && bSKeyEnable[SKT_ALT])
-			{
-				if (CurActionKey->Down == false && CurActionKey->Press == false)
-				{
-					CurActionKey->Down = true;
-					CurActionKey->Press = true;
-				}
-				else
-					CurActionKey->Down = false;
-			}
-
-			else if (CurActionKey->Down || CurActionKey->Press)
-			{
-				CurActionKey->Down = false;
-				CurActionKey->Press = false;
-				CurActionKey->Up = true;
-			}
-			else if (CurActionKey->Up)
-				CurActionKey->Up = false;
-
-			if (iter2->second->KeyState & KEY_DOWN && CurActionKey->Down && iter2->second->isFunctionBind[AT_DOWN])
-				iter2->second->Func[AT_DOWN](DeltaTime);
-
-			if (iter2->second->KeyState & KEY_PRESS && CurActionKey->Press && iter2->second->isFunctionBind[AT_PRESS])
-				iter2->second->Func[AT_PRESS](DeltaTime);
-
-			if (iter2->second->KeyState & KEY_UP && CurActionKey->Up && iter2->second->isFunctionBind[AT_UP])
-				iter2->second->Func[AT_UP](DeltaTime);
-		}
-	}
-
 	Scene* curScene = SceneManager::Get()->GetCurScene();
 	m_CameraPos = curScene->GetMainCameraTransform()->GetWorldPos();
 
-	POINT tempPos;
-	RECT ScreenRect;
+	unordered_map<string, KeyInfo*>::iterator StartIter = m_KeyMap.begin();
+	unordered_map<string, KeyInfo*>::iterator EndIter = m_KeyMap.end();
 
-	GetClientRect(Core::Get()->GetHwnd(), &ScreenRect);
+	for (; StartIter != EndIter; ++StartIter)
+	{
+		size_t	iCount = 0;
+		for (size_t i = 0; i < StartIter->second->vecKey.size(); ++i)
+		{
+			if (GetAsyncKeyState((int)StartIter->second->vecKey[i]) & 0x8000)
+				iCount++;
+		}
+
+		if (iCount == StartIter->second->vecKey.size())
+		{
+			if (StartIter->second->KeyDown == false && StartIter->second->KeyPress == false)
+			{
+				StartIter->second->KeyDown = true;
+				StartIter->second->KeyPress = true;
+			}
+
+			else if (StartIter->second->KeyDown == true)
+				StartIter->second->KeyDown = false;
+		}
+
+		else if (StartIter->second->KeyPress == true)
+		{
+			StartIter->second->KeyUp = true;
+			StartIter->second->KeyDown = false;
+			StartIter->second->KeyPress = false;
+		}
+
+		else if (StartIter->second->KeyUp == true)
+			StartIter->second->KeyUp = false;
+	}
+
+	POINT tempPos;
+
 	GetCursorPos(&tempPos);
 	ScreenToClient(Core::Get()->GetHwnd(), &tempPos);
 
@@ -237,19 +149,16 @@ void KeyInput::Update(float DeltaTime)
 	m_MouseObject->GetTransform()->SetWorldPos((float)m_MouseScreenPos.x, (float)m_MouseScreenPos.y, 0.0f);
 	m_MouseObject->Update(DeltaTime);
 
-	if (m_isMosueShow == false)
+	if (m_ShowCursor == false && (m_MouseScreenPos.x < 0.0f || m_MouseScreenPos.x > Device::Get()->GetWinSize().Width || m_MouseScreenPos.y < 0.0f || m_MouseScreenPos.y > Device::Get()->GetWinSize().Height))
 	{
-		if (m_ShowCursor == false && (m_MouseScreenPos.x <= 0.0f && m_MouseScreenPos.x >= Device::Get()->GetWinSize().Width || m_MouseScreenPos.y <= 0.0f && m_MouseScreenPos.y >= Device::Get()->GetWinSize().Height))
-		{
-			m_ShowCursor = true;
-			while (ShowCursor(TRUE) != 0) {}
-		}
+		m_ShowCursor = true;
+		while (ShowCursor(TRUE) != 0) {}
+	}
 
-		else if (m_ShowCursor == true && m_MouseScreenPos.x >= 0.0f && m_MouseScreenPos.x <= Device::Get()->GetWinSize().Width && m_MouseScreenPos.y >= 0.0f && m_MouseScreenPos.y <= Device::Get()->GetWinSize().Height)
-		{
-			m_ShowCursor = false;
-			while (ShowCursor(FALSE) >= 0) {}
-		}
+	else if (m_ShowCursor && m_MouseScreenPos.x >= 0.0f && m_MouseScreenPos.x <= Device::Get()->GetWinSize().Width && m_MouseScreenPos.y >= 0.0f && m_MouseScreenPos.y <= Device::Get()->GetWinSize().Height)
+	{
+		m_ShowCursor = false;
+		while (ShowCursor(FALSE) >= 0) {}
 	}
 
 	SAFE_RELEASE(curScene);
@@ -276,58 +185,65 @@ void KeyInput::UpdateMousePos()
 	m_MouseObject->LateUpdate(1.0f);
 }
 
-void KeyInput::DeleteActionKey(const string & KeyName)
+bool KeyInput::KeyDown(const string & Name)
 {
-	BindAction* getAction = FindAction(KeyName);
+	KeyInfo* getKey = FindKey(Name);
 
-	if (getAction == NULLPTR)
-		return;
-	
-	m_KeyActionMap.erase(KeyName);
+	if (getKey == NULLPTR)
+		return false;
+
+	return getKey->KeyDown;
 }
 
-void KeyInput::DeleteAxisKey(const string & KeyName)
+bool KeyInput::KeyPress(const string & Name)
 {
-	BindAxis* getAxis = FindAxis(KeyName);
+	KeyInfo* getKey = FindKey(Name);
 
-	if (getAxis == NULLPTR)
-		return;
+	if (getKey == NULLPTR)
+		return false;
 
-	m_KeyAxisMap.erase(KeyName);
+	return getKey->KeyPress;
 }
 
-BindAxis* KeyInput::FindAxis(const string& Name)
+bool KeyInput::KeyUp(const string & Name)
 {
-	auto FindIter = m_KeyAxisMap.find(Name);
+	KeyInfo* getKey = FindKey(Name);
 
-	if (FindIter == m_KeyAxisMap.end())
+	if (getKey == NULLPTR)
+		return false;
+
+	return getKey->KeyUp;
+}
+
+KeyInfo* KeyInput::FindKey(const string& Name)
+{
+	unordered_map<string, KeyInfo*>::iterator FindIter = m_KeyMap.find(Name);
+
+	if (FindIter == m_KeyMap.end())
 		return NULLPTR;
 
 	return FindIter->second;
 }
-
-BindAction* KeyInput::FindAction(const string& Name)
+void KeyInput::SetEquipObject(JEONG::GameObject * object)
 {
-	auto FindIter = m_KeyActionMap.find(Name);
-
-	if (FindIter == m_KeyActionMap.end())
-		return NULLPTR;
-
-	return FindIter->second;
+	m_EquipObject = object;
+	m_isEquip = true;
 }
 
-bool KeyInput::ReadKeyBoard()
+void KeyInput::ResetEquipObject()
 {
-	HRESULT	result = m_Keyboard->GetDeviceState(256, m_Key);
-
-	if (FAILED(result))
+	if (m_EquipObject != NULLPTR)
 	{
-		if (result == DIERR_INPUTLOST || result == DIERR_NOTACQUIRED)
-			m_Keyboard->Acquire();
-
-		else
-			return false;
+		m_EquipObject = NULLPTR;
+		m_isEquip = false;
 	}
+}
 
-	return true;
+void KeyInput::SetCurSorPos(float DeltaTime)
+{
+	POINT tempPos;
+	GetCursorPos(&tempPos);
+
+	m_MouseObject->GetTransform()->SetWorldPos((float)m_MouseScreenPos.x, (float)m_MouseScreenPos.y - 720.0f, 0.0f);
+	m_MouseObject->Update(DeltaTime);
 }

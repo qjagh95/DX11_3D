@@ -1,5 +1,8 @@
 #include "ClientHeader.h"
 #include "Player.h"
+#include <Scene/SceneManager.h>
+#include <Scene/Scene.h>
+#include <Component/Transform_Com.h>
 
 Player_Com::Player_Com()
 {
@@ -16,18 +19,6 @@ Player_Com::~Player_Com()
 
 bool Player_Com::Init()
 {
-	KeyInput::Get()->AddBindAxis("Move", this, &Player_Com::Move);
-	KeyInput::Get()->AddKeyScale("Move", DIK_W, 1.0f);
-	KeyInput::Get()->AddKeyScale("Move", DIK_S, -1.0f);
-
-	KeyInput::Get()->AddBindAction("Fire", KEY_PRESS, this, &Player_Com::Fire);
-	KeyInput::Get()->AddKeyAction("Fire", DIK_SPACE);
-
-	bool bSKey[SKT_MAX] = { true, true, true };
-	KeyInput::Get()->AddBindAction("Fire1", KEY_PRESS, this, &Player_Com::Fire1);
-	KeyInput::Get()->AddBindAction("Fire1", KEY_UP, this, &Player_Com::Fire1Release);
-	KeyInput::Get()->AddKeyAction("Fire1", DIK_SPACE, bSKey);
-
 	return true;
 }
 
@@ -38,11 +29,16 @@ int Player_Com::Input(float DeltaTime)
 
 int Player_Com::Update(float DeltaTime)
 {
+	if (KeyInput::Get()->KeyDown("MoveLeft"))
+	{
+		SoundManager::Get()->SoundPlay("Effect", ST_3D);
+	}
 	return 0;
 }
 
 int Player_Com::LateUpdate(float DeltaTime)
 {
+
 	return 0;
 }
 

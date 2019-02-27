@@ -491,7 +491,9 @@ MultiRenderTarget * RenderManager::FindMultiTarget(const string & MultiKey)
 
 void RenderManager::Render3D(float DeltaTime)
 {
-	ImGui::Checkbox("WireFrame", &m_isWireFrame);
+#ifdef GUI_USING
+	//ImGui::Checkbox("WireFrame", &m_isWireFrame);
+#endif 
 
 	if (m_isDeferred == false)
 		ForwardRender(DeltaTime);

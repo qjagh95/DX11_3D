@@ -229,6 +229,9 @@
     <Filter Include="Core\17. TinyXML">
       <UniqueIdentifier>{31bfd374-2942-476f-a0fe-0f1d9d1c54b3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="EditScene">
+      <UniqueIdentifier>{b7788474-1256-483f-929c-0128314378f1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -432,6 +435,9 @@
     <ClInclude Include="tinyxml2.h">
       <Filter>Core\17. TinyXML</Filter>
     </ClInclude>
+    <ClInclude Include="EditScene.h">
+      <Filter>EditScene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Copy.bat">
@@ -628,6 +634,9 @@
     <ClCompile Include="tinyxml2.cpp">
       <Filter>Core\17. TinyXML</Filter>
     </ClCompile>
+    <ClCompile Include="EditScene.cpp">
+      <Filter>EditScene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon1.ico">
@@ -662,6 +671,9 @@
       <Filter>Core\09. Render\05. HLSLSorce</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\Shader\LightDir.fx">
+      <Filter>Core\09. Render\05. HLSLSorce</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\Shader\Skinned.fx">
       <Filter>Core\09. Render\05. HLSLSorce</Filter>
     </FxCompile>
   </ItemGroup>

@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "ExcelManager.h"
 
-#ifdef GUI_USING
-
 JEONG_USING
 SINGLETON_VAR_INIT(ExcelManager)
 
@@ -552,5 +550,3 @@ bool ExcelManager::LoadExcel(const string& KeyName, const string& PathKey)
 	
 	return getData->book->load(Path.c_str());
 }
-
-#endif

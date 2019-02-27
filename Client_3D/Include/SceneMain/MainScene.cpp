@@ -68,6 +68,7 @@ int MainScene::Input(float DeltaTime)
 
 int MainScene::Update(float DeltaTime)
 {
+
 	return 0;
 }
 

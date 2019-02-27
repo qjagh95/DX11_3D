@@ -150,6 +150,15 @@ wstring BineryRead::ReadWString()
 	return ReturnString;
 }
 
+void * BineryRead::ReadUserData(size_t size)
+{
+	void* Temp;
+
+	m_ReadFile.read((char*)&Temp, size);
+
+	return Temp;
+}
+
 void BineryRead::ReadData(bool & Data)
 {
 	m_ReadFile.read((char*)&Data, sizeof(bool));

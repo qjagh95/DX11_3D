@@ -27,8 +27,6 @@
 #include <dxgidebug.h>
 #include <dinput.h>
 
-#ifdef GUI_USING
-
 ///Excel
 #include "enum.h"
 #include "IBookT.h"
@@ -42,8 +40,6 @@
 #include "imgui.h"
 #include "imgui_impl_dx11.h"
 #include "imgui_impl_win32.h"
-
-#endif
 
 #include <wrl/client.h>
 #include "tinyxml2.h"

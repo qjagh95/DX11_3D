@@ -1,7 +1,5 @@
 #pragma once
 
-#ifdef GUI_USING
-
 JEONG_BEGIN
 
 struct JEONG_DLL ExcelData
@@ -75,6 +73,4 @@ public:
 };
 
 JEONG_END
-
-#endif
 

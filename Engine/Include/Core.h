@@ -1,12 +1,15 @@
 #pragma once
 JEONG_BEGIN
 
+#define GUI_USING 0xffffffff
+
 class Timer;
 class JEONG_DLL Core
 {
 public:
 	bool Init(HINSTANCE hInst, unsigned int Width,	unsigned int Height, const TCHAR* TitleName, const TCHAR* ClassName, int iIconID, int iSmallIconID,	bool bWindowMode = true);
 	bool Init(HINSTANCE hInst, HWND hWnd, unsigned int Width, unsigned int Height, bool bWindowMode = true);
+	bool EditInit(HINSTANCE hInst, HWND hWnd, unsigned int Width, unsigned int Height, bool bWindowMode = true, bool bGUIInit = false);
 	int Run();
 	void Logic();
 
@@ -15,6 +18,7 @@ public:
 
 	HWND GetHwnd() const { return m_hWnd; }
 	HINSTANCE GetHinstance() const { return m_hIstance; }
+	void EditDelete();
 
 private:
 	int Input(float DeltaTime);
@@ -30,6 +34,7 @@ private:
 
 private:
 	static bool m_isLoop;
+	static bool m_isGUI;
 	HINSTANCE m_hIstance;
 	WinSize m_WinSize;
 	HWND m_hWnd;
@@ -37,6 +42,7 @@ private:
 	GAME_MODE m_GameMode;
 	static WPARAM m_wParam;
 	Timer* m_Timer;
+
 
 public:
 	CLASS_IN_SINGLE(Core);

@@ -15,6 +15,7 @@ public:
 	string ReadString();
 	size_t ReadSizeT();
 	wstring ReadWString();
+	void* ReadUserData(size_t size);
 
 	void ReadData(bool& Data);
 	void ReadData(int& Data);

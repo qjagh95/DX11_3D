@@ -18,26 +18,11 @@ JEONG_BEGIN
 //	string		SpcTexName;         ///Spcluar 텍스쳐 이름
 //};
 
-//struct JEONG_DLL FBXMeshContainer
-//{
-//	vector<Vector3>	vecPos;
-//	vector<Vector3>	vecNormal;
-//	vector<Vector2>	vecUV;
-//	vector<Vector3>	vecTangent;
-//	vector<Vector3>	vecBinormal;
-//	vector<vector<UINT>> vecIndices;
-//	//vector<Vector4> vecBlendWeight;
-//	//vector<Vector4> vecBlendIndex;
-//	//unordered_map<int, vector<FBXWEIGHT>>	mapWeights;
-//	bool isBump;
-//	//bool isAnimation;
-//
-//	FBXMeshContainer()
-//	{
-//		isBump = false;
-//		//isAnimation = false;
-//	}
-//};
+struct JEONG_DLL FBXMeshContainer
+{
+	vector<UINT> indecies;
+	vector<Vertex3D> vertecis;
+};
 
 // 0. write material xml
 // 1. Read joint Data
@@ -59,15 +44,10 @@ struct JEONG_DLL FBXMaterial
 	string BumpTexName;
 };
 
-struct JEONG_DLL FBXJoint
+struct JEONG_DLL FBXJoint 
 {
 	string Name;
-
-	int Index;
-	int ParentIndex;
-
-	Matrix LocalTransform; //부모Joint의 공간으로의 변환행렬 (곱하면 부모로간다)
-	Matrix GlobalTransform; //3DMax상에서의 월드 공간으로의 변환행렬 (곱하면 Max좌표계의 World로간다)
+	Matrix BindPoseInv;
 };
 
 struct JEONG_DLL FBXVertex
@@ -90,10 +70,15 @@ struct JEONG_DLL FBXMesh
 	string Name;
 
 	int JointIndex;
-	FbxMesh* Mesh;
+	FbxMesh* pMesh;
 
 	vector<FBXVertex*> Vertices;
 	vector<FBXMeshPart*> MeshPart;
+};
+
+struct JEONG_DLL FBXSkeleton
+{
+	vector<FBXJoint*> vecJoints;
 };
 
 class JEONG_DLL FBXLoader
@@ -122,35 +107,24 @@ private:
 	// TODO: 광민_3
 	void ReadMaterial(FbxScene* scene);
 	void WriteMaterialXML(const string& FileName, const string& PathKey = FBX_DATA_PATH);
-	void ReadJoint(FbxScene* Scene, FbxNode* Node, int Index, int ParentIndex);
+	void ReadJoint(FbxNode* Node);
+	void ReadJointData(FbxMesh* mesh);
 	void ReadMesh(FbxScene* Scene, FbxNode* Node, int JointIndex);
-	void ReadBinormal();
-	void ReadTangent();
 
-	//void Triangulate(FbxNode* pNode);
-	//void LoadMaterial(FbxSurfaceMaterial * pMtrl);
-	//Vector4 GetMaterialColor(FbxSurfaceMaterial * pMtrl,const char * pPropertyName, const char * pPropertyFactorName);
-	//double GetMaterialFactor(FbxSurfaceMaterial * pMtrl,const char * pPropertyName);
-	//string GetMaterialTexture(FbxSurfaceMaterial * pMtrl, const char * pPropertyName);
-
-	//void LoadMesh(FbxNode* pNode);
-	//void LoadMesh(FbxMesh* pMesh);
-
-	//void LoadNormal(FbxMesh * pMesh, FBXMeshContainer* pContainer, int iVtxID,int iControlIndex);
-	//void LoadUV(FbxMesh * pMesh, FBXMeshContainer* pContainer,int iUVID, int iControlIndex);
-	//void LoadTangent(FbxMesh * pMesh, FBXMeshContainer* pContainer, int iVtxID, int iControlIndex);
-	//void LoadBinormal(FbxMesh * pMesh, FBXMeshContainer* pContainer,int iVtxID, int iControlIndex);
-	
 private:
 	FbxManager*	m_Manager;
 	FbxScene* m_Scene;
 
 	// TODO: 광민_4
 	//vector<vector<FbxMaterial*>> m_vecMaterials;
-	//vector<FBXMeshContainer*> m_vecMeshContainer;
+	vector<FBXMeshContainer*> m_vecMeshContainer;
 	vector<FBXMaterial*> m_vecMaterials;
-	vector<FBXJoint*> m_vecJoints;
 	vector<FBXMesh*> m_vecMeshs;
+	FBXSkeleton m_vecSkeleton;
+	unordered_map<int, vector<pair<int, float>>> m_JointWeightMap;
+
+	FbxAxisSystem m_AxisSystem;
+	bool m_isRightHand;
 
 public:
 	FBXLoader();

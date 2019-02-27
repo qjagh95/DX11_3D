@@ -7,6 +7,8 @@ FBXLoader::FBXLoader()
 {
 	m_Manager = NULLPTR;
 	m_Scene = NULLPTR;
+	
+	m_isRightHand = false;
 }
 
 FBXLoader::~FBXLoader()
@@ -47,6 +49,7 @@ bool FBXLoader::LoadFbx(const char* FullPath)
 	FbxIOSettings* pIos = FbxIOSettings::Create(m_Manager, IOSROOT);
 	FbxImporter* pImporter = FbxImporter::Create(m_Manager, "");
 	m_Scene = FbxScene::Create(m_Manager, "");
+	pIos->SetBoolProp(IMP_FBX_TEXTURE, true);
 
 	// FbxManager에 지정한다.
 	m_Manager->SetIOSettings(pIos);
@@ -57,9 +60,11 @@ bool FBXLoader::LoadFbx(const char* FullPath)
 	// 위에서 만들어낸 정보를 FbxScene에 노드를 구성한다.
 	pImporter->Import(m_Scene);
 
-	//Max의 Axis시스템은 Y와 Z가 바뀌어있다.
-	if (m_Scene->GetGlobalSettings().GetAxisSystem() != FbxAxisSystem::Max)
-		m_Scene->GetGlobalSettings().SetAxisSystem(FbxAxisSystem::Max);
+	m_AxisSystem = m_Scene->GetGlobalSettings().GetAxisSystem();
+	m_isRightHand = m_AxisSystem.GetCoorSystem() == FbxAxisSystem::eRightHanded;
+
+	if (FbxSystemUnit::m != m_Scene->GetGlobalSettings().GetSystemUnit())
+		FbxSystemUnit::m.ConvertScene(m_Scene);
 
 	ReadMaterial(m_Scene);
 	//WriteMaterialXML();
@@ -199,51 +204,114 @@ void FBXLoader::WriteMaterialXML(const string& FileName, const string& PathKey)
 	Document->SaveFile(FullPath.c_str());
 }
 
-void FBXLoader::ReadJoint(FbxScene* Scene, FbxNode* Node, int Index, int ParentIndex)
+void FBXLoader::ReadJoint(FbxNode* Node)
 {
 	FbxNodeAttribute* Attribute = Node->GetNodeAttribute();
 
 	if (Attribute != NULLPTR)
 	{
+		FbxNodeAttribute::EType nodeType = Attribute->GetAttributeType();
+
 		bool Check = false;
-
-		switch (Attribute->GetAttributeType())
-		{
-		case FbxNodeAttribute::eNull: //잡 데이터들 안에 Joint데이터가 있을 수도 있음
-			Check = true;
-			break;
-
-		case FbxNodeAttribute::eMarker: //머리위에 닉네임을 표시할 Joint
-			Check = true;
-			break;
-
-		case FbxNodeAttribute::eSkeleton: //Joint의 집합
-			Check = true;
-			break;
-
-		case FbxNodeAttribute::eMesh: //Mesh 자체
-			Check = true;
-			break;
-		}
+		Check |= (nodeType == FbxNodeAttribute::eSkeleton);
+		Check |= (nodeType == FbxNodeAttribute::eMesh);
+		Check |= (nodeType == FbxNodeAttribute::eMarker);
+		Check |= (nodeType == FbxNodeAttribute::eNull);
 
 		if (Check == true)
 		{
 			FBXJoint* newJoint = new FBXJoint();
 			newJoint->Name = Node->GetName();
-			newJoint->Index = Index;
-			newJoint->ParentIndex = ParentIndex;
-			newJoint->LocalTransform = ToMatrix(Node->EvaluateLocalTransform());
-			newJoint->GlobalTransform = ToMatrix(Node->EvaluateGlobalTransform());
 
-			m_vecJoints.push_back(newJoint);
+			m_vecSkeleton.vecJoints.push_back(newJoint);
 
-			if (Attribute->GetAttributeType() == FbxNodeAttribute::eMesh)
-				ReadMesh(Scene, Node, Index);
+			//매쉬가 있을경우 JointData를 읽는다.
+			if (FbxNodeAttribute::eMesh == nodeType)
+				ReadJointData(Node->GetMesh());
 		}
 	}
 
-	for (int i = 0; i < Node->GetChildCount(); ++i)
-		ReadJoint(Scene, Node->GetChild(i), (int)m_vecJoints.size(), Index);
+	for (int i = 0; i < Node->GetChildCount(); i++)
+		ReadJoint(Node->GetChild(i));
+}
+
+void FBXLoader::ReadJointData(FbxMesh * mesh)
+{
+	//Deformer = 해체기
+	//Skin애니메이션용 해체기를 사용한다.
+	for (int i = 0; i < mesh->GetDeformerCount(); i++)
+	{
+		FbxDeformer* getDeformer = mesh->GetDeformer(i);
+		FbxSkin* skin = dynamic_cast<FbxSkin*>(getDeformer);
+
+		if (skin == NULLPTR)
+			continue;
+
+		for (int j = 0; j < skin->GetClusterCount(); j++)
+		{
+			//FbxCluster = 관절을 포함한 정점 데이터들의 집합 (Ex...팔뚝)
+			FbxCluster* getCluster = skin->GetCluster(j);
+
+			//링크된 관절의 이름을 가져온다.
+			string JointName = getCluster->GetLink()->GetName();
+			
+			int JointIndex = 0;
+
+			for (int k = 0; k < m_vecSkeleton.vecJoints.size(); k++)
+			{
+				//이름이 같은놈의 인덱스를 넣어주고 빠진다.
+				if (m_vecSkeleton.vecJoints[j]->Name == JointName)
+				{
+					JointIndex = k;
+					break;
+				}
+			}
+
+			FbxAMatrix BindPoseMatrix; ///T Pose의 Matrix정보
+			getCluster->GetTransformLinkMatrix(BindPoseMatrix); ///BindPose를 얻어온다
+
+			Matrix BindPoseInv = ToMatrix(BindPoseMatrix);
+			BindPoseInv.Inverse();
+
+			m_vecSkeleton.vecJoints[JointIndex]->BindPoseInv = BindPoseInv;
+
+			//ControlPoint = Position만 있는 Vertex (Model Space Pos)
+											   //CP들의 인덱스 갯수
+			for (size_t k = 0; k < getCluster->GetControlPointIndicesCount(); k++)
+			{
+				/* 3 2 1 3 4 */
+			    /* 0.5 0.2 0.2 0.2 0.4 */
+
+				//CP들의 인덱스를 가져온다
+				int vertexIndex = getCluster->GetControlPointIndices()[k];
+				//인덱스번째의 CP가 JointIndex에 영향을 받는 정도
+				float Weight = (float)getCluster->GetControlPointWeights()[k];
+				
+				//해당 CP가 여러개의 Joint에 영향을 받을 수 있기때문.
+				m_JointWeightMap[vertexIndex].push_back(make_pair(JointIndex, Weight));
+			}
+		}
+	}
+
+	//행렬 4개만 영향.
+	auto StartIter = m_JointWeightMap.begin();
+	auto EndIter = m_JointWeightMap.end();
+
+	for (; StartIter != EndIter; StartIter++)
+	{
+		StartIter->second.resize(4);
+
+		float WeightSum = 0.0f;
+		for (size_t i = 0; i < StartIter->second.size(); i++)
+			WeightSum += StartIter->second[i].second;
+
+		if (WeightSum == 0.0f)
+			continue;
+		//Weight의 합은 1
+		//역수 곱함 = 1
+		for (size_t i = 0; i < StartIter->second.size(); i++)
+			StartIter->second[i].second /= WeightSum;
+	}
 }
 
 void FBXLoader::ReadMesh(FbxScene* Scene, FbxNode* Node, int JointIndex)
@@ -271,9 +339,9 @@ void FBXLoader::ReadMesh(FbxScene* Scene, FbxNode* Node, int JointIndex)
 			int ControlPointIndex = getMesh->GetPolygonVertex(i, j);
 			newVertex->ControlPointIndex = ControlPointIndex;
 
-			//polygon_vertex_idx = 인덱스의 인덱스
+			//PolygonVertexIdx = 인덱스의 인덱스
 			//0 1 2 / 2 1 3 <- 인덱스
-			//0 1 2 3 4 5 <- 인덱스의 인덱스
+			//0 1 2   3 4 5 <- 인덱스의 인덱스
 			int PolygonVertexIndex = 3 * i + j;
 			newVertex->MaterialName = GetMaterialName(getMesh, i, PolygonVertexIndex, ControlPointIndex);
 
@@ -299,7 +367,7 @@ void FBXLoader::ReadMesh(FbxScene* Scene, FbxNode* Node, int JointIndex)
 	FBXMesh* newMeshData = new FBXMesh();
 	newMeshData->Name = Node->GetName();
 	newMeshData->JointIndex = JointIndex;
-	newMeshData->Mesh = getMesh;
+	newMeshData->pMesh = getMesh;
 	newMeshData->Vertices = vertices;
 
 	m_vecMeshs.push_back(newMeshData);
@@ -328,7 +396,7 @@ void FBXLoader::ReadMesh(FbxScene* Scene, FbxNode* Node, int JointIndex)
 		for (size_t i = 0; i < gather.size(); i++)
 		{
 			newMeshPart->Vertices.push_back(gather[i].Vertex3D);
-			newMeshPart->Indices.push_back((int)newMeshPart->Indices.size()); // 일단은 인덱스 최적화 안함
+			newMeshPart->Indices.push_back((int)newMeshPart->Indices.size()); 
 		}
 		newMeshData->MeshPart.push_back(newMeshPart);
 	}
@@ -529,118 +597,3 @@ Vector2 FBXLoader::GetUV(FbxMesh * Mesh, int ControlPointIndex, int UVIndex)
 
 	return Result;
 }
-
-//void FBXLoader::LoadMesh(FbxNode * pNode)
-//{
-//	//본격적으로 Mesh를 로드하는 함수.
-//
-//	//노드의 속성을 가져온다.
-//	FbxNodeAttribute* pAttr = pNode->GetNodeAttribute();
-//
-//	//속성이 Mesh 타입이면 로드.
-//	if (pAttr != NULLPTR && pAttr->GetAttributeType() == FbxNodeAttribute::eMesh)
-//	{
-//		FbxMesh* pMesh = pNode->GetMesh();
-//
-//		if (pMesh != NULLPTR)
-//			LoadMesh(pMesh);
-//	}
-//
-//	int	iChildCount = pNode->GetChildCount();
-//
-//	for (int i = 0; i < iChildCount; ++i)
-//		LoadMesh(pNode->GetChild(i));
-//}
-//
-//void FBXLoader::LoadMesh(FbxMesh * pMesh)
-//{
-//	// MeshContainer를 만들고 컨테이너별 정점과 컨테이너&서브셋 별
-//	// 인덱스 정보를 얻어와서 메쉬를 구성해야 한다.
-//	FBXMeshContainer* pContainer = new FBXMeshContainer();
-//	pContainer->isBump = false;
-//	m_vecMeshContainer.push_back(pContainer);
-//
-//	// ControlPoint 는 위치정보를 담고 있는 배열이다.
-//	// 이 배열의 개수는 곧 정점의 개수가 된다.
-//	int	iVtxCount = pMesh->GetControlPointsCount();
-//
-//	// 내부적으로 FbxVector4타입의 배열로 저장하고 있기 때문에 배열의 
-//	// 시작주소를 얻어온다.
-//	FbxVector4*	pVtxPos = pMesh->GetControlPoints();
-//
-//	// 컨테이너가 가지고 있는 정점 정보들을 정점수만큼 resize 해준다.
-//	pContainer->vecPos.resize(iVtxCount);
-//	pContainer->vecNormal.resize(iVtxCount);
-//	pContainer->vecUV.resize(iVtxCount);
-//	pContainer->vecTangent.resize(iVtxCount);
-//	pContainer->vecBinormal.resize(iVtxCount);
-//
-//	for (int i = 0; i < iVtxCount; ++i)
-//	{
-//		// y와 z축이 바뀌어 있기 때문에 변경해준다.
-//		pContainer->vecPos[i].x = pVtxPos[i].mData[0];
-//		pContainer->vecPos[i].y = pVtxPos[i].mData[2];
-//		pContainer->vecPos[i].z = pVtxPos[i].mData[1];
-//	}
-//
-//	// 폴리곤 수를 얻어온다.
-//	int	iPolygonCount = pMesh->GetPolygonCount();
-//	UINT	iVtxID = 0;
-//
-//	// 재질 수를 얻어온다.
-//	int	iMtrlCount = pMesh->GetNode()->GetMaterialCount();
-//
-//	// 재질 수는 곧 서브셋 수이기 때문에 재질 수만큼 resize 한다.
-//	pContainer->vecIndices.resize(iMtrlCount);
-//
-//	// 재질 정보를 얻어온다.
-//	FbxGeometryElementMaterial*	pMaterial = pMesh->GetElementMaterial();
-//	int iCount = pMesh->GetElementMaterialCount();
-//	// 삼각형 수만큼 반복한다.
-//	for (int i = 0; i < iPolygonCount; ++i)
-//	{
-//		// 이 폴리곤을 구성하는 정점의 수를 얻어온다.
-//		// 삼각형일 경우 3개를 얻어온다.
-//		int	iPolygonSize = pMesh->GetPolygonSize(i);
-//
-//		int	iIdx[3] = {};
-//
-//		for (int j = 0; j < iPolygonSize; ++j)
-//		{
-//			// 현재 삼각형을 구성하고 있는 버텍스정보 내에서의 인덱스를
-//			// 구한다.
-//			int	iControlIndex = pMesh->GetPolygonVertex(i, j);
-//
-//			iIdx[j] = iControlIndex;
-//
-//			LoadNormal(pMesh, pContainer, iVtxID, iControlIndex);
-//			LoadUV(pMesh, pContainer, pMesh->GetTextureUVIndex(i, j), iControlIndex);
-//			LoadTangent(pMesh, pContainer, iVtxID, iControlIndex);
-//			LoadBinormal(pMesh, pContainer, iVtxID, iControlIndex);
-//
-//			++iVtxID;
-//		}
-//
-//		int	iMtrlID = pMaterial->GetIndexArray().GetAt(i);
-//
-//		pContainer->vecIndices[iMtrlID].push_back(iIdx[0]);
-//		pContainer->vecIndices[iMtrlID].push_back(iIdx[2]);
-//		pContainer->vecIndices[iMtrlID].push_back(iIdx[1]);
-//	}
-//}
-//
-//void FBXLoader::LoadNormal(FbxMesh * pMesh, FBXMeshContainer * pContainer, int iVtxID, int iControlIndex)
-//{
-//}
-//
-//void FBXLoader::LoadUV(FbxMesh * pMesh, FBXMeshContainer * pContainer, int iUVID, int iControlIndex)
-//{
-//}
-//
-//void FBXLoader::LoadTangent(FbxMesh * pMesh, FBXMeshContainer * pContainer, int iVtxID, int iControlIndex)
-//{
-//}
-//
-//void FBXLoader::LoadBinormal(FbxMesh * pMesh, FBXMeshContainer * pContainer, int iVtxID, int iControlIndex)
-//{
-//}

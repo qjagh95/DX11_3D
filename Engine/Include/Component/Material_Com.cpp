@@ -316,9 +316,7 @@ void Material_Com::SetNormalSampler(int RegisterNumber, const string & KeyName, 
 	}
 
 	if (Subset >= m_vecMaterial[Container].size())
-	{
 		m_vecMaterial[Container].push_back(CreateSubSet());
-	}
 
 	SubsetMaterial*	pMaterial = m_vecMaterial[Container][Subset];
 
@@ -383,9 +381,7 @@ void Material_Com::SetSpecularSampler(int RegisterNumber, const string & KeyName
 	}
 
 	if (Subset >= m_vecMaterial[Container].size())
-	{
 		m_vecMaterial[Container].push_back(CreateSubSet());
-	}
 
 	SubsetMaterial*	pMaterial = m_vecMaterial[Container][Subset];
 
@@ -406,9 +402,7 @@ void Material_Com::SetDiffuseSampler(int RegisterNumber, const string & KeyName,
 	}
 
 	if (Subset >= m_vecMaterial[Container].size())
-	{
 		m_vecMaterial[Container].push_back(CreateSubSet());
-	}
 
 	SubsetMaterial*	pMaterial = m_vecMaterial[Container][Subset];
 
@@ -472,37 +466,37 @@ SubsetMaterial* Material_Com::CreateSubSet()
 //쉐이더에 셋팅한다.
 void Material_Com::SetShader(int Container, int Subset)
 {
-	SubsetMaterial*	pMaterial = m_vecMaterial[Container][Subset];
+	SubsetMaterial*	getMaterial = m_vecMaterial[Container][Subset];
 
-	if (pMaterial->DiffuseTex != NULLPTR)
+	if (getMaterial->DiffuseTex != NULLPTR)
 	{
-		pMaterial->DiffuseTex->m_Tex->SetShaderResource(pMaterial->DiffuseTex->m_Register);
-		pMaterial->DiffuseTex->m_Sampler->SetSamplerState(pMaterial->DiffuseTex->m_SamplerRegister);
+		getMaterial->DiffuseTex->m_Tex->SetShaderResource(getMaterial->DiffuseTex->m_Register);
+		getMaterial->DiffuseTex->m_Sampler->SetSamplerState(getMaterial->DiffuseTex->m_SamplerRegister);
 	}
 
-	if (pMaterial->NormalTex != NULLPTR)
+	if (getMaterial->NormalTex != NULLPTR)
 	{
-		pMaterial->NormalTex->m_Tex->SetShaderResource(pMaterial->NormalTex->m_Register);
-		pMaterial->NormalTex->m_Sampler->SetSamplerState(pMaterial->NormalTex->m_SamplerRegister);
-		pMaterial->MatrialInfo.Diffuse.w = 1.0f;
-	}
-	else
-		pMaterial->MatrialInfo.Diffuse.w = 0.0f;
-
-	if (pMaterial->SpecularTex != NULLPTR)
-	{
-		pMaterial->SpecularTex->m_Tex->SetShaderResource(pMaterial->SpecularTex->m_Register);
-		pMaterial->SpecularTex->m_Sampler->SetSamplerState(pMaterial->SpecularTex->m_SamplerRegister);
-		pMaterial->MatrialInfo.Ambient.w = 1.0f;
+		getMaterial->NormalTex->m_Tex->SetShaderResource(getMaterial->NormalTex->m_Register);
+		getMaterial->NormalTex->m_Sampler->SetSamplerState(getMaterial->NormalTex->m_SamplerRegister);
+		getMaterial->MatrialInfo.Diffuse.w = 1.0f;
 	}
 	else
-		pMaterial->MatrialInfo.Ambient.w = 0.0f;
+		getMaterial->MatrialInfo.Diffuse.w = 0.0f;
 
-	for (size_t i = 0; i < pMaterial->vecMultiTexture.size(); ++i)
+	if (getMaterial->SpecularTex != NULLPTR)
 	{
-		pMaterial->vecMultiTexture[i].m_Tex->SetShaderResource(pMaterial->vecMultiTexture[i].m_Register);
-		pMaterial->vecMultiTexture[i].m_Sampler->SetSamplerState(pMaterial->vecMultiTexture[i].m_SamplerRegister);
+		getMaterial->SpecularTex->m_Tex->SetShaderResource(getMaterial->SpecularTex->m_Register);
+		getMaterial->SpecularTex->m_Sampler->SetSamplerState(getMaterial->SpecularTex->m_SamplerRegister);
+		getMaterial->MatrialInfo.Ambient.w = 1.0f;
+	}
+	else
+		getMaterial->MatrialInfo.Ambient.w = 0.0f;
+
+	for (size_t i = 0; i < getMaterial->vecMultiTexture.size(); ++i)
+	{
+		getMaterial->vecMultiTexture[i].m_Tex->SetShaderResource(getMaterial->vecMultiTexture[i].m_Register);
+		getMaterial->vecMultiTexture[i].m_Sampler->SetSamplerState(getMaterial->vecMultiTexture[i].m_SamplerRegister);
 	}
 
-	ShaderManager::Get()->UpdateCBuffer("Material", &pMaterial->MatrialInfo);
+	ShaderManager::Get()->UpdateCBuffer("Material", &getMaterial->MatrialInfo);
 }

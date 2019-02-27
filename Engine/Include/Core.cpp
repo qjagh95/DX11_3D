@@ -32,6 +32,7 @@
 JEONG_USING
 SINGLETON_VAR_INIT(Core)
 bool Core::m_isLoop = true;
+bool Core::m_isGUI = true;
 WPARAM Core::m_wParam;
 
 Core::Core()
@@ -53,14 +54,12 @@ Core::~Core()
 	CollsionManager::Delete();
 	KeyInput::Delete();
 	FontManager::Delete();
-	SoundManager::Delete();
 	StaticManager::Delete();
 	RenderManager::Delete();
-
-#ifdef GUI_USING
+	SoundManager::Get()->AllStop();
+	SoundManager::Delete();
 	ExcelManager::Delete();
 	GUIManager::Delete();
-#endif
 	ResourceManager::Delete();
 
 	CoUninitialize();
@@ -86,9 +85,7 @@ bool Core::Init(HINSTANCE hInst, HWND hWnd, unsigned int Width, unsigned int Hei
 	m_WinSize.Height = Height;
 
 	//컴객체 초기화.
-#ifdef GUI_USING
 	CoInitializeEx(NULLPTR, COINIT_MULTITHREADED);
-#endif
 
 	//DirectX11 Device초기화
 	if (Device::Get()->Init(hWnd, Width, Height, bWindowMode) == false)
@@ -98,12 +95,6 @@ bool Core::Init(HINSTANCE hInst, HWND hWnd, unsigned int Width, unsigned int Hei
 	}
 
 	if (PathManager::Get()->Init() == false)
-	{
-		TrueAssert(true);
-		return false;
-	}
-
-	if (SoundManager::Get()->Init() == false)
 	{
 		TrueAssert(true);
 		return false;
@@ -145,14 +136,6 @@ bool Core::Init(HINSTANCE hInst, HWND hWnd, unsigned int Width, unsigned int Hei
 		return false;
 	}
 
-#ifdef GUI_USING
-	if (ExcelManager::Get()->Init() == false)
-	{
-		TrueAssert(true);
-		return false;
-	}
-#endif
-
 	if (KeyInput::Get()->Init() == false)
 	{
 		TrueAssert(true);
@@ -165,9 +148,98 @@ bool Core::Init(HINSTANCE hInst, HWND hWnd, unsigned int Width, unsigned int Hei
 		return false;
 	}
 
-#ifdef GUI_USING
+	if (ExcelManager::Get()->Init() == false)
+	{
+		TrueAssert(true);
+		return false;
+	}
+
 	GUIManager::Get()->CreateImGui(m_hWnd, Device::Get()->GetDevice(), Device::Get()->GetContext());
-#endif
+
+	if (SoundManager::Get()->Init() == false)
+	{
+		TrueAssert(true);
+		return false;
+	}
+
+	SetClearColor(0, 150, 255, 0);
+
+	m_Timer = TimeManager::Get()->FindTimer("MainTimer");
+
+	return true;
+}
+
+bool Core::EditInit(HINSTANCE hInst, HWND hWnd, unsigned int Width, unsigned int Height, bool bWindowMode, bool bGUIInit)
+{
+	m_isGUI = bGUIInit;
+
+	m_hIstance = hInst;
+	m_hWnd = hWnd;
+	m_WinSize.Width = Width;
+	m_WinSize.Height = Height;
+
+	CoInitializeEx(NULLPTR, COINIT_MULTITHREADED);
+
+	//DirectX11 Device초기화
+	if (Device::Get()->Init(hWnd, Width, Height, bWindowMode) == false)
+	{
+		TrueAssert(true);
+		return false;
+	}
+
+	if (PathManager::Get()->Init() == false)
+	{
+		TrueAssert(true);
+		return false;
+	}
+
+	if (TimeManager::Get()->Init() == false)
+	{
+		TrueAssert(true);
+		return false;
+	}
+
+	if (ResourceManager::Get()->Init() == false)
+	{
+		TrueAssert(true);
+		return false;
+	}
+
+	if (RenderManager::Get()->Init() == false)
+	{
+		TrueAssert(true);
+		return false;
+	}
+
+	if (CollsionManager::Get()->Init() == false)
+	{
+		TrueAssert(true);
+		return false;
+	}
+
+	if (FontManager::Get()->Init() == false)
+	{
+		TrueAssert(true);
+		return false;
+	}
+
+	if (StaticManager::Get()->Init() == false)
+	{
+		TrueAssert(true);
+		return false;
+	}
+
+	if (KeyInput::Get()->Init() == false)
+	{
+		TrueAssert(true);
+		return false;
+	}
+
+	if (SceneManager::Get()->Init() == false)
+	{
+		TrueAssert(true);
+		return false;
+	}
 
 	SetClearColor(0, 150, 255, 0);
 
@@ -201,7 +273,7 @@ void Core::Logic()
 	float Time = m_Timer->GetDeltaTime();
 
 #ifdef GUI_USING
-	GUIManager::Get()->ImGuiBegin("MaJaSinInNa");
+	//GUIManager::Get()->ImGuiBegin("MaJaSinInNa");
 #endif
 
 	Input(Time);
@@ -259,11 +331,12 @@ void Core::CreateWnd(const TCHAR * TitleName, const TCHAR * ClassName)
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 LRESULT Core::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {  
-#ifdef GUI_USING
-	if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam))
-		return true;
-#endif
-
+	if (m_isGUI == false)
+	{
+		if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam))
+			return true;
+	}
+	
 	switch (message)
 	{
 		case WM_DESTROY:
@@ -277,6 +350,23 @@ LRESULT Core::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
+void Core::EditDelete()
+{
+	Device::Delete();
+	ShaderManager::Delete();
+	PathManager::Delete();
+	SceneManager::Delete();
+	TimeManager::Delete();
+	CollsionManager::Delete();
+	KeyInput::Delete();
+	FontManager::Delete();
+	StaticManager::Delete();
+	RenderManager::Delete();
+	ResourceManager::Delete();
+
+	CoUninitialize();
+}
+
 int Core::Input(float DeltaTime)
 {
 	KeyInput::Get()->Update(DeltaTime);
@@ -286,6 +376,7 @@ int Core::Input(float DeltaTime)
 
 int Core::Update(float DeltaTime)
 {
+	//SoundManager::Get()->Update();
 	SceneManager::Get()->Update(DeltaTime);
 
 	//if (KeyInput::Get()->KeyDown("F1"))
@@ -320,7 +411,7 @@ void Core::Render(float DeltaTime)
 		RenderManager::Get()->Render(DeltaTime);
 		KeyInput::Get()->RenderMouse(DeltaTime);
 #ifdef GUI_USING
-		GUIManager::Get()->ImGuiEnd();
+		//GUIManager::Get()->ImGuiEnd();
 #endif
 	}
 	Device::Get()->Present();

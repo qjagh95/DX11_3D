@@ -66,7 +66,9 @@ bool Scene::Init()
 
 int Scene::Input(float DeltaTime)
 {
+#ifdef GUI_USING
 	LightDebug(DeltaTime);
+#endif
 
 	list<SceneComponent*>::iterator StartIter = m_SceneComponentList.begin();
 	list<SceneComponent*>::iterator EndIter = m_SceneComponentList.end();
@@ -512,44 +514,44 @@ void Scene::ChangeCamera(const string & TagName)
 
 void Scene::LightDebug(float DeltaTime)
 {
-	ImGui::Text("GlobalLight");
-	ImGui::BeginTabBar("AA");
-	ImGui::EndTabBar();
+	//ImGui::Text("GlobalLight");
+	//ImGui::BeginTabBar("AA");
+	//ImGui::EndTabBar();
 
-	static int GlobalLightType = 0;
+	//static int GlobalLightType = 0;
 
-	GameObject* getObject = FindObjectNoneCount("GlobalLight");
-	Light_Com* getLight = getObject->FindComponentFromTypeNoneCount<Light_Com>(CT_LIGHT);
+	//GameObject* getObject = FindObjectNoneCount("GlobalLight");
+	//Light_Com* getLight = getObject->FindComponentFromTypeNoneCount<Light_Com>(CT_LIGHT);
 
-	const char* Items[4] = { "Direction", "Point", "Spot", "BomiSpot" };
-	ImGui::Text("LightType");
-	ImGui::Combo("", &getLight->m_tLightInfo.LightType, Items, 4);
+	//const char* Items[4] = { "Direction", "Point", "Spot", "BomiSpot" };
+	//ImGui::Text("LightType");
+	//ImGui::Combo("", &getLight->m_tLightInfo.LightType, Items, 4);
 
-	ImGui::Text("LightInfo");
+	//ImGui::Text("LightInfo");
 
-	ImGui::SliderFloat4("Ambient", (float*)&getLight->m_tLightInfo.Ambient, -1.0f, 1.0f);
-	ImGui::SliderFloat4("Diffuse", (float*)&getLight->m_tLightInfo.Diffuse, -1.0f, 1.0f);
-	ImGui::SliderFloat3("Specular", (float*)&getLight->m_tLightInfo.Spcular, -1.0f, 1.0f);
-	ImGui::SliderFloat3("Direction", (float*)&getLight->m_tLightInfo.Direction, -1.0f, 1.0f);
-	ImGui::SliderFloat3("Attenuation", (float*)&getLight->m_tLightInfo.Attenuation, -1.0f, 1.0f);
-	ImGui::SliderFloat("Range", (float*)&getLight->m_tLightInfo.Range, 0.0f, 20.0f);
-	ImGui::SliderFloat("FallOff", (float*)&getLight->m_tLightInfo.FallOff, -1.0f, 10.0f);
+	//ImGui::SliderFloat4("Ambient", (float*)&getLight->m_tLightInfo.Ambient, -1.0f, 1.0f);
+	//ImGui::SliderFloat4("Diffuse", (float*)&getLight->m_tLightInfo.Diffuse, -1.0f, 1.0f);
+	//ImGui::SliderFloat3("Specular", (float*)&getLight->m_tLightInfo.Spcular, -1.0f, 1.0f);
+	//ImGui::SliderFloat3("Direction", (float*)&getLight->m_tLightInfo.Direction, -1.0f, 1.0f);
+	//ImGui::SliderFloat3("Attenuation", (float*)&getLight->m_tLightInfo.Attenuation, -1.0f, 1.0f);
+	//ImGui::SliderFloat("Range", (float*)&getLight->m_tLightInfo.Range, 0.0f, 20.0f);
+	//ImGui::SliderFloat("FallOff", (float*)&getLight->m_tLightInfo.FallOff, -1.0f, 10.0f);
 
-	ImGui::Text("LightPos");
+	//ImGui::Text("LightPos");
 
-	ImGui::SliderFloat3("Pos", (float*)&getLight->m_tLightInfo.Pos, -1.0f, 20.0f);
+	//ImGui::SliderFloat3("Pos", (float*)&getLight->m_tLightInfo.Pos, -1.0f, 20.0f);
 
-	ImGui::BeginTabBar("BB");
-	ImGui::EndTabBar();
+	//ImGui::BeginTabBar("BB");
+	//ImGui::EndTabBar();
 
-	ImGui::Text("Camera");
+	//ImGui::Text("Camera");
 
-	static Vector3 CameraPos;
-	ImGui::SliderFloat3("CameraPos", (float*)&CameraPos, -100.0f, 100.0f);
-	m_MainCameraTransform->SetWorldPos(CameraPos);
+	//static Vector3 CameraPos;
+	//ImGui::SliderFloat3("CameraPos", (float*)&CameraPos, -100.0f, 100.0f);
+	//m_MainCameraTransform->SetWorldPos(CameraPos);
 
-	ImGui::BeginTabBar("Camera");
-	ImGui::EndTabBar();
+	//ImGui::BeginTabBar("Camera");
+	//ImGui::EndTabBar();
 }
 
 GameObject * Scene::FindCamera(const string & TagName)

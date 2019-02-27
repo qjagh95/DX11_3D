@@ -175,7 +175,7 @@ VS_OUTPUT_3D StandardBumpVS(VS_INPUT_3D input)
 
     float3 vPos = input.vPos - g_Pivot * g_Length;
 
-    output.vViewPos = mul(float4(vPos, 1.0f), g_WV);
+    output.vViewPos = mul(float4(vPos, 1.0f), g_WV).xyz;
     output.vProjPos = mul(float4(vPos, 1.0f), g_WVP);
 	//output.vPos = output.vProjPos;
     output.vPos = mul(float4(vPos, 1.0f), g_WVP);

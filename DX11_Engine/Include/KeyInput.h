@@ -1,49 +1,13 @@
 #pragma once
 JEONG_BEGIN
 
-struct JEONG_DLL KeyScale
+struct JEONG_DLL KeyInfo
 {
-	unsigned char Key;
-	float Scale;
-};
-
-struct JEONG_DLL BindAxis
-{
-	string	KeyName;
-	bool isFunctionBind;
-	function<void(float, float)> Func;
-	vector<KeyScale*> KeyList;
-
-	BindAxis() :isFunctionBind(false) {}
-	~BindAxis() { Safe_Delete_VecList(KeyList); }
-};
-
-struct JEONG_DLL ActionKey
-{
-	unsigned char	Key;
-	bool isSKey[SKT_MAX];
-	bool Press;
-	bool Down;
-	bool Up;
-
-	ActionKey()
-	{
-		memset(isSKey, 0, sizeof(bool) * SKT_MAX);
-		Press = false;
-		Down = false;
-		Up = false;
-	}
-};
-
-struct JEONG_DLL BindAction
-{
-	string	ActionName;
-	bool	isFunctionBind[AT_MAX];
-	function<void(float)> Func[AT_MAX];
-	vector<ActionKey*> KeyList;
-	int KeyState;
-
-	~BindAction() { Safe_Delete_VecList(KeyList); }
+	string KeyName;
+	vector<__int64> vecKey;
+	bool KeyDown;
+	bool KeyPress;
+	bool KeyUp;
 };
 
 class GameObject;
@@ -55,6 +19,9 @@ public:
 	bool Init();
 	void Update(float DeltaTime);
 	void RenderMouse(float DeltaTime);
+	bool KeyDown(const string& Name);
+	bool KeyPress(const string& Name);
+	bool KeyUp(const string& Name);
 
 	Vector2 GetMouseScreenPos() const { return m_MouseScreenPos; }
 	Vector3 GetMouseWorldPos() const;
@@ -62,201 +29,75 @@ public:
 	void ChangeMouseScene(Scene* pScene);
 	void UpdateMousePos();
 	GameObject* GetMouseObject() const { return m_MouseObject; }
+
+	void SetEquipObject(GameObject* object);
+	GameObject* GetEquipObject() const { return m_EquipObject; }
+	void ResetEquipObject();
+	bool GetisEquipObject() const { return m_isEquip; }
 	void SetShowCursor(bool Value) { m_isMosueShow = Value; }
-	void DeleteActionKey(const string& KeyName);
-	void DeleteAxisKey(const string& KeyName);
-	BindAxis* FindAxis(const string& Name);
-	BindAction* FindAction(const string& Name);
-
-private:
-	bool ReadKeyBoard();
-
-private:
-	IDirectInput8* m_Input;
-	IDirectInputDevice8* m_Keyboard;
-	unsigned char	m_Key[256];
-	bool m_KeyPress[256];
-	bool m_KeyDown[256];
-	bool m_KeyUp[256];
-	vector<unsigned char> m_KeyList;
-	unordered_map<string, BindAxis*> m_KeyAxisMap;
-	unordered_map<string, BindAction*> m_KeyActionMap;
-
-public:
-	void AddKeyScale(const string& strName, unsigned char cKey, float fScale)
-	{
-		BindAxis* pBind = FindAxis(strName);
-
-		if (pBind == NULLPTR)
-		{
-			pBind = new BindAxis();
-			m_KeyAxisMap.insert(make_pair(strName, pBind));
-		}
-
-		KeyScale* pKeyScale = new KeyScale();
-
-		pKeyScale->Scale = fScale;
-		pKeyScale->Key = cKey;
-
-		pBind->KeyList.push_back(pKeyScale);
-
-		vector<unsigned char>::iterator	iter;
-		vector<unsigned char>::iterator	iterEnd = m_KeyList.end();
-
-		bool bFind = false;
-		for (iter = m_KeyList.begin(); iter != iterEnd; ++iter)
-		{
-			if (*iter == cKey)
-			{
-				bFind = true;
-				break;		
-			}
-		}
-
-		if (!bFind)
-			m_KeyList.push_back(cKey);
-	}
-
-	BindAxis* AddBindAxis(const string& strName, void(*pFunc)(float, float))
-	{
-		BindAxis* pBind = FindAxis(strName);
-
-		if (pBind == NULLPTR)
-		{
-			pBind = new BindAxis();
-			m_KeyAxisMap.insert(make_pair(strName, pBind));
-		}
-
-		pBind->KeyName = strName;
-		pBind->isFunctionBind = true;
-		pBind->Func = bind(pFunc, placeholders::_1, placeholders::_2);
-
-		return pBind;
-	}
+	void SetCurSorPos(float DeltaTime);
 
 	template <typename T>
-	BindAxis* AddBindAxis(const string& strName, T* pObj, void(T::*pFunc)(float, float))
+	bool AddKey(const T& value)
 	{
-		BindAxis* pBind = FindAxis(strName);
-
-		if (!pBind)
+		if (m_NewKey == NULLPTR)
 		{
-			pBind = new BindAxis();
-
-			m_KeyAxisMap.insert(make_pair(strName, pBind));
+			m_NewKey = new KeyInfo();
+			m_NewKey->KeyDown = false;
+			m_NewKey->KeyPress = false;
+			m_NewKey->KeyUp = false;
 		}
 
-		pBind->KeyName = strName;
-		pBind->isFunctionBind = true;
-		pBind->Func = bind(pFunc, pObj, placeholders::_1, placeholders::_2);
+		//타입이름 가져옴.
+		const char* typeName = typeid(T).name();
 
-		return pBind;
+		if (strcmp(typeName, "int") == 0 || strcmp(typeName, "char") == 0)
+			m_NewKey->vecKey.push_back((__int64)value);
+		else
+		{
+			m_NewKey->KeyName = value;
+			m_KeyMap.insert(make_pair(m_NewKey->KeyName, m_NewKey));
+		}
+
+		return true;
 	}
 
-public:
-	void AddKeyAction(const string& strName, unsigned char cKey, bool* pSKey = nullptr)
+	template <typename T, typename ... Types>
+	bool AddKey(const T& value, Types ... Args)
 	{
-		BindAction*	pBind = FindAction(strName);
-
-		if (!pBind)
+		if (m_NewKey == NULLPTR)
 		{
-			pBind = new BindAction();
-			m_KeyActionMap.insert(make_pair(strName, pBind));
+			m_NewKey = new KeyInfo();
+			m_NewKey->KeyDown = false;
+			m_NewKey->KeyPress = false;
+			m_NewKey->KeyUp = false;
 		}
 
-		ActionKey* pKeyAction = new ActionKey();
-		pKeyAction->Key = cKey;
+		//타입이름 가져옴.
+		const char* typeName = typeid(T).name();
 
-		if (pSKey)
-			memcpy(pKeyAction->isSKey, pSKey, sizeof(bool) * SKT_MAX);
-
-		pBind->KeyList.push_back(pKeyAction);
-
-		vector<unsigned char>::iterator	iter;
-		vector<unsigned char>::iterator	iterEnd = m_KeyList.end();
-
-		bool bFind = false;
-		for (iter = m_KeyList.begin(); iter != iterEnd; ++iter)
+		if (strcmp(typeName, "int") == 0 || strcmp(typeName, "char") == 0)
+			m_NewKey->vecKey.push_back((__int64)value);
+		else
 		{
-			if (*iter == cKey)
-			{
-				bFind = true;
-				break;
-			}
+			m_NewKey->KeyName = value;
+			m_KeyMap.insert(make_pair(m_NewKey->KeyName, m_NewKey));
 		}
 
-		if (!bFind)
-			m_KeyList.push_back(cKey);
-	}
+		AddKey(Args...);
 
-	BindAction* AddBindAction(const string& strName, KEY_STATE eKeyState, void(*pFunc)(float))
-	{
-		BindAction*	pBind = FindAction(strName);
+		if (m_NewKey != NULLPTR)
+			m_NewKey = NULLPTR;
 
-		if (!pBind)
-		{
-			pBind = new BindAction();
-			m_KeyActionMap.insert(make_pair(strName, pBind));
-		}
-
-		ACTION_KEY_FUNCTION_TYPE eType;
-
-		switch (eKeyState)
-		{
-		case KEY_PRESS:
-			eType = AT_PRESS;
-			break;
-		case KEY_DOWN:
-			eType = AT_DOWN;
-			break;
-		case KEY_UP:
-			eType = AT_UP;
-			break;
-		}
-
-		pBind->ActionName = strName;
-		pBind->isFunctionBind[eType] = true;
-		pBind->Func[eType] = bind(pFunc, placeholders::_1);
-		pBind->KeyState |= eKeyState;
-
-		return pBind;
-	}
-
-	template <typename T>
-	BindAction* AddBindAction(const string& strName, KEY_STATE eKeyState, T* pObj, void(T::*pFunc)(float))
-	{
-		BindAction*	pBind = FindAction(strName);
-
-		if (!pBind)
-		{
-			pBind = new BindAction();
-			m_KeyActionMap.insert(make_pair(strName, pBind));
-		}
-
-		ACTION_KEY_FUNCTION_TYPE eType;
-
-		switch (eKeyState)
-		{
-		case KEY_PRESS:
-			eType = AT_PRESS;
-			break;
-		case KEY_DOWN:
-			eType = AT_DOWN;
-			break;
-		case KEY_UP:
-			eType = AT_UP;
-			break;
-		}
-
-		pBind->ActionName = strName;
-		pBind->isFunctionBind[eType] = true;
-		pBind->KeyState |= eKeyState;
-		pBind->Func[eType] = bind(pFunc, pObj, placeholders::_1);
-
-		return pBind;
+		return true;
 	}
 
 private:
+	KeyInfo* FindKey(const string& Name);
+
+private:
+	unordered_map<string, KeyInfo*> m_KeyMap;
+	KeyInfo* m_NewKey;
 	Vector2 m_MouseScreenPos;	//화면상의 좌표 (0 ~ 1280, 0 ~ 720)
 	Vector2 m_MouseWorldPos;	//화면내의 좌표
 	Vector2 m_MouseGap;			//화면상 좌표와 화면 내의 좌표의 차이
@@ -264,6 +105,8 @@ private:
 	ColliderPoint_Com* m_MouseWorldPoint;
 	ColliderPoint_Com* m_MouseWindowPoint;
 	bool m_ShowCursor;
+	GameObject* m_EquipObject;
+	bool m_isEquip;
 	Vector3 m_CameraPos;
 	static bool m_isMosueShow;
 
@@ -272,3 +115,5 @@ public:
 };
 
 JEONG_END
+
+
