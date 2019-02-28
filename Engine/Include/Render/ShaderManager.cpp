@@ -186,6 +186,14 @@ bool ShaderManager::Init()
 		return false;
 	}
 
+	Entry[ST_VERTEX] = "SkyBoxVS";
+	Entry[ST_PIXEL] = "SkyBoxPS";
+	if (LoadShader(SKY_BOX_SHADER, TEXT("SkyBoxShader.fx"), Entry) == false)
+	{
+		TrueAssert(true);
+		return false;
+	}
+
 	AddInputElement("POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 12);
 	AddInputElement("NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 12);
 	AddInputElement("TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 8);

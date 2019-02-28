@@ -139,7 +139,8 @@ bool RenderManager::Init()
 	Second.StencilFunc = D3D11_COMPARISON_NEVER; //통과 X
 
 	//앞면만 통과시키겠다.
-	CreateDepthStencilState(DEPTH_LESS, TRUE, D3D11_DEPTH_WRITE_MASK_ZERO, D3D11_COMPARISON_LESS, TRUE, D3D11_DEFAULT_STENCIL_READ_MASK, D3D11_DEFAULT_STENCIL_READ_MASK, First, Second);	CreateDepthStencilState(DEPTH_DISABLE, FALSE);
+	CreateDepthStencilState(DEPTH_LESS, TRUE, D3D11_DEPTH_WRITE_MASK_ZERO, D3D11_COMPARISON_LESS, TRUE, D3D11_DEFAULT_STENCIL_READ_MASK, D3D11_DEFAULT_STENCIL_READ_MASK, First, Second);
+	CreateDepthStencilState(DEPTH_LESS_EQUAL,TRUE, D3D11_DEPTH_WRITE_MASK_ALL, D3D11_COMPARISON_LESS_EQUAL);
 	CreateDepthStencilState(DEPTH_DISABLE, FALSE);
 
 	m_CBuffer.ViewPortSize = Vector2((float)Device::Get()->GetWinSize().Width, (float)Device::Get()->GetWinSize().Height);

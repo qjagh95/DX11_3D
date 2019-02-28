@@ -3,7 +3,7 @@
 
 JEONG_BEGIN
 
-class JEONG_DLL Animation3D_Com : public Component_Base
+class JEONG_DLL SkyBox_Com : public Component_Base
 {
 public:
 	bool Init() override;
@@ -13,16 +13,17 @@ public:
 	void Collision(float DeltaTime) override;
 	void CollisionLateUpdate(float DeltaTime) override;
 	void Render(float DeltaTime) override;
-	Animation3D_Com* Clone() override;
+	SkyBox_Com* Clone() override;
 	void AfterClone() override;
 
 protected:
-	Animation3D_Com();
-	Animation3D_Com(const Animation3D_Com& CopyData);
-	~Animation3D_Com();
+	SkyBox_Com();
+	SkyBox_Com(const SkyBox_Com& CopyData);
+	~SkyBox_Com();
 
 public:
 	friend class GameObject;
+	friend class Scene;
 };
 
 JEONG_END

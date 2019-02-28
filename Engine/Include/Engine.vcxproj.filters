@@ -232,6 +232,15 @@
     <Filter Include="EditScene">
       <UniqueIdentifier>{b7788474-1256-483f-929c-0128314378f1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\08. Object\Component\BaseComponent\14. SkyBox">
+      <UniqueIdentifier>{1702980a-01bc-4d8d-80af-7923e647f00a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\08. Object\Component\BaseComponent\15. NavigationMesh">
+      <UniqueIdentifier>{bcf0b065-d0c0-40a1-8068-df75e07dcbe4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\18. NavigationManager">
+      <UniqueIdentifier>{c86e529a-f827-4f89-894d-140ee470a5e0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -438,6 +447,15 @@
     <ClInclude Include="EditScene.h">
       <Filter>EditScene</Filter>
     </ClInclude>
+    <ClInclude Include="Component\SkyBox_Com.h">
+      <Filter>Core\08. Object\Component\BaseComponent\14. SkyBox</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\NavigationMesh.h">
+      <Filter>Core\08. Object\Component\BaseComponent\15. NavigationMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="NavigationManager.h">
+      <Filter>Core\18. NavigationManager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Copy.bat">
@@ -637,6 +655,15 @@
     <ClCompile Include="EditScene.cpp">
       <Filter>EditScene</Filter>
     </ClCompile>
+    <ClCompile Include="Component\SkyBox_Com.cpp">
+      <Filter>Core\08. Object\Component\BaseComponent\14. SkyBox</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\NavigationMesh.cpp">
+      <Filter>Core\08. Object\Component\BaseComponent\15. NavigationMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="NavigationManager.cpp">
+      <Filter>Core\18. NavigationManager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon1.ico">
@@ -674,6 +701,9 @@
       <Filter>Core\09. Render\05. HLSLSorce</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\Shader\Skinned.fx">
+      <Filter>Core\09. Render\05. HLSLSorce</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\Shader\SkyBoxShader.fx">
       <Filter>Core\09. Render\05. HLSLSorce</Filter>
     </FxCompile>
   </ItemGroup>

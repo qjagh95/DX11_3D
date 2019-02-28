@@ -3,7 +3,7 @@
 
 JEONG_BEGIN
 
-class JEONG_DLL Animation3D_Com : public Component_Base
+class JEONG_DLL NavigationMesh : public Component_Base
 {
 public:
 	bool Init() override;
@@ -13,13 +13,13 @@ public:
 	void Collision(float DeltaTime) override;
 	void CollisionLateUpdate(float DeltaTime) override;
 	void Render(float DeltaTime) override;
-	Animation3D_Com* Clone() override;
+	NavigationMesh* Clone() override;
 	void AfterClone() override;
 
 protected:
-	Animation3D_Com();
-	Animation3D_Com(const Animation3D_Com& CopyData);
-	~Animation3D_Com();
+	NavigationMesh();
+	NavigationMesh(const NavigationMesh& CopyData);
+	~NavigationMesh();
 
 public:
 	friend class GameObject;
