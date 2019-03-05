@@ -163,6 +163,7 @@ bool RenderManager::Init()
 	CreateResterizerState(BACK_CULL, D3D11_FILL_SOLID, D3D11_CULL_BACK);
 	CreateResterizerState(CULL_NONE, D3D11_FILL_SOLID, D3D11_CULL_NONE);
 	CreateResterizerState(WIRE_FRAME, D3D11_FILL_WIREFRAME);
+	CreateResterizerState(FRONT_COUNT_WISE, D3D11_FILL_SOLID, D3D11_CULL_BACK, TRUE);
 
 	Vector3	vPos;
 	vPos.x = Device::Get()->GetWinSize().Width - 100.0f;

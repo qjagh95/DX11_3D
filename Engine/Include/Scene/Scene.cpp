@@ -9,19 +9,30 @@
 #include "../KeyInput.h"
 
 #include "../Component/Camera_Com.h"
+#include "../Component/FreeCamera_Com.h"
 #include "../Component/Transform_Com.h"
-
+#include "../Component/SkyBox_Com.h"
 #include "../Component/Light_Com.h"
 
 JEONG_USING
 
 Scene::Scene()
 {
+	m_MainCamera = NULLPTR;
+	m_MainCameraTransform = NULLPTR;
+	m_MainCameraObject = NULLPTR;
+
+	m_UICamera = NULLPTR;
+	m_UICameraTransform = NULLPTR;
+	m_UICameraObject = NULLPTR;
+
+	m_SkyObject = NULLPTR;
+	m_SkyBox = NULLPTR;
 }
 
 Scene::~Scene()
 {
-	JEONG::GameObject::DestroyProtoType(this);
+	GameObject::DestroyProtoType(this);
 
 	Safe_Release_Map(m_CameraMap);
 	Safe_Release_VecList(m_LayerList);
@@ -31,6 +42,9 @@ Scene::~Scene()
 	SAFE_RELEASE(m_MainCameraObject);
 	SAFE_RELEASE(m_UICamera);
 	SAFE_RELEASE(m_UICameraObject);
+
+	SAFE_RELEASE(m_SkyObject);
+	SAFE_RELEASE(m_SkyBox);
 }
 
 bool Scene::Init()
@@ -42,11 +56,11 @@ bool Scene::Init()
 	 
 	m_MainCameraObject = CreateCamera("MainCamera", Vector3(1.0f, -1.0f, -5.0f), CT_PERSPECTIVE, (float)Device::Get()->GetWinSize().Width, (float)Device::Get()->GetWinSize().Height, 45.0f, 0.3f, 1000.0f);
 	m_MainCameraTransform = m_MainCameraObject->GetTransform();
-	m_MainCamera = m_MainCameraObject->FindComponentFromType<JEONG::Camera_Com>(CT_CAMERA);
+	m_MainCamera = m_MainCameraObject->FindComponentFromType<Camera_Com>(CT_CAMERA);
 
 	m_UICameraObject = CreateCamera("UICamera", Vector3(0.0f, 0.0f, -0.6f), CT_ORTHO, (float)Device::Get()->GetWinSize().Width, (float)Device::Get()->GetWinSize().Height, 60.0f, 0.0f, 1000.0f);
 	m_UICameraTransform = m_UICameraObject->GetTransform();
-	m_UICamera = m_UICameraObject->FindComponentFromType<JEONG::Camera_Com>(CT_CAMERA);
+	m_UICamera = m_UICameraObject->FindComponentFromType<Camera_Com>(CT_CAMERA);
 
 	SortLayer();
 
@@ -58,17 +72,19 @@ bool Scene::Init()
 	newLight->SetLightType(LT_DIRECTION);
 	newLight->SetLightRange(5.0f);
 	newLight->SetLightAttenuation(Vector3(0.2f, 0.2f, 0.2f));
+	newLight->SetLightDirection(Vector3(-10.0f, -10.0f, -50.0f));
+
+	m_SkyObject = GameObject::CreateObject("SkyBox", Default);
+	m_SkyBox = m_SkyObject->AddComponent< SkyBox_Com>("SkyBox");
 
 	SAFE_RELEASE(newLight);
-	SAFE_RELEASE(newLightObject);	
+	SAFE_RELEASE(newLightObject);
 	return true;
 }
 
 int Scene::Input(float DeltaTime)
 {
-#ifdef GUI_USING
 	LightDebug(DeltaTime);
-#endif
 
 	list<SceneComponent*>::iterator StartIter = m_SceneComponentList.begin();
 	list<SceneComponent*>::iterator EndIter = m_SceneComponentList.end();
@@ -518,12 +534,10 @@ void Scene::LightDebug(float DeltaTime)
 	//ImGui::BeginTabBar("AA");
 	//ImGui::EndTabBar();
 
-	//static int GlobalLightType = 0;
-
 	//GameObject* getObject = FindObjectNoneCount("GlobalLight");
 	//Light_Com* getLight = getObject->FindComponentFromTypeNoneCount<Light_Com>(CT_LIGHT);
 
-	//const char* Items[4] = { "Direction", "Point", "Spot", "BomiSpot" };
+	//const char* Items[4] = { "Direction", "Point", "Spot"};
 	//ImGui::Text("LightType");
 	//ImGui::Combo("", &getLight->m_tLightInfo.LightType, Items, 4);
 
@@ -548,7 +562,7 @@ void Scene::LightDebug(float DeltaTime)
 
 	//static Vector3 CameraPos;
 	//ImGui::SliderFloat3("CameraPos", (float*)&CameraPos, -100.0f, 100.0f);
-	//m_MainCameraTransform->SetWorldPos(CameraPos);
+	////m_MainCameraTransform->SetWorldPos(CameraPos);
 
 	//ImGui::BeginTabBar("Camera");
 	//ImGui::EndTabBar();

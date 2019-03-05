@@ -99,5 +99,4 @@ void GUIManager::Debug()
 	ImGui::EndTabBar();
 
 	SAFE_RELEASE(getObject);
-	SAFE_RELEASE(getScene);
 }

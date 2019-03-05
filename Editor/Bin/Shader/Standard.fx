@@ -108,10 +108,11 @@ PS_OUTPUT_GBUFFER StandardNormalColorPS(VS_OUTPUT_NORMAL_COLOR input)
     float4 Specular = float4(0.0f, 0.0f, 0.0f, 0.0f);
 
     //카메라를 바라보는 방향
-    float3 toCamera = -normalize(input.vPosV);
 
     if (g_isDeferred == RENDER_FORWARD)
     {
+        float3 toCamera = -normalize(input.vPosV);
+
         if (g_Light.LightType == LIGHT_DIRECTION)
             ComputeDirectionLight(float4(input.vNormalV, g_Light.LightSpecular.w), toCamera, Ambient, Diffuse, Specular);
         else if (g_Light.LightType == LIGHT_POINT)

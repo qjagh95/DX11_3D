@@ -4,10 +4,16 @@
 #include "Transform_Com.h"
 #include "Material_Com.h"
 
+#include "Render/ShaderManager.h"
+
+#include "Scene/SceneManager.h"
+#include "Scene/Scene.h"
+
 JEONG_USING
 
 SkyBox_Com::SkyBox_Com()
 {
+	m_CBuffer = {};
 }
 
 SkyBox_Com::SkyBox_Com(const SkyBox_Com & CopyData)
@@ -21,32 +27,38 @@ SkyBox_Com::~SkyBox_Com()
 
 bool SkyBox_Com::Init()
 {
-	//m_Transform->SetWorldScale(10000000.0f, 10000000.0f, 10000000.0f);
-	//m_Transform->Update(0.0f);
+	/*
+	실제 게임에선 구를 크게 그리지않는다.
+	구가 크다면 맵이 크다고 가정할때 정점갯수가 많이 들어가야 하늘이 각지게 보이지않기때문이다.
+	그러면 카메라를 따라다니는 작은 구 하나를 만들고 각종 쉐이더 기법을 사용하여 하늘처럼 보이게 한다.
+	*/
 
-	//Renderer_Com* newRenderer = m_Object->AddComponent<Renderer_Com>("Render");
-	//newRenderer->InitMaterial();
-	//newRenderer->SetMesh(SPHERE_VOLUM);
-	//newRenderer->SetRenderState(DEPTH_LESS_EQUAL);
-	//newRenderer->SetRenderState(CULL_NONE);
+	m_Transform->SetWorldScale(20.0f, 20.0f, 20.0f);
 
-	//Material_Com* newMat = m_Object->FindComponentFromType<Material_Com>(CT_MATERIAL);
-	//newMat->SetDiffuseTexture(10, "SkyDefault", TEXT("Sky.dds"));
-	//newMat->SetDiffuseSampler(10, LINER_SAMPLER);	
+	Renderer_Com* newRenderer = m_Object->AddComponent<Renderer_Com>("SkyRender");
+	newRenderer->InitMaterial();
+	newRenderer->SetMesh(SPHERE_VOLUM);
+	newRenderer->SetShader(SKY_BOX_SHADER);
+	newRenderer->SetRenderState(CULL_NONE);
+	newRenderer->SetRenderState(DEPTH_DISABLE);
+	newRenderer->SetRenderState(FRONT_COUNT_WISE);
 
-	//SAFE_RELEASE(newRenderer);
-	//SAFE_RELEASE(newMat);
+	SAFE_RELEASE(newRenderer);
 
 	return true;
 }
 
 int SkyBox_Com::Input(float DeltaTime)
 {
+	int a = 0;
+
 	return 0;
 }
 
 int SkyBox_Com::Update(float DeltaTime)
 {
+	//카메라를 따라다닌다.
+	m_Transform->SetWorldPos(SceneManager::Get()->GetCurScene()->GetMainCameraTransform()->GetWorldPos());
 	return 0;
 }
 
@@ -65,6 +77,7 @@ void SkyBox_Com::CollisionLateUpdate(float DeltaTime)
 
 void SkyBox_Com::Render(float DeltaTime)
 {
+	ShaderManager::Get()->UpdateCBuffer("SkyCBuffer", &m_CBuffer);
 }
 
 SkyBox_Com * SkyBox_Com::Clone()

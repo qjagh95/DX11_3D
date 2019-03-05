@@ -137,10 +137,6 @@ void RenderTarget::ResetTarget()
 
 void RenderTarget::Render(float DeltaTime)
 {
-	Scene* getScene = SceneManager::Get()->GetCurScene();
-
-	SAFE_RELEASE(getScene);
-
 	if (m_isDebugDraw == false)
 		return;
 
@@ -151,8 +147,6 @@ void RenderTarget::Render(float DeltaTime)
 
 	Scene* pScene = SceneManager::Get()->GetCurScene();
 	Camera_Com*	pCamera = pScene->GetUICamera();
-
-	SAFE_RELEASE(pScene);
 
 	Matrix	matView, matProj;
 	matView = pCamera->GetViewMatrix();

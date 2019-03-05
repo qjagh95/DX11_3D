@@ -219,6 +219,7 @@ bool ShaderManager::Init()
 	CreateCBuffer("CheckBoxCBuffer", sizeof(CheckBoxCBuffer), 9, CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("PublicCBuffer", sizeof(PublicCBuffer), 10, CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("LightCBuffer", sizeof(LightCBuffer), 3, CST_VERTEX | CST_PIXEL);
+	CreateCBuffer("SkyCBuffer", sizeof(SkyCBuffer), 4, CST_VERTEX | CST_PIXEL);
 
 	return true;
 }

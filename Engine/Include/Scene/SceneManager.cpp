@@ -67,8 +67,6 @@ void SceneManager::Render(float DeltaTime)
 
 Scene * SceneManager::GetCurScene() const
 {
-	m_CurScene->AddRefCount();
-
 	return m_CurScene;
 }
 

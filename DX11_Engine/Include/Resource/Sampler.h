@@ -6,7 +6,7 @@ JEONG_BEGIN
 //필터링이란
 //이미지의 확대 축소가 거의 대부분 일어날 수 밖에 없기 때문에 이미지 확대 축소시 깨지는 것을
 //어느정도로 보정해주느냐를 설정해주는 것.
-class Sampler : public RefCount
+class JEONG_DLL Sampler : public RefCount
 {
 public:
 	//어떻게 필터링 할 것인가에 대한 방법 (퀄리티가 높을수록 느리다)

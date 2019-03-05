@@ -12,6 +12,8 @@
 #include <Component/Renderer_Com.h>
 #include <Component/Camera_Com.h>
 #include <Component/Transform_Com.h>
+#include <Component/FreeCamera_Com.h>
+
 #include <Resource/FBXLoader.h>
 
 MainScene::MainScene()
@@ -26,6 +28,8 @@ bool MainScene::Init()
 {
 	Camera_Com* mainCamera = m_Scene->GetMainCamera();
 	mainCamera->SetCameraType(CT_PERSPECTIVE);
+
+	FreeCamera_Com* FreeCamera = mainCamera->AddComponent<FreeCamera_Com>("FreeCamera");
 
 	Layer* BackLayer = m_Scene->FindLayer("BackGround");
 	Layer* Default = m_Scene->FindLayer("Default");
@@ -52,7 +56,7 @@ bool MainScene::Init()
 	SAFE_RELEASE(newObject2);
 	SAFE_RELEASE(RenderComponent);
 	SAFE_RELEASE(newObject);
-
+	SAFE_RELEASE(FreeCamera);
 	SAFE_RELEASE(Default);
 	SAFE_RELEASE(UILayer);
 	SAFE_RELEASE(TileLayer);

@@ -84,6 +84,14 @@ struct VS_INPUT_3D
     float4 vBlendIndex : BLENDINDICES0;
 };
 
+struct VS_INPUT_VERTEX4
+{
+    float3 vPos : POSITION0;
+    float3 vNormal : NORMAL0;
+    float2 vUV : TEXCOORD0;
+    float3 vTangent : TANGENT0;
+};
+
 struct VS_OUTPUT_3D
 {
     float4 vPos : SV_POSITION0;

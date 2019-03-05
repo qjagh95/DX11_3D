@@ -38,6 +38,7 @@
 #define LIGHT_BLEND_SHADER "LightBlendShader"
 #define	STANDARD_BUMP_SHADER "StandardBumpShader"
 #define	VERTEX3D_SHADER "Vertex3DShader"
+#define SKY_BOX_SHADER "SkyBoxShader"
 
 //Base InputLayOut
 #define POS_COLOR_LAYOUT "PosColorLayOut"
@@ -46,6 +47,7 @@
 #define POS_VOLUME_LAYOUT "PosVolumeLayOut"
 #define POS_NORMAL_COLOR_LAYOUT "PosNormalColorLayOut"
 #define	VERTEX3D_LAYOUT	"Vertex3DLayout"
+#define	VERTEX4_LAYOUT	"Vertex4Layout"
 
 //Sampler
 #define LINER_SAMPLER "Linear"
@@ -61,14 +63,19 @@
 #define WIRE_FRAME "WireFrame"
 #define DEPTH_GRATOR "DepthGrator"
 #define DEPTH_LESS "DepthLess"
+#define DEPTH_LESS_EQUAL "DepthLessEqual"
 #define FRONT_CULL "FrontCull"
 #define BACK_CULL "BackCull"
+#define FRONT_COUNT_WISE "FrontCountWise"
 
 //VolumMesh
 #define SPHERE_VOLUM "SphereVolum"
 #define CAPSUL_VOLUM "CapsulVolum"
 #define CORN_VOLUM "CornVolum"
 #define CYLINDER_VOLUM "CylinderVolum"
+
+//Mesh
+#define SPHERE_SKY "Sky"
 
 template<typename T>
 void Safe_Delete_VecList(T& p)

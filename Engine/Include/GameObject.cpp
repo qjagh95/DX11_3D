@@ -465,7 +465,6 @@ GameObject * GameObject::CreateProtoType(const string & TagName, bool isCurrent)
 	}
 
 	pMap = &FindIter->second;
-	SAFE_RELEASE(getScene);
 
 	newProtoType = new GameObject();
 	newProtoType->SetTag(TagName);
@@ -485,7 +484,7 @@ GameObject * GameObject::CreateProtoType(const string & TagName, bool isCurrent)
 
 GameObject * GameObject::CreateClone(const string & TagName, const string & ProtoTypeTagName, JEONG::Layer * layer, bool isCurrent)
 {
-	JEONG::Scene* getScene = NULLPTR;
+	Scene* getScene = NULLPTR;
 
 	if (isCurrent == true)
 		getScene = SceneManager::Get()->GetCurScene();
@@ -493,7 +492,6 @@ GameObject * GameObject::CreateClone(const string & TagName, const string & Prot
 		getScene = SceneManager::Get()->GetNextScene();
 
 	GameObject* newCloneObject = FindProtoType(getScene, ProtoTypeTagName);
-	SAFE_RELEASE(getScene);
 
 	if (newCloneObject == NULLPTR)
 		return NULLPTR;

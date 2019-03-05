@@ -7,6 +7,7 @@ class SceneComponent;
 class GameObject;
 class Camera_Com;
 class Transform_Com;
+class SkyBox_Com;
 class JEONG_DLL Scene : public RefCount
 {
 public:
@@ -73,6 +74,9 @@ private:
 	Camera_Com* m_UICamera;
 	Transform_Com* m_UICameraTransform;
 	GameObject* m_UICameraObject;
+
+	GameObject* m_SkyObject;
+	SkyBox_Com* m_SkyBox;
 
 private:
 	Scene();

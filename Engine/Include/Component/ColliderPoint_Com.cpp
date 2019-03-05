@@ -56,14 +56,13 @@ int ColliderPoint_Com::Update(float DeltaTime)
 
 int ColliderPoint_Com::LateUpdate(float DeltaTime)
 {
-	JEONG::Scene* curScene = SceneManager::Get()->GetCurScene();
+	Scene* curScene = SceneManager::Get()->GetCurScene();
 	Vector3 tempPos = m_Transform->GetWorldPos();
 	m_WorldInfo = tempPos + m_Virtual;
 
 	m_SectionMin = m_WorldInfo;
 	m_SectionMax = m_WorldInfo;
 
-	SAFE_RELEASE(curScene);
 
 	return 0;
 }

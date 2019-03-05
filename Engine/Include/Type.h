@@ -12,7 +12,7 @@ namespace JEONG
 		WinSize(unsigned int Width, unsigned Height) : Width(Width), Height(Height) {}
 	};
 
-	struct VertexColor
+	struct JEONG_DLL VertexColor
 	{
 		Vector3 m_Pos;
 		Vector4 m_Color;
@@ -22,7 +22,7 @@ namespace JEONG
 		VertexColor(const Vector3& vec3, const Vector4& vec4) { m_Pos = vec3, m_Color = vec4; }
 	};
 
-	struct VertexNormalColor
+	struct JEONG_DLL VertexNormalColor
 	{
 		Vector3	m_Pos;
 		Vector3	m_Normal;
@@ -44,7 +44,7 @@ namespace JEONG
 		Vector4	Index;
 	};
 
-	struct VertexPos
+	struct JEONG_DLL VertexPos
 	{
 		Vector3 m_Pos;
 	};
@@ -52,7 +52,7 @@ namespace JEONG
 	//UV좌표란 이미지크기에 상관없이 무조건 0에서 1까지의 범위를 갖는 숫자이다. (좌상단 좌표를 사용한다)
 	//Left = 0 , Right = 1
 	//Top = 0 , Bottom = 1
-	struct VertexUV
+	struct JEONG_DLL VertexUV
 	{
 		Vector3 m_Pos;
 		Vector2 m_UV;
@@ -243,5 +243,20 @@ namespace JEONG
 		int isWireMode;
 		Vector2 ViewPortSize;
 		float Empty;
+	};
+
+	struct JEONG_DLL SkyCBuffer
+	{
+		Vector4 Center;
+		Vector4 Apex;
+		float Height;
+		Vector3 Empty;
+
+		SkyCBuffer() 
+		{
+			Center = Vector4(0.0f, 0x80 / 255.0f, 1.0f, 1.0f);
+			Apex = Vector4(0x9B / 255.0f, 0xCD / 255.0f, 1.0f, 1.0f);
+			Height = 4.5f;
+		}
 	};
 }

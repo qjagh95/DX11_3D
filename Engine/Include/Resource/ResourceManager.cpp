@@ -171,6 +171,7 @@ bool ResourceManager::Init()
 	CreateCornVolum(CORN_VOLUM, 0.5f, 0.5f, 64, 128);
 
 	CreateSphereVolum(SPHERE_VOLUM, 0.5f, 64, 128);
+	CreateSphereVolum(SPHERE_SKY, 0.5f, 64, 128, SKY_BOX_SHADER, POS_LAYOUT);
 
 	CreateSampler(LINER_SAMPLER);
 	//디퍼드에 최적화된 샘플러 = 포인트(픽셀값을 1:1매칭시켜서 가져온다)

@@ -272,9 +272,7 @@ void Core::Logic()
 	m_Timer->Update();
 	float Time = m_Timer->GetDeltaTime();
 
-#ifdef GUI_USING
-	//GUIManager::Get()->ImGuiBegin("MaJaSinInNa");
-#endif
+	GUIManager::Get()->ImGuiBegin("MaJaSinInNa");
 
 	Input(Time);
 	Update(Time);
@@ -376,7 +374,7 @@ int Core::Input(float DeltaTime)
 
 int Core::Update(float DeltaTime)
 {
-	//SoundManager::Get()->Update();
+	SoundManager::Get()->Update();
 	SceneManager::Get()->Update(DeltaTime);
 
 	//if (KeyInput::Get()->KeyDown("F1"))
@@ -410,9 +408,7 @@ void Core::Render(float DeltaTime)
 		SceneManager::Get()->Render(DeltaTime);
 		RenderManager::Get()->Render(DeltaTime);
 		KeyInput::Get()->RenderMouse(DeltaTime);
-#ifdef GUI_USING
-		//GUIManager::Get()->ImGuiEnd();
-#endif
+		GUIManager::Get()->ImGuiEnd();
 	}
 	Device::Get()->Present();
 }

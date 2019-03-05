@@ -53,6 +53,9 @@ bool JEONG::KeyInput::Init()
 	AddKey("LButton", VK_LBUTTON);
 	AddKey("RButton", VK_RBUTTON);
 	AddKey("MButton", VK_MBUTTON);
+	AddKey("Space", VK_SPACE);
+	AddKey("Shift", VK_SHIFT);
+
 
 	m_MouseObject = JEONG::GameObject::CreateObject("MouseObject");
 	m_MouseObject->GetTransform()->SetWorldScale(Vector3(31.0f, 32.0f, 0.0f));
@@ -160,8 +163,6 @@ void KeyInput::Update(float DeltaTime)
 		m_ShowCursor = false;
 		while (ShowCursor(FALSE) >= 0) {}
 	}
-
-	SAFE_RELEASE(curScene);
 }
 
 void KeyInput::RenderMouse(float DeltaTime)

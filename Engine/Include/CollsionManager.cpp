@@ -76,10 +76,8 @@ void JEONG::CollsionManager::AddCollsion(GameObject * object)
 		return;
 
 	Scene* CurScene = SceneManager::Get()->GetCurScene();
-	JEONG::Transform_Com* getTransform = CurScene->GetMainCameraTransform();
+	Transform_Com* getTransform = CurScene->GetMainCameraTransform();
 	Vector3 CameraPos = getTransform->GetWorldPos();
-
-	SAFE_RELEASE(CurScene);
 
 	//컬라이더 컴포넌트 리스트를 가져온다 (충돌체가 여러개 일 수 있기때문에) (업캐스팅)
 	const list<Component_Base*>* getComList = object->FindComponentFromType(CT_COLLIDER);

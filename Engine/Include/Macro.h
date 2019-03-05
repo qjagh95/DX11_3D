@@ -47,6 +47,7 @@
 #define POS_VOLUME_LAYOUT "PosVolumeLayOut"
 #define POS_NORMAL_COLOR_LAYOUT "PosNormalColorLayOut"
 #define	VERTEX3D_LAYOUT	"Vertex3DLayout"
+#define	VERTEX4_LAYOUT	"Vertex4Layout"
 
 //Sampler
 #define LINER_SAMPLER "Linear"
@@ -65,6 +66,7 @@
 #define DEPTH_LESS_EQUAL "DepthLessEqual"
 #define FRONT_CULL "FrontCull"
 #define BACK_CULL "BackCull"
+#define FRONT_COUNT_WISE "FrontCountWise"
 
 //VolumMesh
 #define SPHERE_VOLUM "SphereVolum"
