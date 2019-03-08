@@ -179,6 +179,14 @@ struct LightInfo
     float2 g_Empty123456357;
 };
 
+struct SkinningData
+{
+    float3 vPos;
+    float3 vNormal;
+    float3 vTangent;
+    float3 vBinormal;
+};
+
 cbuffer Material : register(b1)
 {
     //반사 결정.
@@ -214,6 +222,10 @@ cbuffer Light : register(b3)
 /////////////////////////////////////////////////////////////////////
 
 Texture2D DiffuseTexture : register(t0);
+Texture2D NormalTexture : register(t1);
+Texture2D SpecularTexture : register(t2);
+Texture2D BoneTexture : register(t3);
+
 SamplerState DiffuseSampler : register(s0);
 Texture2D TargetDiffuse : register(t10);
 
@@ -370,6 +382,70 @@ float4 DecompressColor(float Color)
 
     return OutColor;
 }
+
+matrix GetBoneMatrix(int index)
+{
+    matrix matBone =
+    {
+        BoneTexture.Load(int3(index * 4, 0, 0)),
+		BoneTexture.Load(int3(index * 4 + 1, 0, 0)),
+		BoneTexture.Load(int3(index * 4 + 2, 0, 0)),
+		BoneTexture.Load(int3(index * 4 + 3, 0, 0))
+    };
+
+    return matBone;
+}
+
+SkinningData Skinned(float3 vPos, float3 vNormal, float3 vTangent, float3 vBinormal, float4 vWeights, float4 vIndices)
+{
+    SkinningData tSkinning = (SkinningData) 0;
+
+    float fWeights[4];
+    fWeights[0] = vWeights.x;
+    fWeights[1] = vWeights.y;
+    fWeights[2] = vWeights.z;
+    fWeights[3] = 1.0f - vWeights.x - vWeights.y - vWeights.z;
+
+    for (int i = 0; i < 4; ++i)
+    {
+        matrix matBone = GetBoneMatrix((int) vIndices[i]);
+
+        tSkinning.vPos += fWeights[i] * mul(float4(vPos, 1.f), matBone).xyz;
+        tSkinning.vNormal += fWeights[i] * mul(float4(vNormal, 0.f), matBone).xyz;
+        tSkinning.vTangent += fWeights[i] * mul(float4(vTangent, 0.f), matBone).xyz;
+        tSkinning.vBinormal += fWeights[i] * mul(float4(vBinormal, 0.f), matBone).xyz;
+    }
+
+    tSkinning.vNormal = normalize(tSkinning.vNormal);
+    tSkinning.vTangent = normalize(tSkinning.vTangent);
+    tSkinning.vBinormal = normalize(tSkinning.vBinormal);
+
+    return tSkinning;
+}
+
+SkinningData Skinned(float3 vPos, float3 vNormal, float4 vWeights, float4 vIndices)
+{
+    SkinningData tSkinning = (SkinningData) 0;
+
+    float fWeights[4];
+    fWeights[0] = vWeights.x;
+    fWeights[1] = vWeights.y;
+    fWeights[2] = vWeights.z;
+    fWeights[3] = 1.f - vWeights.x - vWeights.y - vWeights.z;
+
+    for (int i = 0; i < 4; ++i)
+    {
+        matrix matBone = GetBoneMatrix((int) vIndices[i]);
+
+        tSkinning.vPos += fWeights[i] * mul(float4(vPos, 1.f), matBone).xyz;
+        tSkinning.vNormal += fWeights[i] * mul(float4(vNormal, 0.f), matBone).xyz;
+    }
+
+    tSkinning.vNormal = normalize(tSkinning.vNormal);
+
+    return tSkinning;
+}
+
 
 VS_OUTPUT_3D Vertex3DVS(VS_INPUT_3D input)
 {

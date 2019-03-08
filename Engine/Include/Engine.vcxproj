@@ -209,6 +209,7 @@
     <ClInclude Include="Component\Bar_Com.h" />
     <ClInclude Include="Component\FreeCamera_Com.h" />
     <ClInclude Include="Component\IconSlot_Com.h" />
+    <ClInclude Include="Component\LandScape_Com.h" />
     <ClInclude Include="Component\Light_Com.h" />
     <ClInclude Include="Component\NavigationMesh.h" />
     <ClInclude Include="Component\SkyBox_Com.h" />
@@ -238,6 +239,7 @@
     <ClInclude Include="FontManager.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GUIManager.h" />
+    <ClInclude Include="Heap.h" />
     <ClInclude Include="KeyInput.h" />
     <ClInclude Include="Macro.h" />
     <ClInclude Include="NavigationManager.h" />
@@ -282,6 +284,7 @@
     <ClCompile Include="Component\Bar_Com.cpp" />
     <ClCompile Include="Component\FreeCamera_Com.cpp" />
     <ClCompile Include="Component\IconSlot_Com.cpp" />
+    <ClCompile Include="Component\LandScape_Com.cpp" />
     <ClCompile Include="Component\Light_Com.cpp" />
     <ClCompile Include="Component\NavigationMesh.cpp" />
     <ClCompile Include="Component\SkyBox_Com.cpp" />
@@ -449,28 +452,6 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
-    </FxCompile>
-    <FxCompile Include="..\Bin\Shader\Skinned.fx">
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </EntryPointName>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-      </EntryPointName>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-      </EntryPointName>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-      </EntryPointName>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="..\Bin\Shader\SkyBoxShader.fx">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

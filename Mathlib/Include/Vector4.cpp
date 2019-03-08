@@ -922,4 +922,28 @@ Vector4 Vector4::Normalize(const Vector4 & vec)
 
 	return Vector4(XMVector3Normalize(Src));
 }
+
+Vector4 Vector4::Lerp(const Vector4 & Src, const Vector4 & Dest, float Time)
+{
+	XMVECTOR tSrc = XMLoadFloat4((XMFLOAT4*)&Src);
+	XMVECTOR tDest = XMLoadFloat4((XMFLOAT4*)&Dest);
+
+	return Vector4(XMVectorLerp(tSrc, tDest, Time));
+}
+Vector4 Vector4::QuaternionSlerpSLerp(const Vector4 & Src, const Vector4 & Dest, float Time)
+{
+	XMVECTOR tSrc = XMLoadFloat4((XMFLOAT4*)&Src);
+	XMVECTOR tDest = XMLoadFloat4((XMFLOAT4*)&Dest);
+
+	return Vector4(XMQuaternionSlerp(tSrc, tDest, Time));
+}
+XMVECTOR Vector4::Convert()
+{
+	return XMLoadFloat4((XMFLOAT4*)this);
+}
+
+void Vector4::Convert(const XMVECTOR & Xmvec)
+{
+	XMStoreFloat4((XMFLOAT4*)this, Xmvec);
+}
 /////////////////////////////////////////////////////////////////////////

@@ -26,8 +26,8 @@ PathManager::PathManager()
 	AddPath(SHADER_PATH, TEXT("Shader\\"));
 	AddPath(SOUND_PATH, TEXT("Sound\\"));
 	AddPath(DATA_PATH, TEXT("Data\\"));
-	AddPath(FBX_PATH, TEXT("FBX\\"));
-	AddPath(FBX_DATA_PATH, TEXT("FBXData\\"));
+	AddPath(MESH_PATH, TEXT("Mesh\\"));
+	AddPath(MESH_DATA_PATH, TEXT("MeshData\\"));
 }
 
 PathManager::~PathManager()

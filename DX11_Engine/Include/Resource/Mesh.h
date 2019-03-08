@@ -40,19 +40,21 @@ struct JEONG_DLL MeshContainer
 
 class Material_Com;
 class FBXLoader;
+class Animation3D_Com;
 class Mesh : public RefCount
 {
 public:
-	bool CreateMesh(const string& TagName, const string& ShaderKeyName, const string& LayOutKeyName, void* vertexInfo, int vertexCount, int vertexSize, D3D11_USAGE vertexUsage, D3D11_PRIMITIVE_TOPOLOGY primitiveType, void* indexInfo = NULLPTR, int indexCount = 0,	int indexSize = 0, D3D11_USAGE indexUsage = D3D11_USAGE_DEFAULT, DXGI_FORMAT indexFormat = DXGI_FORMAT_R16_UINT);
+	bool CreateMesh(const string& KeyName, const string& ShaderKeyName, const string& LayOutKeyName, void* vertexInfo, int vertexCount, int vertexSize, D3D11_USAGE vertexUsage, D3D11_PRIMITIVE_TOPOLOGY primitiveType, void* indexInfo = NULLPTR, int indexCount = 0,	int indexSize = 0, D3D11_USAGE indexUsage = D3D11_USAGE_DEFAULT, DXGI_FORMAT indexFormat = DXGI_FORMAT_R16_UINT);
 	void Render();
 	void Render(int Container, int Subset);
 
+	bool LoadMesh(const string& KeyName, const TCHAR* FileName, const string& PathKey = MESH_DATA_PATH);
+	bool LoadMeshFromFullPath(const string& KeyName, const TCHAR* FullPath);
 	string GetShaderKey() const { return m_ShaderKeyName; }
 	string GetLayOutKey() const { return m_LayOutKeyName; }
 	void* GetVertexInfo(int Index) const { return m_vecMeshContainer[Index]->vertexBuffer.vInfo; }
-	//bool LoadMesh(const string& KeyName, const TCHAR* pFileName,const string& strPathKey = FBX_PATH);
-	//bool LoadMeshFromFullPath(const string& KeyName, const TCHAR* pFullPath);
 	Material_Com* CloneMaterial();
+	Animation3D_Com* CloneAnimation();
 
 	void UpdateVertexBuffer(void* vertexInfo, int ContainerIndex = 0);
 
@@ -65,8 +67,13 @@ public:
 	Vector3 GetLenth() const { return m_Lenth; }
 	float GetRadius() const { return m_Radius; }
 
+	bool Save(const string& FileName, const string& PathKey = MESH_PATH);
+	bool SaveFullPath(const char* pFullPath);
+	bool Load(const string& FileName, const string& PathKey = MESH_DATA_PATH);
+	bool LoadFullPath(const char* pFullPath);
+
 private:
-	//bool ConvertFbx(FBXLoader* pLoader);
+	bool ConvertFbx(FBXLoader* pLoader, const char* pFullPath);
 
 private:
 	vector<MeshContainer*> m_vecMeshContainer;
@@ -77,6 +84,7 @@ private:
 	Vector3 m_Max;
 	Vector3 m_Lenth;
 	Material_Com* m_Material;
+	Animation3D_Com* m_Animation;
 	float m_Radius;
 
 private:

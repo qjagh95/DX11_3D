@@ -3,6 +3,16 @@
 
 JEONG_USING
 
+BineryRead::BineryRead(const wchar_t* FullPath)
+{
+	m_ReadFile.open(FullPath, ios::binary);
+}
+
+BineryRead::BineryRead(const char* FullPath)
+{
+	m_ReadFile.open(FullPath, ios::binary);
+}
+
 BineryRead::BineryRead(const string& FileName)
 {
 	wstring Temp;
@@ -245,4 +255,12 @@ void BineryRead::ReadData(wchar_t* Data)
 void BineryRead::ReadData(void * Data, size_t Size)
 {
 	m_ReadFile.read((char*)&Data, Size);
+}
+
+Matrix BineryRead::ReadData()
+{
+	Matrix Data;
+	m_ReadFile.read((char*)&Data, sizeof(float) * 16);
+
+	return Data;
 }

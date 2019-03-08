@@ -26,6 +26,7 @@ union MATH_DLL __declspec(align(16)) Matrix
 
 	void operator = (const Matrix& mat);
 	void operator = (const XMMATRIX& mat);
+	void operator = (float f[4][4]);
 
 	Matrix operator * (const Matrix& mat) const;
 	Matrix operator * (const XMMATRIX& mat)	const;

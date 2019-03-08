@@ -3,6 +3,16 @@
 
 JEONG_USING
 
+BineryWrite::BineryWrite(const wchar_t* FullPath)
+{
+	m_WriteFile.open(FullPath, ios::binary);
+}
+
+BineryWrite::BineryWrite(const char* FullPath)
+{
+	m_WriteFile.open(FullPath, ios::binary);
+}
+
 BineryWrite::BineryWrite(const string& FileName)
 {
 	wstring Temp;
@@ -14,7 +24,7 @@ BineryWrite::BineryWrite(const string& FileName)
 	Temp += CA2W(FileName.c_str());
 	string Temp2 = CW2A(Temp.c_str());
 
-	m_WriteFile = ofstream(Temp2.c_str(), ios_base::binary);
+	m_WriteFile.open(Temp2.c_str(), ios::binary);
 }
 
 BineryWrite::BineryWrite(const wstring& FileName)

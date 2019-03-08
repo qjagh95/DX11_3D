@@ -259,4 +259,11 @@ namespace JEONG
 			Height = 4.5f;
 		}
 	};
+
+	struct JEONG_DLL LandScapeCBuffer
+	{
+		float	DetailLevel;
+		int		SplatCount;
+		Vector2	Empty;
+	};
 }

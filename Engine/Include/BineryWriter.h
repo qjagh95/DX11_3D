@@ -22,6 +22,8 @@ private:
 	ofstream m_WriteFile;
 
 public:
+	BineryWrite(const TCHAR* FullPath);
+	BineryWrite(const char* FullPath);
 	BineryWrite(const string& FileName);
 	BineryWrite(const wstring& FileName);
 	~BineryWrite();

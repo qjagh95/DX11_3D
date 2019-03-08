@@ -50,7 +50,7 @@ int FreeCamera_Com::Update(float DeltaTime)
 		m_Object->GetTransform()->Move(AXIS_Z, m_Speed, DeltaTime);
 
 	if (KeyInput::Get()->KeyPress("RButton"))
-		m_Object->GetTransform()->Rotation(Vector3(KeyInput::Get()->GetMouseGap().y, -KeyInput::Get()->GetMouseGap().x, 0.0f));
+		m_Object->GetTransform()->Rotation(Vector3(KeyInput::Get()->GetMouseGap().y * 0.1f, -KeyInput::Get()->GetMouseGap().x * 0.1f, 0.0f));
 
 	return 0;
 }

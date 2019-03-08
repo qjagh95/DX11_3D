@@ -241,6 +241,9 @@
     <Filter Include="Core\18. NavigationManager">
       <UniqueIdentifier>{c86e529a-f827-4f89-894d-140ee470a5e0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\08. Object\Component\BaseComponent\16. LandScape">
+      <UniqueIdentifier>{d3d88cde-b8ad-4ce7-bd46-f0c44fd1dd4c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -456,6 +459,12 @@
     <ClInclude Include="NavigationManager.h">
       <Filter>Core\18. NavigationManager</Filter>
     </ClInclude>
+    <ClInclude Include="Heap.h">
+      <Filter>Core\03. Header</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\LandScape_Com.h">
+      <Filter>Core\08. Object\Component\BaseComponent\16. LandScape</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Copy.bat">
@@ -664,6 +673,9 @@
     <ClCompile Include="NavigationManager.cpp">
       <Filter>Core\18. NavigationManager</Filter>
     </ClCompile>
+    <ClCompile Include="Component\LandScape_Com.cpp">
+      <Filter>Core\08. Object\Component\BaseComponent\16. LandScape</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon1.ico">
@@ -698,9 +710,6 @@
       <Filter>Core\09. Render\05. HLSLSorce</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\Shader\LightDir.fx">
-      <Filter>Core\09. Render\05. HLSLSorce</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Bin\Shader\Skinned.fx">
       <Filter>Core\09. Render\05. HLSLSorce</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\Shader\SkyBoxShader.fx">

@@ -154,6 +154,8 @@ union MATH_DLL Vector3
 	void Convert(const XMVECTOR & Xmvec);
 
 	static Vector3 Normalize(const Vector3& vec);
+	static Vector3 Lerp(const Vector3 & Src, const Vector3 & Dest, float Time);
+	static Vector3 QuaternionSlerpSLerp(const Vector3 & Src, const Vector3 & Dest, float Time);
 
 	static Vector3 Axis[3];
 	static Vector3 Zero;

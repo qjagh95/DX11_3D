@@ -178,8 +178,7 @@ VS_OUTPUT_3D StandardBumpVS(VS_INPUT_3D input)
 
     output.vViewPos = mul(float4(vPos, 1.0f), g_WV).xyz;
     output.vProjPos = mul(float4(vPos, 1.0f), g_WVP);
-	//output.vPos = output.vProjPos;
-    output.vPos = mul(float4(vPos, 1.0f), g_WVP);
+    output.vPos = output.vProjPos;
     output.vUV = input.vUV;
 
 	// Normal을 View로 변환한다.
@@ -189,6 +188,28 @@ VS_OUTPUT_3D StandardBumpVS(VS_INPUT_3D input)
 
     return output;
 }
+
+VS_OUTPUT_3D StandardBumpAnimVS(VS_INPUT_3D input)
+{
+    VS_OUTPUT_3D output = (VS_OUTPUT_3D) 0;
+
+    float3 vPos = input.vPos - g_Pivot * g_Length;
+
+    SkinningData tSkinning = Skinned(vPos, input.vNormal, input.vTangent, input.vBinormal, input.vBlendWeight, input.vBlendIndex);
+
+    output.vViewPos = mul(float4(tSkinning.vPos, 1.f), g_WV).xyz;
+    output.vProjPos = mul(float4(tSkinning.vPos, 1.f), g_WVP);
+    output.vPos = output.vProjPos;
+    output.vUV = input.vUV;
+
+	// Normal을 View로 변환한다.
+    output.vNormalV = normalize(mul(float4(tSkinning.vNormal, 0.0f), g_WV).xyz);
+    output.vTangentV = normalize(mul(float4(tSkinning.vTangent, 0.0f), g_WV).xyz);
+    output.vBinormalV = normalize(mul(float4(tSkinning.vBinormal, 0.0f), g_WV).xyz);
+
+    return output;
+}
+
 
 PS_OUTPUT_GBUFFER StandardBumpPS(VS_OUTPUT_3D input)
 {
@@ -200,6 +221,22 @@ PS_OUTPUT_GBUFFER StandardBumpPS(VS_OUTPUT_3D input)
 
     //카메라를 바라보는 방향
     float3 toCamera = -normalize(input.vViewPos);
+    float3 vNormal = input.vNormalV;
+
+    if (g_Material.Diffuse.w == 1.0f)
+    {
+        float4 vNormalCol = NormalTexture.Sample(DiffuseSampler, input.vUV);
+        vNormalCol.xyz = vNormalCol.xyz * 2.0f - 1.0f;
+
+        float3x3 mat =
+        {
+            input.vTangentV,   //X축
+            input.vBinormalV,  //Y축
+            input.vNormalV,    //Z축
+        };
+
+        vNormal = normalize(mul(vNormalCol.xyz, mat));
+    }
 
     if (g_isDeferred == RENDER_FORWARD)
     {
@@ -229,6 +266,43 @@ PS_OUTPUT_GBUFFER StandardBumpPS(VS_OUTPUT_3D input)
 
     return output;
 }
+
+VS_OUTPUT_3D StandardTexNormalVS(VS_INPUT_3D input)
+{
+    VS_OUTPUT_3D output = (VS_OUTPUT_3D) 0;
+
+    float3 vPos = input.vPos - g_Pivot * g_Length;
+
+    output.vViewPos = mul(float4(vPos, 1.0f), g_WV).xyz;
+    output.vProjPos = mul(float4(vPos, 1.0f), g_WVP);
+    output.vPos = output.vProjPos;
+    output.vUV = input.vUV;
+    
+    output.vNormalV = normalize(mul(float4(input.vNormal, 0.0f), g_WV).xyz);
+
+    return output;
+}
+
+
+VS_OUTPUT_3D StandardTexNormalAnimVS(VS_INPUT_3D input)
+{
+    VS_OUTPUT_3D output = (VS_OUTPUT_3D) 0;
+
+    float3 vPos = input.vPos - g_Pivot * g_Length;
+
+    SkinningData tSkinning = Skinned(vPos, input.vNormal, input.vBlendWeight, input.vBlendIndex);
+
+    output.vViewPos = mul(float4(tSkinning.vPos, 1.f), g_WV).xyz;
+    output.vProjPos = mul(float4(tSkinning.vPos, 1.f), g_WVP);
+    output.vPos = output.vProjPos;
+    output.vUV = input.vUV;
+
+	// Normal을 View로 변환한다.
+    output.vNormalV = normalize(mul(float4(tSkinning.vNormal, 0.f), g_WV).xyz);
+
+    return output;
+}
+
 
 //////////////////////////////////NULLBuffer출력용/////////////////////////////
 

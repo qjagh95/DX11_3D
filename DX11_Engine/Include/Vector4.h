@@ -127,7 +127,13 @@ union MATH_DLL Vector4
 	float Dot(float Val[4]) const;
 	float Dot(int Val[4]) const;
 
+	XMVECTOR Convert();
+	void Convert(const XMVECTOR & Xmvec);
+
 	static Vector4 Normalize(const Vector4& vec);
+	Vector4 Lerp(const Vector4 & Src, const Vector4 & Dest, float Time);
+	Vector4 QuaternionSlerpSLerp(const Vector4 & Src, const Vector4 & Dest, float Time);
+
 	static Vector4 Axis[4];
 	static Vector4 Zero;
 	static Vector4 One;

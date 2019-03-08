@@ -928,6 +928,21 @@ Vector3 Vector3::Normalize(const Vector3 & vec)
 
 	return Vector3(XMVector3Normalize(Src));
 }
+
+Vector3 Vector3::Lerp(const Vector3 & Src, const Vector3 & Dest, float Time)
+{
+	XMVECTOR tSrc = XMLoadFloat3((XMFLOAT3*)&Src);
+	XMVECTOR tDest = XMLoadFloat3((XMFLOAT3*)&Dest);
+
+	return Vector3(XMVectorLerp(tSrc, tDest, Time));
+}
+Vector3 Vector3::QuaternionSlerpSLerp(const Vector3 & Src, const Vector3 & Dest, float Time)
+{
+	XMVECTOR tSrc = XMLoadFloat3((XMFLOAT3*)&Src);
+	XMVECTOR tDest = XMLoadFloat3((XMFLOAT3*)&Dest);
+
+	return Vector3(XMQuaternionSlerp(tSrc, tDest, Time));
+}
 /////////////////////////////////////////////////////////////////////////
 
 float Vector3::GetAngle(const Vector3 & vec) const
@@ -1010,7 +1025,7 @@ float Vector3::GetAngle(int Val[3]) const
 
 XMVECTOR Vector3::Convert()
 {
-	return XMLoadFloat3((XMFLOAT3*)this);;
+	return XMLoadFloat3((XMFLOAT3*)this);
 }
 
 void Vector3::Convert(const XMVECTOR & Xmvec)

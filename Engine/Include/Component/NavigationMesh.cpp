@@ -52,7 +52,3 @@ NavigationMesh * NavigationMesh::Clone()
 {
 	return new NavigationMesh(*this);
 }
-
-void NavigationMesh::AfterClone()
-{
-}

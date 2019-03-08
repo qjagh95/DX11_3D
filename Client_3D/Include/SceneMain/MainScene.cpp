@@ -45,7 +45,7 @@ bool MainScene::Init()
 	RenderComponent->InitMaterial();
 
 	//FBXLoader bb;
-	//string cc = PathManager::Get()->FindPathMultiByte(FBX_PATH);
+	//string cc = PathManager::Get()->FindPathMultiByte(MESH_PATH);
 	//cc += "Monster4.fbx";
 	//bb.LoadFbx(cc.c_str());
 

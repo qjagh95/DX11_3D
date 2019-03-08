@@ -3,6 +3,7 @@
 #include "Transform_Com.h"
 #include "Camera_Com.h"
 #include "Material_Com.h"
+#include "Animation3D_Com.h"
 
 #include "../Device.h"
 #include "../GameObject.h"
@@ -216,6 +217,49 @@ void Renderer_Com::SetMesh(const string & KeyName, const TCHAR * FileName, const
 			m_Object->AddComponent(clone);
 
 			SAFE_RELEASE(clone);
+		}
+
+		Animation3D_Com* pAnimation = m_Mesh->CloneAnimation();
+
+		if (pAnimation)
+		{
+			m_Object->DeleteComponent(CT_ANIMATION3D);
+			m_Object->AddComponent(pAnimation);
+			SAFE_RELEASE(pAnimation);
+		}
+	}
+}
+
+void Renderer_Com::SetMeshFromFullPath(const string & KeyName, const TCHAR * FullPath)
+{
+	SAFE_RELEASE(m_Mesh);
+	ResourceManager::Get()->LoadMeshFromFullPath(KeyName, FullPath);
+	m_Mesh = ResourceManager::Get()->FindMesh(KeyName);
+
+	if (m_Mesh != NULLPTR)
+	{
+		SetShader(m_Mesh->GetShaderKey());
+		SetLayOut(m_Mesh->GetLayOutKey());
+
+		Material_Com* clone = m_Mesh->CloneMaterial();
+
+		if (clone != NULLPTR)
+		{
+			m_Material = clone;
+
+			m_Object->DeleteComponent(CT_MATERIAL);
+			m_Object->AddComponent(clone);
+
+			SAFE_RELEASE(clone);
+		}
+
+		Animation3D_Com* pAnimation = m_Mesh->CloneAnimation();
+
+		if (pAnimation)
+		{
+			m_Object->DeleteComponent(CT_ANIMATION3D);
+			m_Object->AddComponent(pAnimation);
+			SAFE_RELEASE(pAnimation);
 		}
 	}
 }

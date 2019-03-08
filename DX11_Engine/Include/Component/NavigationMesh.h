@@ -14,7 +14,6 @@ public:
 	void CollisionLateUpdate(float DeltaTime) override;
 	void Render(float DeltaTime) override;
 	NavigationMesh* Clone() override;
-	void AfterClone() override;
 
 protected:
 	NavigationMesh();

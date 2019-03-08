@@ -27,6 +27,8 @@
 #include <dxgidebug.h>
 #include <dinput.h>
 
+#include <DirectXCollision.h>
+
 ///Excel
 #include "enum.h"
 #include "IBookT.h"

@@ -127,6 +127,22 @@ bool ShaderManager::Init()
 	Entry[ST_PIXEL] = "StandardNormalColorPS";
 	if (LoadShader(STANDARD_NORMAL_COLOR_SHADER, TEXT("Standard.fx"), Entry) == false)
 	{
+
+		return false;
+	}
+
+	Entry[ST_VERTEX] = "StandardTexNormalAnimVS";
+	Entry[ST_PIXEL] = "StandardBumpPS";
+	if (LoadShader(STANDARD_TEX_NORMAL_ANIM_SHADER, TEXT("Standard.fx"), Entry) == false)
+	{
+		TrueAssert(true);
+		return false;
+	}
+
+	Entry[ST_VERTEX] = "StandardTexNormalVS";
+	Entry[ST_PIXEL] = "StandardBumpPS";
+	if (LoadShader(STANDARD_TEX_NORMAL_SHADER, TEXT("Standard.fx"), Entry) == false)
+	{
 		TrueAssert(true);
 		return false;
 	}
@@ -220,6 +236,7 @@ bool ShaderManager::Init()
 	CreateCBuffer("PublicCBuffer", sizeof(PublicCBuffer), 10, CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("LightCBuffer", sizeof(LightCBuffer), 3, CST_VERTEX | CST_PIXEL);
 	CreateCBuffer("SkyCBuffer", sizeof(SkyCBuffer), 4, CST_VERTEX | CST_PIXEL);
+	CreateCBuffer("LandScapeCBuffer", sizeof(LandScapeCBuffer), 4, CST_VERTEX | CST_PIXEL);
 
 	return true;
 }

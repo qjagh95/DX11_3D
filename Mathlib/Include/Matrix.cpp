@@ -61,6 +61,12 @@ void Matrix::operator=(const XMMATRIX & mat)
 	matrix = mat;
 }
 
+void Matrix::operator = (float f[4][4])
+{
+	for (int i = 0; i < 4; ++i)
+		vec[i] = f[i];
+}
+
 Matrix & Matrix::operator*=(const XMMATRIX & mat)
 {
 	matrix *= mat;

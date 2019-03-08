@@ -260,11 +260,11 @@ bool ResourceManager::LoadMesh(const string & KeyName, const TCHAR * pFileName, 
 
 	newMesh = new Mesh();
 
-	//if (newMesh->LoadMesh(KeyName, pFileName, strPathKey) == false)
-	//{
-	//	SAFE_RELEASE(newMesh);
-	//	return false;
-	//}
+	if (newMesh->LoadMesh(KeyName, pFileName, strPathKey) == false)
+	{
+		SAFE_RELEASE(newMesh);
+		return false;
+	}
 
 	m_MeshMap.insert(make_pair(KeyName, newMesh));
 
@@ -283,11 +283,11 @@ bool ResourceManager::LoadMeshFromFullPath(const string & KeyName, const TCHAR *
 
 	newMesh = new Mesh();
 
-	//if (newMesh->LoadMeshFromFullPath(KeyName, pFullPath) == false)
-	//{
-	//	SAFE_RELEASE(newMesh);
-	//	return false;
-	//}
+	if (newMesh->LoadMeshFromFullPath(KeyName, pFullPath) == false)
+	{
+		SAFE_RELEASE(newMesh);
+		return false;
+	}
 
 	m_MeshMap.insert(make_pair(KeyName, newMesh));
 	return true;

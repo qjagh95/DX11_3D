@@ -15,6 +15,7 @@ public:
 	string ReadString();
 	size_t ReadSizeT();
 	wstring ReadWString();
+	Matrix ReadData();
 	void* ReadUserData(size_t size);
 
 	void ReadData(bool& Data);
@@ -36,6 +37,8 @@ private:
 	ifstream m_ReadFile;
 
 public:
+	BineryRead(const wchar_t* FullPath);
+	BineryRead(const char* FullPath);
 	BineryRead(const string& FileName);
 	BineryRead(const wstring& FileName);
 	~BineryRead();

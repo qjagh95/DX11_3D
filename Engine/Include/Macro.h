@@ -18,8 +18,8 @@
 #define SHADER_PATH "ShaderPath"
 #define SOUND_PATH "SoundPath"
 #define DATA_PATH "DataPath"
-#define FBX_PATH "FBXPath"
-#define FBX_DATA_PATH "FBXDataPath"
+#define MESH_PATH "MeshPath"
+#define MESH_DATA_PATH "MeshDataPath"
 
 //Shader
 #define STANDARD_COLOR_SHADER "StandardColorShader"
@@ -37,6 +37,10 @@
 #define	LIGHT_SPOT_SHADER "LightSpotAccShader"
 #define LIGHT_BLEND_SHADER "LightBlendShader"
 #define	STANDARD_BUMP_SHADER "StandardBumpShader"
+#define	STANDARD_BUMP_SHADER "StandardBumpShader"
+#define STANDARD_BUMP_ANIM_SHADER "StandardBumpAnimShader"
+#define STANDARD_TEX_NORMAL_ANIM_SHADER "StandardTexNormalAnimShader"
+#define STANDARD_TEX_NORMAL_SHADER "StandardTexNormalShader"
 #define	VERTEX3D_SHADER "Vertex3DShader"
 #define SKY_BOX_SHADER "SkyBoxShader"
 

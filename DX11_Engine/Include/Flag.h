@@ -28,6 +28,7 @@ namespace JEONG
 		CT_GARVITY,
 		CT_NUMBER,
 		CT_LIGHT,
+		CT_ANIMATION3D,
 		CT_MAX,
 	};
 

@@ -33,6 +33,11 @@ bool SkyBox_Com::Init()
 	그러면 카메라를 따라다니는 작은 구 하나를 만들고 각종 쉐이더 기법을 사용하여 하늘처럼 보이게 한다.
 	*/
 
+	/*
+	물론 큐브텍스쳐가 있다면 구를 크게그려서 큐브텍스쳐를 샘플링하여 
+	구현하는 것도 쉽게 가능하다.
+	*/
+
 	m_Transform->SetWorldScale(20.0f, 20.0f, 20.0f);
 
 	Renderer_Com* newRenderer = m_Object->AddComponent<Renderer_Com>("SkyRender");
@@ -50,8 +55,6 @@ bool SkyBox_Com::Init()
 
 int SkyBox_Com::Input(float DeltaTime)
 {
-	int a = 0;
-
 	return 0;
 }
 

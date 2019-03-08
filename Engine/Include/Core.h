@@ -1,8 +1,6 @@
 #pragma once
 JEONG_BEGIN
 
-#define GUI_USING 0xffffffff
-
 class Timer;
 class JEONG_DLL Core
 {
