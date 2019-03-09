@@ -127,7 +127,7 @@ bool ShaderManager::Init()
 	Entry[ST_PIXEL] = "StandardNormalColorPS";
 	if (LoadShader(STANDARD_NORMAL_COLOR_SHADER, TEXT("Standard.fx"), Entry) == false)
 	{
-
+		TrueAssert(true);
 		return false;
 	}
 
@@ -176,7 +176,10 @@ bool ShaderManager::Init()
 	AddInputElement("COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 16);
 
 	if (CreateInputLayOut(POS_NORMAL_COLOR_LAYOUT, STANDARD_NORMAL_COLOR_SHADER) == false)
+	{
+		TrueAssert(true);
 		return false;
+	}
 
 	Entry[ST_VERTEX] = "Vertex3DVS";
 	Entry[ST_PIXEL] = "Vertex3DPS";
@@ -189,6 +192,14 @@ bool ShaderManager::Init()
 	Entry[ST_VERTEX] = "StandardBumpVS";
 	Entry[ST_PIXEL] = "StandardBumpPS";
 	if (LoadShader(STANDARD_BUMP_SHADER, TEXT("Standard.fx"), Entry) == false)
+	{
+		TrueAssert(true);
+		return false;
+	}
+
+	Entry[ST_VERTEX] = "StandardBumpAnimVS";
+	Entry[ST_PIXEL] = "StandardBumpPS";
+	if (LoadShader(STANDARD_BUMP_ANIM_SHADER, TEXT("Standard.fx"), Entry) == false)
 	{
 		TrueAssert(true);
 		return false;
@@ -373,7 +384,7 @@ CBuffer * ShaderManager::FindCBuffer(const string & KeyName)
 
 Shader * ShaderManager::FindShader(const string & KeyName)
 {
-	unordered_map<string, JEONG::Shader*>::iterator FindIter = m_ShaderMap.find(KeyName);
+	unordered_map<string, Shader*>::iterator FindIter = m_ShaderMap.find(KeyName);
 
 	if (FindIter == m_ShaderMap.end())
 		return NULLPTR;
@@ -385,7 +396,7 @@ Shader * ShaderManager::FindShader(const string & KeyName)
 
 Shader * ShaderManager::FindShaderNoneCount(const string & KeyName)
 {
-	unordered_map<string, JEONG::Shader*>::iterator FindIter = m_ShaderMap.find(KeyName);
+	unordered_map<string, Shader*>::iterator FindIter = m_ShaderMap.find(KeyName);
 
 	if (FindIter == m_ShaderMap.end())
 		return NULLPTR;
@@ -393,7 +404,7 @@ Shader * ShaderManager::FindShaderNoneCount(const string & KeyName)
 	return FindIter->second;
 }
 
-ID3D11InputLayout * JEONG::ShaderManager::FindInputLayOut(const string & KeyName)
+ID3D11InputLayout * ShaderManager::FindInputLayOut(const string & KeyName)
 {
 	unordered_map<string, ID3D11InputLayout*>::iterator FindIter = m_LayOutMap.find(KeyName);
 

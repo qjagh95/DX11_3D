@@ -182,107 +182,12 @@ VS_OUTPUT_3D StandardBumpVS(VS_INPUT_3D input)
     output.vUV = input.vUV;
 
 	// Normal을 View로 변환한다.
-    output.vNormalV = normalize(mul(float4(input.vNormal, 0.f), g_WV).xyz);
-    output.vTangentV = normalize(mul(float4(input.vTangent, 0.f), g_WV).xyz);
-    output.vBinormalV = normalize(mul(float4(input.vBinormal, 0.f), g_WV).xyz);
+    output.vNormal = normalize(mul(float4(input.vNormal, 0.f), g_WV).xyz);
+    output.vTangent = normalize(mul(float4(input.vTangent, 0.f), g_WV).xyz);
+    output.vBinormal = normalize(mul(float4(input.vBinormal, 0.f), g_WV).xyz);
 
     return output;
 }
-
-VS_OUTPUT_3D StandardBumpAnimVS(VS_INPUT_3D input)
-{
-    VS_OUTPUT_3D output = (VS_OUTPUT_3D) 0;
-
-    float3 vPos = input.vPos - g_Pivot * g_Length;
-
-    SkinningData tSkinning = Skinned(vPos, input.vNormal, input.vTangent, input.vBinormal, input.vBlendWeight, input.vBlendIndex);
-
-    output.vViewPos = mul(float4(tSkinning.vPos, 1.f), g_WV).xyz;
-    output.vProjPos = mul(float4(tSkinning.vPos, 1.f), g_WVP);
-    output.vPos = output.vProjPos;
-    output.vUV = input.vUV;
-
-	// Normal을 View로 변환한다.
-    output.vNormalV = normalize(mul(float4(tSkinning.vNormal, 0.0f), g_WV).xyz);
-    output.vTangentV = normalize(mul(float4(tSkinning.vTangent, 0.0f), g_WV).xyz);
-    output.vBinormalV = normalize(mul(float4(tSkinning.vBinormal, 0.0f), g_WV).xyz);
-
-    return output;
-}
-
-
-PS_OUTPUT_GBUFFER StandardBumpPS(VS_OUTPUT_3D input)
-{
-    PS_OUTPUT_GBUFFER output = (PS_OUTPUT_GBUFFER) 0;
-    
-    float4 Ambient = float4(0.0f, 0.0f, 0.0f, 0.0f);
-    float4 Diffuse = float4(0.0f, 0.0f, 0.0f, 0.0f);
-    float4 Specular = float4(0.0f, 0.0f, 0.0f, 0.0f);
-
-    //카메라를 바라보는 방향
-    float3 toCamera = -normalize(input.vViewPos);
-    float3 vNormal = input.vNormalV;
-
-    if (g_Material.Diffuse.w == 1.0f)
-    {
-        float4 vNormalCol = NormalTexture.Sample(DiffuseSampler, input.vUV);
-        vNormalCol.xyz = vNormalCol.xyz * 2.0f - 1.0f;
-
-        float3x3 mat =
-        {
-            input.vTangentV,   //X축
-            input.vBinormalV,  //Y축
-            input.vNormalV,    //Z축
-        };
-
-        vNormal = normalize(mul(vNormalCol.xyz, mat));
-    }
-
-    if (g_isDeferred == RENDER_FORWARD)
-    {
-        if (g_Light.LightType == LIGHT_DIRECTION)
-            ComputeDirectionLight(float4(input.vNormalV, g_Light.LightSpecular.w), toCamera, Ambient, Diffuse, Specular);
-        else if (g_Light.LightType == LIGHT_POINT)
-            ComputePointLight(float4(input.vNormalV, g_Light.LightSpecular.w), input.vViewPos, toCamera, Ambient, Diffuse, Specular);
-        else if (g_Light.LightType == LIGHT_SPOT)
-            ComputeSpotLight(float4(input.vNormalV, g_Light.LightSpecular.w), input.vViewPos, toCamera, Ambient, Diffuse, Specular);
-
-        output.vAlbedo = DiffuseTexture.Sample(DiffuseSampler, input.vUV) * (Diffuse + Ambient) + Specular;
-    }
-    else
-    {
-        output.vAlbedo = DiffuseTexture.Sample(DiffuseSampler, input.vUV);
-        output.vNormal.xyz = input.vNormalV;
-        output.vNormal.w = g_Material.Specular.w;
-        output.vDepth.r = input.vPos.z / input.vPos.w;
-        output.vDepth.g = output.vDepth.r;
-        output.vDepth.b = output.vDepth.r;
-        output.vDepth.a = input.vPos.w;
-        output.vMaterial.r = CompressColor(g_Material.Ambient);
-        output.vMaterial.g = CompressColor(g_Material.Diffuse);
-        output.vMaterial.b = CompressColor(g_Material.Specular);
-        output.vMaterial.a = CompressColor(g_Material.Emissive);
-    }
-
-    return output;
-}
-
-VS_OUTPUT_3D StandardTexNormalVS(VS_INPUT_3D input)
-{
-    VS_OUTPUT_3D output = (VS_OUTPUT_3D) 0;
-
-    float3 vPos = input.vPos - g_Pivot * g_Length;
-
-    output.vViewPos = mul(float4(vPos, 1.0f), g_WV).xyz;
-    output.vProjPos = mul(float4(vPos, 1.0f), g_WVP);
-    output.vPos = output.vProjPos;
-    output.vUV = input.vUV;
-    
-    output.vNormalV = normalize(mul(float4(input.vNormal, 0.0f), g_WV).xyz);
-
-    return output;
-}
-
 
 VS_OUTPUT_3D StandardTexNormalAnimVS(VS_INPUT_3D input)
 {
@@ -298,11 +203,91 @@ VS_OUTPUT_3D StandardTexNormalAnimVS(VS_INPUT_3D input)
     output.vUV = input.vUV;
 
 	// Normal을 View로 변환한다.
-    output.vNormalV = normalize(mul(float4(tSkinning.vNormal, 0.f), g_WV).xyz);
+    output.vNormal = normalize(mul(float4(tSkinning.vNormal, 0.f), g_WV).xyz);
 
     return output;
 }
 
+VS_OUTPUT_3D StandardBumpAnimVS(VS_INPUT_3D input)
+{
+    VS_OUTPUT_3D output = (VS_OUTPUT_3D) 0;
+
+    float3 vPos = input.vPos - g_Pivot * g_Length;
+
+    SkinningData tSkinning = Skinned(vPos, input.vNormal, input.vTangent, input.vBinormal, input.vBlendWeight, input.vBlendIndex);
+
+    output.vViewPos = mul(float4(tSkinning.vPos, 1.0f), g_WV).xyz;
+    output.vProjPos = mul(float4(tSkinning.vPos, 1.0f), g_WVP);
+    output.vPos = output.vProjPos;
+    output.vUV = input.vUV;
+
+	// Normal을 View로 변환한다.
+    output.vNormal = normalize(mul(float4(tSkinning.vNormal, 0.0f), g_WV).xyz);
+    output.vTangent = normalize(mul(float4(tSkinning.vTangent, 0.0f), g_WV).xyz);
+    output.vBinormal = normalize(mul(float4(tSkinning.vBinormal, 0.0f), g_WV).xyz);
+
+    return output;
+}
+
+
+PS_OUTPUT_GBUFFER StandardBumpPS(VS_OUTPUT_3D input)
+{
+    PS_OUTPUT_GBUFFER output = (PS_OUTPUT_GBUFFER) 0;
+    
+    float4 Ambient = float4(0.0f, 0.0f, 0.0f, 0.0f);
+    float4 Diffuse = float4(0.0f, 0.0f, 0.0f, 0.0f);
+    float4 Specular = float4(0.0f, 0.0f, 0.0f, 0.0f);
+
+    //카메라를 바라보는 방향
+    float3 toCamera = -normalize(input.vViewPos);
+    float3 vNormal = input.vNormal;
+
+    float4 vNormalCol = NormalTexture.Sample(DiffuseSampler, input.vUV);
+    vNormalCol.xyz = vNormalCol.xyz * 2.0f - 1.0f;
+
+    float3x3 mat =
+    {
+        input.vTangent, //X축
+        input.vBinormal, //Y축
+        input.vNormal, //Z축
+    };
+
+    vNormal = normalize(mul(vNormalCol.xyz, mat));
+
+    output.vAlbedo = DiffuseTexture.Sample(DiffuseSampler, input.vUV);
+    output.vNormal.xyz = input.vNormal;
+    output.vNormal.w = g_Material.Specular.w;
+    output.vDepth.r = input.vPos.z / input.vPos.w;
+    output.vDepth.g = output.vDepth.r;
+    output.vDepth.b = output.vDepth.r;
+    output.vDepth.a = input.vPos.w;
+
+    float4 vSpc;
+    vSpc = SpecularTexture.Sample(DiffuseSampler, input.vUV);
+    
+    output.vMaterial.r = CompressColor(g_Material.Ambient);
+    output.vMaterial.g = CompressColor(g_Material.Diffuse);
+    output.vMaterial.b = CompressColor(vSpc);
+    output.vMaterial.a = CompressColor(g_Material.Emissive);
+
+    return output;
+}
+
+VS_OUTPUT_3D StandardTexNormalVS(VS_INPUT_3D input)
+{
+    VS_OUTPUT_3D output = (VS_OUTPUT_3D) 0;
+
+    float3 vPos = input.vPos - g_Pivot * g_Length;
+
+    output.vViewPos = mul(float4(vPos, 1.0f), g_WV).xyz;
+    output.vProjPos = mul(float4(vPos, 1.0f), g_WVP);
+    output.vPos = output.vProjPos;
+    output.vUV = input.vUV;
+    
+    output.vNormal = normalize(mul(float4(input.vNormal, 0.0f), g_WV).xyz);
+
+    return output;
+}
 
 //////////////////////////////////NULLBuffer출력용/////////////////////////////
 

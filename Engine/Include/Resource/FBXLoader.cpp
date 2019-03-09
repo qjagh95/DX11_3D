@@ -5,7 +5,7 @@ JEONG_USING
 
 FBXLoader::FBXLoader()
 {
-
+	m_bMixamo = false;
 }
 
 FBXLoader::~FBXLoader()
@@ -78,9 +78,7 @@ bool FBXLoader::LoadFbx(const char * pFullPath, FBX_LOAD_TYPE eType)
 		// 클립이 가지고 있는 프레임을 본 개수만큼 resize 해준다.
 		// 원래 Animation Clip에서 하던것이다.
 		for (size_t i = 0; i < m_vecClip.size(); ++i)
-		{
 			m_vecClip[i]->vecBoneKeyFrame.resize(m_vecBones.size());
-		}
 	}
 
 	Triangulate(m_pScene->GetRootNode());

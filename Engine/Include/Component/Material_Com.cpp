@@ -155,12 +155,81 @@ Material_Com * Material_Com::Clone()
 	return new Material_Com(*this);
 }
 
+void Material_Com::Save(BineryWrite & Writer)
+{
+	size_t	iContainer = m_vecMaterial.size();
+	Writer.WriteData(iContainer);
+
+	for (size_t i = 0; i < iContainer; ++i)
+	{
+		size_t iSubset = m_vecMaterial[i].size();
+		Writer.WriteData(iSubset);
+
+		for (size_t j = 0; j < iSubset; ++j)
+		{
+			SubsetMaterial*	pSubset = m_vecMaterial[i][j];
+			Writer.WriteData(&pSubset->MatrialInfo, sizeof(MaterialCbuffer));
+
+			SaveTextureSet(Writer, pSubset->DiffuseTex);
+			SaveTextureSet(Writer, pSubset->NormalTex);
+			SaveTextureSet(Writer, pSubset->SpecularTex);
+
+			size_t	iMultiTexCount = pSubset->vecMultiTexture.size();
+			Writer.WriteData(iMultiTexCount);
+
+			for (size_t k = 0; k < iMultiTexCount; ++k)
+				SaveTextureSet(Writer, &pSubset->vecMultiTexture[k]);
+		}
+	}
+}
+
+void Material_Com::Load(BineryRead & Reader)
+{
+	ClearContainer();
+
+	size_t	iContainer = 0;
+	Reader.ReadData(iContainer);
+
+	for (size_t i = 0; i < iContainer; ++i)
+	{
+		size_t iSubset = 0;
+		Reader.ReadData(iSubset);
+		
+		vector<SubsetMaterial*>	vecMtrl;
+		m_vecMaterial.push_back(vecMtrl);
+
+		for (size_t j = 0; j < iSubset; ++j)
+		{
+			SubsetMaterial*	pSubset = new SubsetMaterial;
+			m_vecMaterial[i].push_back(pSubset);
+
+			Reader.ReadData(&pSubset->MatrialInfo, sizeof(MaterialCbuffer));
+
+			LoadTextureSet(Reader, &pSubset->DiffuseTex);
+			LoadTextureSet(Reader, &pSubset->NormalTex);
+			LoadTextureSet(Reader, &pSubset->SpecularTex);
+
+			size_t	iMultiTexCount = pSubset->vecMultiTexture.size();
+
+			Reader.ReadData(iMultiTexCount);
+
+			TextureSet* pTexSet = nullptr;
+			for (size_t k = 0; k < iMultiTexCount; ++k)
+			{
+				pTexSet = &pSubset->vecMultiTexture[k];
+				LoadTextureSet(Reader, &pTexSet);
+			}
+		}
+	}
+
+}
+
 void Material_Com::SetMaterial(const Vector4& Diffuse, const Vector4& Ambient, const Vector4& Specular, float SpecularPower, const Vector4& Emissive, int Container, int Subset)
 {
 	//컨테이너가 없다면 하나 추가한다.
 	if (Container >= m_vecMaterial.size())
 	{
-		vector<JEONG::SubsetMaterial*> newVec;
+		vector<SubsetMaterial*> newVec;
 		m_vecMaterial.push_back(newVec);
 	}
 	//서브셋이 없다면 추가한다.
@@ -454,6 +523,199 @@ void Material_Com::ClearContainer()
 	}
 
 	m_vecMaterial.clear();
+}
+
+void Material_Com::AddMultiTex(int iSmpRegister, const string & strSmpKey, int iRegister, const string & strKey, const TCHAR * pFileName, const string & strPathKey, int iContainer, int iSubset)
+{
+	if (iContainer >= m_vecMaterial.size())
+	{
+		vector<SubsetMaterial*>	vec;
+		m_vecMaterial.push_back(vec);
+	}
+
+	if (iSubset >= m_vecMaterial[iContainer].size())
+		m_vecMaterial[iContainer].push_back(CreateSubSet());
+
+	SubsetMaterial*	pMaterial = m_vecMaterial[iContainer][iSubset];
+
+	if (pMaterial->vecMultiTexture.size() == 4)
+		return;
+
+	TextureSet	tSet = {};
+	tSet.m_Register = iRegister;
+	tSet.m_SamplerRegister = iSmpRegister;
+
+	ResourceManager::Get()->CreateTexture(strKey, pFileName, strPathKey);
+	tSet.m_Tex = ResourceManager::Get()->FindTexture(strKey);
+	tSet.m_Sampler = ResourceManager::Get()->FindSampler(strKey);
+
+	pMaterial->vecMultiTexture.push_back(tSet);
+}
+
+void Material_Com::AddMultiTex(int iSmpRegister, const string & strSmpKey, int iRegister, const string & strKey, const vector<const TCHAR*>& vecFileName, const string & strPathKey, int iContainer, int iSubset)
+{
+	if (iContainer >= m_vecMaterial.size())
+	{
+		vector<SubsetMaterial*>	vec;
+		m_vecMaterial.push_back(vec);
+	}
+
+	if (iSubset >= m_vecMaterial[iContainer].size())
+		m_vecMaterial[iContainer].push_back(CreateSubSet());
+
+	SubsetMaterial*	pMaterial = m_vecMaterial[iContainer][iSubset];
+
+	if (pMaterial->vecMultiTexture.size() == 4)
+		return;
+
+	TextureSet	tSet = {};
+
+	tSet.m_Register = iRegister;
+	tSet.m_SamplerRegister = iSmpRegister;
+
+	ResourceManager::Get()->CreateTexture(strKey, vecFileName, strPathKey);
+	tSet.m_Tex = ResourceManager::Get()->FindTexture(strKey);
+
+	tSet.m_Sampler = ResourceManager::Get()->FindSampler(strSmpKey);
+
+	pMaterial->vecMultiTexture.push_back(tSet);
+}
+
+void Material_Com::SaveTextureSet(BineryWrite & Writer, TextureSet * pTexture)
+{
+	bool bTexEnable = false;
+
+	if (pTexture)
+	{
+		bTexEnable = true;
+		Writer.WriteData(bTexEnable);
+		Writer.WriteData(pTexture->m_Tex->GetTag());
+
+		// Texture 경로를 얻어온다.
+		const vector<TCHAR*>* pPathList = pTexture->m_Tex->GetFullPath();
+
+		size_t iPathCount = pPathList->size();
+		Writer.WriteData(iPathCount);
+
+		vector<TCHAR*>::const_iterator	iter;
+		vector<TCHAR*>::const_iterator	iterEnd = pPathList->end();
+
+		for (iter = pPathList->begin(); iter != iterEnd; ++iter)
+		{
+			int	iPathLength = lstrlen(*iter);
+			char strPath[MAX_PATH] = {};
+
+#ifdef UNICODE
+			WideCharToMultiByte(CP_ACP, 0, *iter, -1, strPath, iPathLength, 0, 0);
+#else
+			strcpy_s(strPath, *iter);
+#endif // UNICODE
+			_strupr_s(strPath);
+
+			for (int k = iPathLength - 1; k >= 0; --k)
+			{
+				if (strPath[k] == '\\' || strPath[k] == '/')
+				{
+					char	strBin[3];
+					strBin[0] = 'N';
+					strBin[1] = 'I';
+					strBin[2] = 'B';
+					bool	bEnable = true;
+					for (int l = 1; l < 4; ++l)
+					{
+						if (strPath[k - l] != strBin[l - 1])
+						{
+							bEnable = false;
+							break;
+						}
+					}
+
+					if (bEnable)
+					{
+						char strSavePath[MAX_PATH] = {};
+						int	iSaveCount = iPathLength - (k + 1);
+						memcpy(strSavePath, &strPath[k + 1], sizeof(char) * iSaveCount);
+						Writer.WriteData(strSavePath);
+						break;
+					}
+				}
+			}
+		}
+
+		// Sampler Key
+		Writer.WriteData(pTexture->m_Sampler->GetTag());
+		Writer.WriteData(pTexture->m_Register);
+		Writer.WriteData(pTexture->m_SamplerRegister);
+	}
+
+	else
+		Writer.WriteData(bTexEnable);
+}
+
+void Material_Com::LoadTextureSet(BineryRead & Reader, TextureSet ** ppTexture)
+{
+	bool bTexEnable = false;
+	Reader.ReadData(bTexEnable);
+
+	if (bTexEnable)
+	{
+		string strTexKey;
+		Reader.ReadData(strTexKey);
+
+		size_t iPathCount = 0;
+		Reader.ReadData(iPathCount);
+
+		if (iPathCount == 1)
+		{
+			string strPath = {};
+			Reader.ReadData(strPath);
+
+			TCHAR strLoadPath[MAX_PATH] = {};
+
+#ifdef UNICODE
+			MultiByteToWideChar(CP_ACP, 0, strPath.c_str(), -1, strLoadPath, (int)strPath.length() * 2);
+#else
+			strcpy_s(strLoadPath, strPath);
+#endif // UNICODE
+
+			*ppTexture = new TextureSet;
+
+			ResourceManager::Get()->CreateTexture(strTexKey, strLoadPath, ROOT_PATH);
+			(*ppTexture)->m_Tex = ResourceManager::Get()->FindTexture(strTexKey);
+		}
+
+		else
+		{
+			vector<const TCHAR*> vecPath;
+			for (size_t i = 0; i < iPathCount; ++i)
+			{
+				string strPath = {};
+				int	iSaveCount = 0;
+				
+				Reader.ReadData(strPath);
+
+				TCHAR*	strLoadPath = new TCHAR[MAX_PATH];
+				memset(strLoadPath, 0, sizeof(TCHAR) * MAX_PATH);
+
+				strLoadPath = CA2W(strPath.c_str());
+
+				vecPath.push_back(strLoadPath);
+			}
+			*ppTexture = new TextureSet;
+
+			ResourceManager::Get()->CreateTexture(strTexKey, vecPath, ROOT_PATH);
+			(*ppTexture)->m_Tex = ResourceManager::Get()->FindTexture(strTexKey);
+		}
+
+		// Sampler Key
+		string strSmpKey = {};
+		Reader.ReadData(strSmpKey);
+
+		(*ppTexture)->m_Sampler = ResourceManager::Get()->FindSampler(strSmpKey);
+
+		Reader.ReadData((*ppTexture)->m_Register);
+		Reader.ReadData((*ppTexture)->m_SamplerRegister);
+	}
 }
 
 SubsetMaterial* Material_Com::CreateSubSet()

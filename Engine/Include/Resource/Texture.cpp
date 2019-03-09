@@ -16,6 +16,8 @@ Texture::~Texture()
 {
 	SAFE_RELEASE(m_ShaderResourceView);
 	Safe_Delete_VecList(m_vecImage);
+
+	m_vecFullPath.clear();
 }
 
 bool Texture::LoadTexture(const string & TextureName, const TCHAR * FileName, const string & PathKey)
@@ -44,6 +46,8 @@ bool Texture::LoadTexture(const string & TextureName, const vector<const TCHAR*>
 			lstrcpy(strFullPath, pPath);
 
 		lstrcat(strFullPath, FileNames[i]);
+
+		m_vecFullPath.push_back(strFullPath);
 
 		memcpy(strFullPath, strFullPath, sizeof(TCHAR) * MAX_PATH);
 
@@ -86,6 +90,8 @@ bool Texture::LoadTextureFromFullPath(const string & TextureName, const TCHAR * 
 {
 	SetTag(TextureName);
 	lstrcpy(m_FullPath, FullPath);
+
+	m_vecFullPath.push_back(m_FullPath);
 
 	TCHAR Sep[_MAX_EXT] = {};
 	char mSep[_MAX_EXT] = {};
@@ -133,6 +139,8 @@ bool Texture::LoadTextureFromFullPath(const string & TextureName, const vector<c
 	for (size_t i = 0; i < FullPaths.size(); ++i)
 	{
 		memcpy(m_FullPath, FullPaths[i], sizeof(TCHAR) * MAX_PATH);
+
+		m_vecFullPath.push_back(m_FullPath);
 
 		TCHAR strExt[_MAX_EXT] = {};
 		char ext[_MAX_EXT] = {};

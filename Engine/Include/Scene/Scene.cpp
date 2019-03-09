@@ -70,12 +70,12 @@ bool Scene::Init()
 
 	Light_Com* newLight = newLightObject->AddComponent<Light_Com>("GlobalLight");
 	newLight->SetLightType(LT_DIRECTION);
-	newLight->SetLightRange(5.0f);
+	newLight->SetLightRange(500000.0f);
 	newLight->SetLightAttenuation(Vector3(0.2f, 0.2f, 0.2f));
-	newLight->SetLightDirection(Vector3(-10.0f, -10.0f, -50.0f));
+	newLight->SetLightDirection(Vector3(1.0f, -1.0f, -1.0f));
 
 	m_SkyObject = GameObject::CreateObject("SkyBox", Default);
-	m_SkyBox = m_SkyObject->AddComponent< SkyBox_Com>("SkyBox");
+	m_SkyBox = m_SkyObject->AddComponent<SkyBox_Com>("SkyBox");
 
 	SAFE_RELEASE(newLight);
 	SAFE_RELEASE(newLightObject);

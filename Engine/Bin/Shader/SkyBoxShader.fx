@@ -14,7 +14,7 @@ struct VS_OUTPUT_2POS
     float3 oPos : POSITION0;
 };
 
-VS_OUTPUT_2POS SkyBoxVS(VS_INPUT_POS input)
+VS_OUTPUT_2POS SkyBoxVS(VS_INPUT_NORMAL_COLOR input)
 {
     VS_OUTPUT_2POS output = (VS_OUTPUT_2POS) 0;
 

@@ -18,6 +18,7 @@ public:
 	size_t GetHeight()	const;
 	const uint8_t* GetPixels() const;
 	size_t GetPixelSize() const;
+	const vector<TCHAR*>* GetFullPath() const { return &m_vecFullPath; }
 
 private:
 	bool CreateShaderResource();
@@ -32,6 +33,7 @@ private:
 	///그렇기때문에 아랫놈이 무조건 필요하다.
 	ID3D11ShaderResourceView* m_ShaderResourceView;
 	TCHAR m_FullPath[MAX_PATH];
+	vector<TCHAR*> m_vecFullPath;
 
 private:	
 	Texture();

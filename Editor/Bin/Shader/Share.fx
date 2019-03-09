@@ -75,34 +75,26 @@ struct VS_OUTPUT_NORMAL_COLOR
 
 struct VS_INPUT_3D
 {
-    float3 vPos : POSITION0;
-    float3 vNormal : NORMAL0;
-    float2 vUV : TEXCOORD0;
-    float3 vTangent : TANGENT0;
-    float3 vBinormal : BINORMAL0;
-    float4 vBlendWeight : BLENDWEIGHTS0;
-    float4 vBlendIndex : BLENDINDICES0;
-};
-
-struct VS_INPUT_VERTEX4
-{
-    float3 vPos : POSITION0;
-    float3 vNormal : NORMAL0;
-    float2 vUV : TEXCOORD0;
-    float3 vTangent : TANGENT0;
+    float3 vPos : POSITION;
+    float3 vNormal : NORMAL;
+    float2 vUV : TEXCOORD;
+    float3 vTangent : TANGENT;
+    float3 vBinormal : BINORMAL;
+    float4 vBlendWeight : BLENDWEIGHTS;
+    float4 vBlendIndex : BLENDINDICES;
 };
 
 struct VS_OUTPUT_3D
 {
-    float4 vPos : SV_POSITION0;
-    float4 vProjPos : POSITION0;
+    float4 vPos : SV_POSITION;
+    float4 vProjPos : POSITION;
     float3 vViewPos : POSITION1;
-    float3 vNormalV : NORMAL0;
-    float2 vUV : TEXCOORD0;
-    float3 vTangentV : TANGENT0;
-    float3 vBinormalV : BINORMAL0;
-    float4 vBlendWeight : BLENDWEIGHTS0;
-    float4 vBlendIndex : BLENDINDICES0;
+    float3 vNormal : NORMAL;
+    float2 vUV : TEXCOORD;
+    float3 vTangent : TANGENT;
+    float3 vBinormal : BINORMAL;
+    float4 vBlendWeight : BLENDWEIGHTS;
+    float4 vBlendIndex : BLENDINDICES;
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -224,6 +216,7 @@ cbuffer Light : register(b3)
 Texture2D DiffuseTexture : register(t0);
 Texture2D NormalTexture : register(t1);
 Texture2D SpecularTexture : register(t2);
+
 Texture2D BoneTexture : register(t3);
 
 SamplerState DiffuseSampler : register(s0);
@@ -437,8 +430,8 @@ SkinningData Skinned(float3 vPos, float3 vNormal, float4 vWeights, float4 vIndic
     {
         matrix matBone = GetBoneMatrix((int) vIndices[i]);
 
-        tSkinning.vPos += fWeights[i] * mul(float4(vPos, 1.f), matBone).xyz;
-        tSkinning.vNormal += fWeights[i] * mul(float4(vNormal, 0.f), matBone).xyz;
+        tSkinning.vPos += fWeights[i] * mul(float4(vPos, 1.0f), matBone).xyz;
+        tSkinning.vNormal += fWeights[i] * mul(float4(vNormal, 0.0f), matBone).xyz;
     }
 
     tSkinning.vNormal = normalize(tSkinning.vNormal);

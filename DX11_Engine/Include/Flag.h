@@ -206,7 +206,7 @@ namespace JEONG
 		KEY_UP = 0x4
 	};
 
-	enum SOUND_TYPE
+	enum JEONG_DLL SOUND_TYPE
 	{
 		ST_EFFECT,
 		ST_BGM,

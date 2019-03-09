@@ -299,22 +299,268 @@ void Mesh::UpdateVertexBuffer(void * vertexInfo, int ContainerIndex)
 
 bool Mesh::Save(const string & FileName, const string & PathKey)
 {
-	return false;
+	BineryWrite Writer(FileName);
+
+	Writer.WriteData(m_TagName);
+	Writer.WriteData(m_ShaderKeyName);
+	Writer.WriteData(m_LayOutKeyName);
+
+	Writer.WriteData(m_Center);
+	Writer.WriteData(m_Radius);
+	Writer.WriteData(m_Min);
+	Writer.WriteData(m_Max);
+	Writer.WriteData(m_Lenth);
+
+	size_t	iContainer = m_vecMeshContainer.size();
+	Writer.WriteData(iContainer);
+	
+	for (size_t i = 0; i < iContainer; ++i)
+	{
+		MeshContainer*	pContainer = m_vecMeshContainer[i];
+
+		Writer.WriteData(pContainer->PrimitiveType);
+		Writer.WriteData(pContainer->vertexBuffer.vSize);
+		Writer.WriteData(pContainer->vertexBuffer.vCount);
+		Writer.WriteData(pContainer->vertexBuffer.vUsage);
+		Writer.WriteData(pContainer->vertexBuffer.vBuffer, pContainer->vertexBuffer.vSize * pContainer->vertexBuffer.vCount);
+
+		size_t	iIdxCount = pContainer->vecIndexBuffer.size();
+
+		Writer.WriteData(pContainer->vecIndexBuffer.size());
+
+		for (size_t j = 0; j < iIdxCount; ++j)
+		{
+			Writer.WriteData(pContainer->vecIndexBuffer[j].iFormat);
+			Writer.WriteData(pContainer->vecIndexBuffer[j].iSize);
+			Writer.WriteData(pContainer->vecIndexBuffer[j].iCount);
+			Writer.WriteData(pContainer->vecIndexBuffer[j].iUsage);
+			Writer.WriteData(pContainer->vecIndexBuffer[j].iBuffer, pContainer->vecIndexBuffer[j].iSize * pContainer->vecIndexBuffer[j].iCount);
+		}
+	}
+
+	bool bMaterial = false;
+
+	if (m_Material)
+	{
+		bMaterial = true;
+		Writer.WriteData(bMaterial);
+		m_Material->Save(Writer);
+	}
+	else
+		Writer.WriteData(bMaterial);
+
+	return true;
 }
 
 bool Mesh::SaveFullPath(const char * pFullPath)
 {
-	return false;
+	BineryWrite Writer(pFullPath);
+
+	Writer.WriteData(m_TagName);
+	Writer.WriteData(m_ShaderKeyName);
+	Writer.WriteData(m_LayOutKeyName);
+
+	Writer.WriteData(m_Center);
+	Writer.WriteData(m_Radius);
+	Writer.WriteData(m_Min);
+	Writer.WriteData(m_Max);
+	Writer.WriteData(m_Lenth);
+
+	size_t	iContainer = m_vecMeshContainer.size();
+	Writer.WriteData(iContainer);
+
+	for (size_t i = 0; i < iContainer; ++i)
+	{
+		MeshContainer*	pContainer = m_vecMeshContainer[i];
+
+		Writer.WriteData(pContainer->PrimitiveType);
+		Writer.WriteData(pContainer->vertexBuffer.vSize);
+		Writer.WriteData(pContainer->vertexBuffer.vCount);
+		Writer.WriteData(pContainer->vertexBuffer.vUsage);
+		Writer.WriteData(pContainer->vertexBuffer.vBuffer, pContainer->vertexBuffer.vSize * pContainer->vertexBuffer.vCount);
+
+		size_t	iIdxCount = pContainer->vecIndexBuffer.size();
+
+		Writer.WriteData(pContainer->vecIndexBuffer.size());
+
+		for (size_t j = 0; j < iIdxCount; ++j)
+		{
+			Writer.WriteData(pContainer->vecIndexBuffer[j].iFormat);
+			Writer.WriteData(pContainer->vecIndexBuffer[j].iSize);
+			Writer.WriteData(pContainer->vecIndexBuffer[j].iCount);
+			Writer.WriteData(pContainer->vecIndexBuffer[j].iUsage);
+			Writer.WriteData(pContainer->vecIndexBuffer[j].iBuffer, pContainer->vecIndexBuffer[j].iSize * pContainer->vecIndexBuffer[j].iCount);
+		}
+	}
+
+	bool bMaterial = false;
+
+	if (m_Material)
+	{
+		bMaterial = true;
+		Writer.WriteData(bMaterial);
+		m_Material->Save(Writer);
+	}
+	else
+		Writer.WriteData(bMaterial);
+
+	return true;
 }
 
 bool Mesh::Load(const string & FileName, const string & PathKey)
 {
-	return false;
+	BineryRead Reader(FileName);
+
+	int	iLength = 0;
+
+	Reader.ReadData(m_TagName);
+	Reader.ReadData(m_ShaderKeyName);
+	Reader.ReadData(m_LayOutKeyName);
+	
+	Reader.ReadData(m_Center);
+	Reader.ReadData(m_Radius);
+	Reader.ReadData(m_Min);
+	Reader.ReadData(m_Max);
+	Reader.ReadData(m_Lenth);
+
+	size_t	iContainer = 0;
+	Reader.ReadData(iContainer);
+
+	for (size_t i = 0; i < iContainer; ++i)
+	{
+		MeshContainer*	pContainer = new MeshContainer();
+		m_vecMeshContainer.push_back(pContainer);
+
+		int	iVtxSize = 0;
+		int	iVtxCount = 0;
+		D3D11_USAGE	eUsage;
+
+		Reader.ReadData((int&)pContainer->PrimitiveType);
+		Reader.ReadData(iVtxSize);
+		Reader.ReadData(iVtxCount);
+		Reader.ReadData((int&)eUsage);
+
+		char*	pData = new char[iVtxSize * iVtxCount];
+
+		Reader.ReadData(pData, iVtxSize * iVtxCount);
+
+		CreateVertexBuffer(pData, iVtxCount, iVtxSize, eUsage);
+
+		SAFE_DELETE_ARRARY(pData);
+
+		size_t	iIdxCount = 0;
+		Reader.ReadData(iIdxCount);
+
+		for (size_t j = 0; j < iIdxCount; ++j)
+		{
+			DXGI_FORMAT	eFmt;
+			int	iIdxSize = 0;
+			int	iIdxCount = 0;
+
+			Reader.ReadData((int&)eFmt);
+			Reader.ReadData(iIdxSize);
+			Reader.ReadData(iIdxCount);
+			Reader.ReadData((int&)eUsage);
+
+			pData = new char[iIdxSize * iIdxCount];
+			Reader.ReadData(pData, iIdxSize * iIdxCount);
+			CreateIndexBuffer(pData, iIdxCount, iIdxSize, eUsage, eFmt);
+			SAFE_DELETE_ARRARY(pData);
+		}
+	}
+
+	bool	bMaterial = false;
+	Reader.ReadData(bMaterial);
+
+	if (bMaterial)
+	{
+		SAFE_RELEASE(m_Material);
+		bMaterial = true;
+
+		m_Material = new Material_Com();
+		m_Material->Init();
+		m_Material->Load(Reader);
+	}
+
+	return true;
 }
 
 bool Mesh::LoadFullPath(const char * pFullPath)
 {
-	return false;
+	BineryRead Reader(pFullPath);
+
+	int	iLength = 0;
+
+	Reader.ReadData(m_TagName);
+	Reader.ReadData(m_ShaderKeyName);
+	Reader.ReadData(m_LayOutKeyName);
+
+	Reader.ReadData(m_Center);
+	Reader.ReadData(m_Radius);
+	Reader.ReadData(m_Min);
+	Reader.ReadData(m_Max);
+	Reader.ReadData(m_Lenth);
+
+	size_t	iContainer = 0;
+	Reader.ReadData(iContainer);
+
+	for (size_t i = 0; i < iContainer; ++i)
+	{
+		MeshContainer*	pContainer = new MeshContainer();
+		m_vecMeshContainer.push_back(pContainer);
+
+		int	iVtxSize = 0;
+		int	iVtxCount = 0;
+		D3D11_USAGE	eUsage;
+
+		Reader.ReadData((int&)pContainer->PrimitiveType);
+		Reader.ReadData(iVtxSize);
+		Reader.ReadData(iVtxCount);
+		Reader.ReadData((int&)eUsage);
+
+		char*	pData = new char[iVtxSize * iVtxCount];
+
+		Reader.ReadData(pData, iVtxSize * iVtxCount);
+
+		CreateVertexBuffer(pData, iVtxCount, iVtxSize, eUsage);
+
+		SAFE_DELETE_ARRARY(pData);
+
+		size_t	iIdxCount = 0;
+		Reader.ReadData(iIdxCount);
+
+		for (size_t j = 0; j < iIdxCount; ++j)
+		{
+			DXGI_FORMAT	eFmt;
+			int	iIdxSize = 0;
+			int	iIdxCount = 0;
+
+			Reader.ReadData((int&)eFmt);
+			Reader.ReadData(iIdxSize);
+			Reader.ReadData(iIdxCount);
+			Reader.ReadData((int&)eUsage);
+
+			pData = new char[iIdxSize * iIdxCount];
+			Reader.ReadData(pData, iIdxSize * iIdxCount);
+			CreateIndexBuffer(pData, iIdxCount, iIdxSize, eUsage, eFmt);
+			SAFE_DELETE_ARRARY(pData);
+		}
+	}
+
+	bool	bMaterial = false;
+	Reader.ReadData(bMaterial);
+
+	if (bMaterial)
+	{
+		SAFE_RELEASE(m_Material);
+		bMaterial = true;
+
+		m_Material = new Material_Com();
+		m_Material->Init();
+		m_Material->Load(Reader);
+	}
+
+	return true;
 }
 
 bool Mesh::ConvertFbx(FBXLoader * pLoader, const char * pFullPath)
@@ -356,12 +602,12 @@ bool Mesh::ConvertFbx(FBXLoader * pLoader, const char * pFullPath)
 				m_ShaderKeyName = STANDARD_TEX_NORMAL_SHADER;
 		}
 
-		vector<Vertex3D>	vecVtx;
+		vector<Vertex3D> vecVtx;
 		iVtxSize = sizeof(Vertex3D);
 
 		for (size_t i = 0; i < (*iter)->vecPos.size(); ++i)
 		{
-			Vertex3D	tVtx = {};
+			Vertex3D tVtx = {};
 
 			tVtx.Pos = (*iter)->vecPos[i];
 			tVtx.Normal = (*iter)->vecNormal[i];
@@ -547,24 +793,24 @@ bool Mesh::ConvertFbx(FBXLoader * pLoader, const char * pFullPath)
 	else
 		m_Animation = NULLPTR;
 
-	char	strFullPath[MAX_PATH] = {};
-	strcpy_s(strFullPath, pFullPath);
-	int	iPathLength = (int)strlen(strFullPath);
-	memcpy(&strFullPath[iPathLength - 3], "msh", 3);
+	//char	strFullPath[MAX_PATH] = {};
+	//strcpy_s(strFullPath, pFullPath);
+	//int	iPathLength = (int)strlen(strFullPath);
+	//memcpy(&strFullPath[iPathLength - 3], "msh", 3);
 
-	SaveFullPath(strFullPath);
+	//SaveFullPath(strFullPath);
 
-	wchar_t* tFullPath = {};
-	tFullPath = CA2W(strFullPath);
+	//wchar_t* tFullPath = {};
+	//tFullPath = CA2W(strFullPath);
 
-	if (m_Animation)
-	{
-		memcpy(&strFullPath[iPathLength - 3], "bne", 3);
-		m_Animation->SaveBoneFullPath(tFullPath);
+	//if (m_Animation)
+	//{
+	//	memcpy(&strFullPath[iPathLength - 3], "bne", 3);
+	//	m_Animation->SaveBoneFullPath(tFullPath);
 
-		memcpy(&strFullPath[iPathLength - 3], "anm", 3);
-		m_Animation->SaveFullPath(tFullPath);
-	}
+	//	memcpy(&strFullPath[iPathLength - 3], "anm", 3);
+	//	m_Animation->SaveFullPath(tFullPath);
+	//}
 
 	return true;
 }

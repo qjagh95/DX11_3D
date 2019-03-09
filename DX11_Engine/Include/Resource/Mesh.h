@@ -48,7 +48,7 @@ public:
 	void Render();
 	void Render(int Container, int Subset);
 
-	bool LoadMesh(const string& KeyName, const TCHAR* FileName, const string& PathKey = MESH_DATA_PATH);
+	bool LoadMesh(const string& KeyName, const TCHAR* FileName, const string& PathKey = MESH_PATH /*MESH_DATA_PATH*/);
 	bool LoadMeshFromFullPath(const string& KeyName, const TCHAR* FullPath);
 	string GetShaderKey() const { return m_ShaderKeyName; }
 	string GetLayOutKey() const { return m_LayOutKeyName; }
@@ -69,7 +69,7 @@ public:
 
 	bool Save(const string& FileName, const string& PathKey = MESH_PATH);
 	bool SaveFullPath(const char* pFullPath);
-	bool Load(const string& FileName, const string& PathKey = MESH_DATA_PATH);
+	bool Load(const string& FileName, const string& PathKey = MESH_PATH /*MESH_DATA_PATH*/);
 	bool LoadFullPath(const char* pFullPath);
 
 private:

@@ -169,14 +169,19 @@ bool ResourceManager::Init()
 	CreateCylinderVolum(CYLINDER_VOLUM, 0.5f, 3, 32);
 	CreateCapsulVolum(CAPSUL_VOLUM, 0.5f, 3, 64, 128);
 	CreateCornVolum(CORN_VOLUM, 0.5f, 0.5f, 64, 128);
-
-	CreateSphereVolum(SPHERE_VOLUM, 0.5f, 64, 128);
 	CreateSphereVolum(SPHERE_SKY, 0.5f, 64, 128, SKY_BOX_SHADER, POS_LAYOUT);
 
 	CreateSampler(LINER_SAMPLER);
 	//디퍼드에 최적화된 샘플러 = 포인트(픽셀값을 1:1매칭시켜서 가져온다)
 	CreateSampler(POINT_SAMPLER, D3D11_FILTER_MIN_MAG_MIP_POINT);
 	
+	return true;
+}
+bool ResourceManager::SamplerInit()
+{
+	CreateSampler(LINER_SAMPLER);
+	CreateSampler(POINT_SAMPLER, D3D11_FILTER_MIN_MAG_MIP_POINT);
+
 	return true;
 }
 
@@ -222,6 +227,29 @@ bool ResourceManager::CreateTexture(const string & KeyName, const TCHAR * FileNa
 	}
 
 	m_TextureMap.insert(make_pair(KeyName, newTexture));
+	return true;
+}
+
+bool ResourceManager::CreateTexture(const string & KeyName, const vector<const TCHAR*>& vecFileName, const string & PathKey)
+{
+	Texture* pTexture = FindTexture(KeyName);
+
+	if (pTexture)
+	{
+		SAFE_RELEASE(pTexture);
+		return false;
+	}
+
+	pTexture = new Texture();
+
+	if (!pTexture->LoadTexture(KeyName, vecFileName, PathKey))
+	{
+		SAFE_RELEASE(pTexture);
+		return false;
+	}
+
+	m_TextureMap.insert(make_pair(KeyName, pTexture));
+
 	return true;
 }
 

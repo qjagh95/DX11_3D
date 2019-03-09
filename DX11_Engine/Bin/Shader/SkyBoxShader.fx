@@ -14,7 +14,7 @@ struct VS_OUTPUT_2POS
     float3 oPos : POSITION0;
 };
 
-VS_OUTPUT_2POS SkyBoxVS(VS_INPUT_POS input)
+VS_OUTPUT_2POS SkyBoxVS(VS_INPUT_NORMAL_COLOR input)
 {
     VS_OUTPUT_2POS output = (VS_OUTPUT_2POS) 0;
 
@@ -34,8 +34,8 @@ PS_OUTPUT_GBUFFER SkyBoxPS(VS_OUTPUT_2POS input)
     float4 Diffuse = float4(0.0f, 0.0f, 0.0f, 0.0f);
     float4 Specular = float4(0.0f, 0.0f, 0.0f, 0.0f);
 
-    ////정점의 높이 (정점의 높이가 1을 벗어날 수도 있다)
-    ////함수는 0보다 낮은값은 0, 1보다 높은값은 1로 고정시키는 함수.
+    //정점의 높이 (정점의 높이가 1을 벗어날 수도 있다)
+    //함수는 0보다 낮은값은 0, 1보다 높은값은 1로 고정시키는 함수.
     float y = saturate(input.oPos.y);
 
     output.vAlbedo = lerp(g_Center, g_Apex, y * g_Height);
@@ -43,16 +43,10 @@ PS_OUTPUT_GBUFFER SkyBoxPS(VS_OUTPUT_2POS input)
     output.vNormal.w = g_Material.Specular.w;
     output.vDepth.rgb = input.vPos.z / input.vPos.w;
     output.vDepth.a = input.vPos.w;
-    output.vMaterial.r = float4(1.0f, 1.0f, 1.0f, 1.0f);
-    output.vMaterial.g = float4(1.0f, 1.0f, 1.0f, 1.0f);
-    output.vMaterial.b = float4(1.0f, 1.0f, 1.0f, 1.0f);
-    output.vMaterial.a = float4(1.0f, 1.0f, 1.0f, 1.0f);
+    output.vMaterial.r = 1.0f;
+    output.vMaterial.g = 1.0f;
+    output.vMaterial.b = 1.0f;
+    output.vMaterial.a = 1.0f;
 
     return output;
-    //PS_OUTPUT_SINGLE output = (PS_OUTPUT_SINGLE) 0;
-    //output.vTarget0 = lerp(g_Center, g_Apex, y * g_Height);
-
-    //return output;
-
-
 }

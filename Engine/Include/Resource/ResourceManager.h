@@ -9,8 +9,10 @@ class JEONG_DLL ResourceManager
 {
 public:
 	bool Init();
+	bool SamplerInit();
 	bool CreateMesh(const string& KeyName, const string& ShaderKeyName, const string& LayOutKeyName, void* vertexInfo, int vertexCount, int vertexSize, D3D11_USAGE vertexUsage, D3D11_PRIMITIVE_TOPOLOGY primitiveType, void* indexInfo = NULLPTR, int indexCount = 0, int indexSize = 0, D3D11_USAGE indexUsage = D3D11_USAGE_DEFAULT, DXGI_FORMAT indexFormat = DXGI_FORMAT_R16_UINT);
 	bool CreateTexture(const string& KeyName, const TCHAR* FileName, const string& PathKey = TEXTURE_PATH);
+	bool CreateTexture(const string& KeyName, const vector<const TCHAR*>& vecFileName, const string& PathKey = TEXTURE_PATH);
 	bool CreateTextureFromFullPath(const string& KeyName, const TCHAR* FullPath);
 	bool LoadMesh(const string& KeyName, const TCHAR* pFileName,const string& strPathKey = MESH_PATH);
 	bool LoadMeshFromFullPath(const string& KeyName, const TCHAR* pFullPath);

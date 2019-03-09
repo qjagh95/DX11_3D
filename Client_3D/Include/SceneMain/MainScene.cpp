@@ -37,17 +37,12 @@ bool MainScene::Init()
 	Layer* TileLayer = m_Scene->FindLayer("Tile");
 
 	GameObject* newObject = GameObject::CreateObject("Pyramid", Default);
-	newObject->GetTransform()->SetWorldPos(0.0f, 0.0f, 2.0f);
+	newObject->GetTransform()->SetWorldPos(0.0f, 0.0f, 0.0f);
 
 	Renderer_Com* RenderComponent = newObject->AddComponent<Renderer_Com>("Render");
-	//RenderComponent->SetMesh("Player", TEXT("Monster4.fbx"));
-	RenderComponent->SetMesh("Pyramid");
+	RenderComponent->SetMesh("Player", TEXT("Monster4.fbx")); 
+	//RenderComponent->SetMesh("Pyramid");
 	RenderComponent->InitMaterial();
-
-	//FBXLoader bb;
-	//string cc = PathManager::Get()->FindPathMultiByte(MESH_PATH);
-	//cc += "Monster4.fbx";
-	//bb.LoadFbx(cc.c_str());
 
 	GameObject* newObject2 = GameObject::CreateObject("Player", Default);
 	Player_Com* newPlayer = newObject2->AddComponent<Player_Com>("Player");
@@ -72,7 +67,6 @@ int MainScene::Input(float DeltaTime)
 
 int MainScene::Update(float DeltaTime)
 {
-
 	return 0;
 }
 

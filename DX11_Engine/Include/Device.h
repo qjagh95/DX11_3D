@@ -5,6 +5,7 @@ class JEONG_DLL Device
 {
 public:
 	bool Init(HWND hWnd, unsigned int Width, unsigned int Height, bool isWindowMode);
+	bool EditInit(HWND hWnd, unsigned int Width, unsigned int Height, bool isWindowMode);
 	void Clear(float ClearColor[4]);
 	void Present();
 	ID3D11Device* GetDevice() const { return m_Device; }

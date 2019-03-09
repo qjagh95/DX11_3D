@@ -54,6 +54,9 @@ public:
 	void Render(float DeltaTime) override;
 	Material_Com* Clone() override;
 
+	void Save(BineryWrite& Writer) override;
+	void Load(BineryRead& Reader) override;
+
 	void SetMaterial(const Vector4& Diffuse, const Vector4& Ambient, const Vector4& Specular, float SpecularPower, const Vector4& Emissive, int Container = 0, int Subset = 0);
 	void SetDiffuseTexture(int RegisterNumber, const string& KeyName, int Container = 0, int Subset = 0);
 	void SetDiffuseTexture(int RegisterNumber, const string& KeyName, const TCHAR* FileName, const string& PathKey = TEXTURE_PATH, int Container = 0, int Subset = 0);
@@ -72,6 +75,13 @@ public:
 	void SetShader(int Container = 0, int Subset = 0);
 	MaterialCbuffer GetMaterialInfo() const { return m_vecMaterial[0][0]->MatrialInfo; }
 	void ClearContainer();
+
+	void AddMultiTex(int iSmpRegister, const string& strSmpKey, int iRegister, const string& strKey, const TCHAR* pFileName, const string& strPathKey = TEXTURE_PATH, int iContainer = 0, int iSubset = 0);
+	void AddMultiTex(int iSmpRegister, const string& strSmpKey,	int iRegister, const string& strKey, const vector<const TCHAR*>& vecFileName, const string& strPathKey = TEXTURE_PATH, int iContainer = 0, int iSubset = 0);
+
+private:
+	void SaveTextureSet(BineryWrite& Writer, TextureSet* pTexture);
+	void LoadTextureSet(BineryRead& Reader, TextureSet** ppTexture);
 
 private:
 	//메쉬도 컨테이너와 서브셋개념으로 나눠져있기때문에 재질정보도 각 부위마다 달라질 수 있다.

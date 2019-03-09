@@ -61,42 +61,42 @@ void GUIManager::ImGuiEnd()
 
 void GUIManager::Debug()
 {
-	static float RotX;
-	static float RotY;
-	static float RotZ;
+	//static float RotX;
+	//static float RotY;
+	//static float RotZ;
 
-	static Vector3 Pos = Vector3(0.0f, 1.0f, 1.0f);
+	//static Vector3 Pos = Vector3(0.0f, 1.0f, 1.0f);
 
-	Scene* getScene = SceneManager::Get()->GetCurScene();
-	GameObject* getObject = getScene->FindObject("Pyramid");
+	//Scene* getScene = SceneManager::Get()->GetCurScene();
+	//GameObject* getObject = getScene->FindObject("Pyramid");
 
-	if (getObject == NULLPTR)
-	{
-		SAFE_RELEASE(getScene);
-		SAFE_RELEASE(getObject);
-		return;
-	}
+	//if (getObject == NULLPTR)
+	//{
+	//	SAFE_RELEASE(getScene);
+	//	SAFE_RELEASE(getObject);
+	//	return;
+	//}
 
-	Material_Com* getMat = getObject->FindComponentFromTypeNoneCount<Material_Com>(CT_MATERIAL);
-	ImGui::Text("Pyramid");
+	//Material_Com* getMat = getObject->FindComponentFromTypeNoneCount<Material_Com>(CT_MATERIAL);
+	//ImGui::Text("Pyramid");
 
-	ImGui::SliderFloat("RotX", &RotX, 0.0f, 10.0f);
-	ImGui::SliderFloat("RotY", &RotY, 0.0f, 10.0f);
-	ImGui::SliderFloat("RotZ", &RotZ, 0.0f, 10.0f);
-	ImGui::SliderFloat4("pDiffuse", (float*)&getMat->m_vecMaterial[0][0]->MatrialInfo.Diffuse, 0.0f, 10.0f);
-	ImGui::SliderFloat4("pAmbient", (float*)&getMat->m_vecMaterial[0][0]->MatrialInfo.Ambient, 0.0f, 10.0f);
-	ImGui::SliderFloat3("pSpecular", (float*)&getMat->m_vecMaterial[0][0]->MatrialInfo.Specular, 0.0f, 10.0f);
-	ImGui::SliderFloat("pSpecularPower", (float*)&getMat->m_vecMaterial[0][0]->MatrialInfo.Specular.w, 0.0f, 100.0f);
+	//ImGui::SliderFloat("RotX", &RotX, 0.0f, 10.0f);
+	//ImGui::SliderFloat("RotY", &RotY, 0.0f, 10.0f);
+	//ImGui::SliderFloat("RotZ", &RotZ, 0.0f, 10.0f);
+	//ImGui::SliderFloat4("pDiffuse", (float*)&getMat->m_vecMaterial[0][0]->MatrialInfo.Diffuse, 0.0f, 10.0f);
+	//ImGui::SliderFloat4("pAmbient", (float*)&getMat->m_vecMaterial[0][0]->MatrialInfo.Ambient, 0.0f, 10.0f);
+	//ImGui::SliderFloat3("pSpecular", (float*)&getMat->m_vecMaterial[0][0]->MatrialInfo.Specular, 0.0f, 10.0f);
+	//ImGui::SliderFloat("pSpecularPower", (float*)&getMat->m_vecMaterial[0][0]->MatrialInfo.Specular.w, 0.0f, 100.0f);
 
-	ImGui::SliderFloat3("PyramidPos", (float*)&Pos, 0.0f, 10.0f);
+	//ImGui::SliderFloat3("PyramidPos", (float*)&Pos, 0.0f, 10.0f);
 
-	getObject->GetTransform()->RotationZ(RotZ);
-	getObject->GetTransform()->RotationX(RotX);
-	getObject->GetTransform()->RotationY(RotY);
-	getObject->GetTransform()->SetWorldPos(Pos);
+	//getObject->GetTransform()->RotationZ(RotZ);
+	//getObject->GetTransform()->RotationX(RotX);
+	//getObject->GetTransform()->RotationY(RotY);
+	//getObject->GetTransform()->SetWorldPos(Pos);
 
-	ImGui::BeginTabBar("Pyramid");
-	ImGui::EndTabBar();
+	//ImGui::BeginTabBar("Pyramid");
+	//ImGui::EndTabBar();
 
-	SAFE_RELEASE(getObject);
+	//SAFE_RELEASE(getObject);
 }
