@@ -403,10 +403,10 @@ SkinningData Skinned(float3 vPos, float3 vNormal, float3 vTangent, float3 vBinor
     {
         matrix matBone = GetBoneMatrix((int) vIndices[i]);
 
-        tSkinning.vPos += fWeights[i] * mul(float4(vPos, 1.f), matBone).xyz;
-        tSkinning.vNormal += fWeights[i] * mul(float4(vNormal, 0.f), matBone).xyz;
-        tSkinning.vTangent += fWeights[i] * mul(float4(vTangent, 0.f), matBone).xyz;
-        tSkinning.vBinormal += fWeights[i] * mul(float4(vBinormal, 0.f), matBone).xyz;
+        tSkinning.vPos += fWeights[i] * mul(float4(vPos, 1.0f), matBone).xyz;
+        tSkinning.vNormal += fWeights[i] * mul(float4(vNormal, 0.0f), matBone).xyz;
+        tSkinning.vTangent += fWeights[i] * mul(float4(vTangent, 0.0f), matBone).xyz;
+        tSkinning.vBinormal += fWeights[i] * mul(float4(vBinormal, 0.0f), matBone).xyz;
     }
 
     tSkinning.vNormal = normalize(tSkinning.vNormal);
@@ -424,7 +424,7 @@ SkinningData Skinned(float3 vPos, float3 vNormal, float4 vWeights, float4 vIndic
     fWeights[0] = vWeights.x;
     fWeights[1] = vWeights.y;
     fWeights[2] = vWeights.z;
-    fWeights[3] = 1.f - vWeights.x - vWeights.y - vWeights.z;
+    fWeights[3] = 1.0f - vWeights.x - vWeights.y - vWeights.z;
 
     for (int i = 0; i < 4; ++i)
     {

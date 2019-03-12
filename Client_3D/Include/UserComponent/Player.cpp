@@ -30,9 +30,8 @@ int Player_Com::Input(float DeltaTime)
 int Player_Com::Update(float DeltaTime)
 {
 	if (KeyInput::Get()->KeyDown("MoveLeft"))
-	{
 		SoundManager::Get()->SoundPlay("Effect", ST_3D);
-	}
+
 	return 0;
 }
 

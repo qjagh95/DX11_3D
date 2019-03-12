@@ -70,7 +70,6 @@ Animation3D_Com::Animation3D_Com(const Animation3D_Com& CopyData)
 
 Animation3D_Com::~Animation3D_Com()
 {
-
 	Safe_Delete_Map(m_mapClip);
 	Safe_Delete_VecList(m_vecBoneMatrix);
 
@@ -103,11 +102,6 @@ int Animation3D_Com::Input(float DeltaTime)
 }
 
 int Animation3D_Com::Update(float DeltaTime)
-{
-	return 0;
-}
-
-int Animation3D_Com::LateUpdate(float DeltaTime)
 {
 	if (m_mapClip.empty())
 		return 0;
@@ -271,7 +265,7 @@ int Animation3D_Com::LateUpdate(float DeltaTime)
 	if (!m_bEnd)
 	{
 		//행렬정보를 텍스쳐에다 저장하겠다.
-		
+
 		D3D11_MAPPED_SUBRESOURCE	tMap = {};
 		Device::Get()->GetContext()->Map(m_pBoneTex, 0, D3D11_MAP_WRITE_DISCARD, 0, &tMap);
 
@@ -283,6 +277,11 @@ int Animation3D_Com::LateUpdate(float DeltaTime)
 		Device::Get()->GetContext()->Unmap(m_pBoneTex, 0);
 	}
 
+	return 0;
+}
+
+int Animation3D_Com::LateUpdate(float DeltaTime)
+{
 	return 0;
 }
 

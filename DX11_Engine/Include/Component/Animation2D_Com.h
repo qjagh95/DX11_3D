@@ -15,7 +15,6 @@ public:
 	void CollisionLateUpdate(float DeltaTime) override;
 	void Render(float DeltaTime) override;
 	Animation2D_Com* Clone() override;
-	void AfterClone() override {}
 
 	void AddClip(const string& AnimationName, ANIMATION2D_TYPE Type, ANIMATION_OPTION Option, float PlayLimitTime, const vector<Clip2DFrame>& vecFrame, const string& TexKey, const TCHAR* FileName, const string& PathKey = TEXTURE_PATH);
 	void SetDefaultClip(const string& ClipName);

@@ -16,6 +16,7 @@ Texture::~Texture()
 {
 	SAFE_RELEASE(m_ShaderResourceView);
 	Safe_Delete_VecList(m_vecImage);
+	Safe_Delete_VecList(m_vecFullPath);
 
 	m_vecFullPath.clear();
 }

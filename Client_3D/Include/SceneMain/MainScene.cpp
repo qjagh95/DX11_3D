@@ -38,10 +38,11 @@ bool MainScene::Init()
 
 	GameObject* newObject = GameObject::CreateObject("Pyramid", Default);
 	newObject->GetTransform()->SetWorldPos(0.0f, 0.0f, 0.0f);
+	newObject->GetTransform()->SetWorldScale(50.0f, 50.0f, 50.0f);
 
 	Renderer_Com* RenderComponent = newObject->AddComponent<Renderer_Com>("Render");
-	RenderComponent->SetMesh("Player", TEXT("Monster4.fbx")); 
-	//RenderComponent->SetMesh("Pyramid");
+	//RenderComponent->SetMesh("Player", TEXT("Monster4.fbx")); 
+	RenderComponent->SetMesh("Pyramid");
 	RenderComponent->InitMaterial();
 
 	GameObject* newObject2 = GameObject::CreateObject("Player", Default);

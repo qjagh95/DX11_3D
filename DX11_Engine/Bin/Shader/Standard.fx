@@ -197,8 +197,8 @@ VS_OUTPUT_3D StandardTexNormalAnimVS(VS_INPUT_3D input)
 
     SkinningData tSkinning = Skinned(vPos, input.vNormal, input.vBlendWeight, input.vBlendIndex);
 
-    output.vViewPos = mul(float4(tSkinning.vPos, 1.f), g_WV).xyz;
-    output.vProjPos = mul(float4(tSkinning.vPos, 1.f), g_WVP);
+    output.vViewPos = mul(float4(tSkinning.vPos, 1.0f), g_WV).xyz;
+    output.vProjPos = mul(float4(tSkinning.vPos, 1.0f), g_WVP);
     output.vPos = output.vProjPos;
     output.vUV = input.vUV;
 
@@ -257,9 +257,7 @@ PS_OUTPUT_GBUFFER StandardBumpPS(VS_OUTPUT_3D input)
     output.vAlbedo = DiffuseTexture.Sample(DiffuseSampler, input.vUV);
     output.vNormal.xyz = input.vNormal;
     output.vNormal.w = g_Material.Specular.w;
-    output.vDepth.r = input.vPos.z / input.vPos.w;
-    output.vDepth.g = output.vDepth.r;
-    output.vDepth.b = output.vDepth.r;
+    output.vDepth.rgb = input.vPos.z / input.vPos.w;
     output.vDepth.a = input.vPos.w;
 
     float4 vSpc;
