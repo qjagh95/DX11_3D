@@ -237,7 +237,7 @@ void ComputeDirectionLight(float4 vNormal, float3 vToCamera, out float4 Ambient,
     //공식.
     Ambient = g_Material.Ambient * g_Light.LightAmbient;
     //Light를 바라보는 방향, LightDir은 World좌표 기준이라서 View로 변환해준다
-    float3 vToLight = mul(float4(LightDir, 1.0f), g_View).xyz;
+    float3 vToLight = mul(float4(LightDir, 0.0f), g_View).xyz;
     vToLight = -normalize(vToLight);
 
     //cos == 내적값 렘버트 자동적용. 

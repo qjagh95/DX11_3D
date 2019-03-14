@@ -29,6 +29,7 @@ namespace JEONG
 		CT_NUMBER,
 		CT_LIGHT,
 		CT_ANIMATION3D,
+		CT_SKY,
 		CT_MAX,
 	};
 
@@ -165,7 +166,8 @@ namespace JEONG
 		RG_ALPHA3,
 		RG_UI,
 		RG_HUD,
-		RG_END
+		RG_SKY,
+		RG_END,
 	};
 
 	enum TILE2D_OPTION

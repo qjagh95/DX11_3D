@@ -32,6 +32,7 @@ public:
 	Transform_Com* GetTransform() const { return m_Transform; }
 	void SetTransform(Transform_Com* transform);
 	RENDER_GROUP GetRenderGroup() const { return m_RenderGroup; }
+	void SetRenderGroup(RENDER_GROUP Group) { m_RenderGroup = Group; }
 
 	void SetRotation(const Vector3& vecRot);
 	void SetRotationX(float RotX);

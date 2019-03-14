@@ -14,6 +14,7 @@ JEONG_USING
 SkyBox_Com::SkyBox_Com()
 {
 	m_CBuffer = {};
+	m_ComType = CT_SKY;
 }
 
 SkyBox_Com::SkyBox_Com(const SkyBox_Com & CopyData)
@@ -38,7 +39,8 @@ bool SkyBox_Com::Init()
 	구현하는 것도 쉽게 가능하다.
 	*/
 
-	m_Transform->SetWorldScale(20.0f, 20.0f, 20.0f);
+	m_Object->SetRenderGroup(RG_SKY);
+	m_Transform->SetWorldScale(1.0f, 1.0f, 1.0f);
 
 	Renderer_Com* newRenderer = m_Object->AddComponent<Renderer_Com>("SkyRender");
 	newRenderer->InitMaterial();
@@ -46,8 +48,9 @@ bool SkyBox_Com::Init()
 	newRenderer->SetShader(SKY_BOX_SHADER);
 	newRenderer->SetRenderState(CULL_NONE);
 	newRenderer->SetRenderState(DEPTH_DISABLE);
-	newRenderer->SetRenderState(FRONT_COUNT_WISE);
+	//newRenderer->SetRenderState(FRONT_COUNT_WISE);
 
+	m_Object->FindComponentFromTypeNoneCount<Material_Com>(CT_MATERIAL)->SetMaterial(Vector4::White, Vector4(1.0f, 1.0f, 1.0f, 1.0f), Vector4::White, 3.2f, Vector4::White);
 	SAFE_RELEASE(newRenderer);
 
 	return true;

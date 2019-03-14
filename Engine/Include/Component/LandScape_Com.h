@@ -16,7 +16,7 @@ public:
 	void Render(float DeltaTime) override;
 	LandScape_Com* Clone() override;
 
-	void CreateGrid(const string& KeyName, int XCount, int ZCount, const string& TexKey = "", const TCHAR* TexName = NULLPTR, const TCHAR* TexNormal = NULLPTR, const TCHAR* TexSpecular = NULLPTR, const char* FileName = NULLPTR, const string& PathKey = TEXTURE_PATH);
+	void CreateGrid(const string& KeyName, int XCount, int ZCount);
 
 private:
 	void ComputeTangent();

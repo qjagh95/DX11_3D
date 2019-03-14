@@ -57,16 +57,18 @@ LandScape_Com * LandScape_Com::Clone()
 	return new LandScape_Com(*this);
 }
 
-void LandScape_Com::CreateGrid(const string & KeyName, int XCount, int ZCount, const string & TexKey, const TCHAR * TexName, const TCHAR * TexNormal, const TCHAR * TexSpecular, const char * FileName, const string & PathKey)
+void LandScape_Com::CreateGrid(const string & KeyName, int XCount, int ZCount)
 {
-	/*
-	TODO : LandScape보류(BMS) 일단 FBX복붙
-
-	*/
-
 	m_XCount = XCount;
 	m_ZCount = ZCount;
 
+	for (int y = 0; y < ZCount; y++)
+	{
+		for (int x = 0; x < XCount; x++)
+		{
+
+		}
+	}
 
 }
 

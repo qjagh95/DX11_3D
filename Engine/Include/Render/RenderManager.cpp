@@ -75,9 +75,8 @@ RenderManager::~RenderManager()
 	for (int i = 0; i < RG_END; ++i)
 	{
 		for (int j = 0; j < m_RenderGroup[i].Size; ++j)
-		{
 			SAFE_RELEASE(m_RenderGroup[i].ObjectList[j]);
-		}
+
 		m_RenderGroup[i].Size = 0;
 	}
 
@@ -493,14 +492,7 @@ MultiRenderTarget * RenderManager::FindMultiTarget(const string & MultiKey)
 
 void RenderManager::Render3D(float DeltaTime)
 {
-#ifdef GUI_USING
-	//ImGui::Checkbox("WireFrame", &m_isWireFrame);
-#endif 
-
-	if (m_isDeferred == false)
-		ForwardRender(DeltaTime);
-	else
-		DeferredRender(DeltaTime);
+	DeferredRender(DeltaTime);
 
 	unordered_map<string, RenderTarget*>::iterator StartIter = m_RenderTargetMap.begin();
 	unordered_map<string, RenderTarget*>::iterator EndIter = m_RenderTargetMap.end();
@@ -519,7 +511,7 @@ void RenderManager::DeferredRender(float DeltaTime)
 	RenderFullScreen(DeltaTime);
 
 	//UI부터~출력
-	for (int i = RG_UI; i < RG_END; ++i)
+	for (int i = RG_UI; i < RG_SKY; ++i)
 	{
 		for (int j = 0; j < m_RenderGroup[i].Size; ++j)
 			m_RenderGroup[i].ObjectList[j]->Render(DeltaTime);
@@ -539,6 +531,8 @@ void RenderManager::RenderGBuffer(float DeltaTime)
 	float ClearColor[4] = {Vector4::RoyalBlue.r,Vector4::RoyalBlue.g ,Vector4::RoyalBlue.b ,Vector4::RoyalBlue.a};
 	m_GBufferMultiTarget->ClearRenderTarget(ClearColor);
 	m_GBufferMultiTarget->SetTarget();
+
+	m_RenderGroup[RG_SKY].ObjectList[0]->Render(DeltaTime);
 
 	for (int i = RG_LANDSCAPE; i <= RG_NORMAL; ++i)
 	{
@@ -824,7 +818,7 @@ void RenderManager::ForwardRender(float DeltaTime)
 	getTarget->RenderFullScreen();
 
 	// UI부터~출력
-	for (int i = RG_UI; i < RG_END; ++i)
+	for (int i = RG_UI; i < RG_SKY; ++i)
 	{
 		for (int j = 0; j < m_RenderGroup[i].Size; ++j)
 			m_RenderGroup[i].ObjectList[j]->Render(DeltaTime);
